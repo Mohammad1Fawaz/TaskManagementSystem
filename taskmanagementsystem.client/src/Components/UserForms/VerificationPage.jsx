@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
-import MediumLogo from '../CommonComponents/MediumLogo'
-import { ToastContainer } from 'react-toastify';
-import { VerifiyUser, successNotify, errorNotify } from '../../Services/UserFormsService/AuthService';
 import { useNavigate } from 'react-router-dom';
-
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { VerifiyUser, errorNotify, successNotify } from '../../Services/UserFormsService/AuthService';
+import MediumLogo from '../CommonComponents/MediumLogo';
 import { useLocation } from 'react-router-dom';
 
 const VerificationPage = () => {
@@ -30,6 +28,7 @@ const VerificationPage = () => {
 
         fetchData();
     }, [token, navigate]);
+
     return (
         <div className="d-flex justify-content-center LoginRegisterContainer ">
             <ToastContainer />

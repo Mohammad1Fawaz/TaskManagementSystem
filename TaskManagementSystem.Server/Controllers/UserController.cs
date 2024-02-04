@@ -45,7 +45,7 @@ namespace TaskManagementSystem.Server.Controllers
 
                 if (registrationResult.Result.success)
                 {
-                    return Ok(new { success=true, message = registrationResult.Result.message });
+                    return Ok(new { success = true, message = registrationResult.Result.message });
                 }
                 else
                 {
@@ -71,7 +71,7 @@ namespace TaskManagementSystem.Server.Controllers
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginViewModel model)
-        {           
+        {
             if (string.IsNullOrEmpty(model.email))
             {
                 ModelState.AddModelError("Email", "Please enter a valid email address.");
@@ -88,13 +88,13 @@ namespace TaskManagementSystem.Server.Controllers
 
                 if (registrationResult.success)
                 {
-                    return Ok(new { success = true, message = "Login successful." });
+                    return Ok(new { success = registrationResult.success, message = registrationResult.message, token = registrationResult.token });
                 }
                 else
                 {
                     return BadRequest(new
                     {
-                        message = registrationResult.message,
+                        success = registrationResult.success,
                         error = registrationResult.message
                     });
                 }
@@ -132,7 +132,7 @@ namespace TaskManagementSystem.Server.Controllers
                     {
                         user.isUserVerfied = true;
                         _context.SaveChanges();
-                        return Ok(new { success = true, message = $"Email: {email} verification successful. You can now log in." });
+                        return Ok(new { success = true, message = $"Email: {email} verification successful. You can now log in.", token = tokenValidationResult.Token });
                     }
                     else
                     {

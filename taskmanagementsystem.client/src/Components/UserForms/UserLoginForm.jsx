@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import MediumLogo from '../CommonComponents/MediumLogo'
-import { loginUser, successNotify, errorNotify  } from '../../Services/UserFormsService/AuthService';
-import {ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { errorNotify, loginUser, successNotify } from '../../Services/UserFormsService/AuthService';
+import { saveToken } from '../../utils/user';
+import MediumLogo from '../CommonComponents/MediumLogo';
+import PrimaryButton from '../ui/PrimaryButton';
+
 const UserLoginForm = () => {
 
     const [formData, setFormData] = useState({
@@ -13,6 +15,7 @@ const UserLoginForm = () => {
     });
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,14 +23,15 @@ const UserLoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         try {
-            const result = await loginUser(formData);
+            const result = await loginUser(formData, setIsLoading);
 
             if (result.success) {
                 successNotify(result.message);
                 const token = result.token;
-                localStorage.setItem('accessToken', token);
+                saveToken(token);
             } else {
                 if (result.errors) {
                     setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
@@ -58,7 +62,7 @@ const UserLoginForm = () => {
                         <i className="fas fa-key  position-absolute text-center end-5 top-20 rounded"></i>
                     </div>
                     <Link to="/ResetPassord" className="text-end d-inline-block text-15 text-main mb-3">Forgot Password?</Link>
-                    <button type="submit" className="btn btn-primary w-100">Login</button>
+                    <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
                 </form>
                 <div className="mt-3 w-100">
                     <span className="text-15">Don&apos;t have an account? </span><Link to="/register" className="text-end d-inline-block text-black text-15">Register here.</Link>

@@ -18,7 +18,7 @@ namespace TaskManagementSystem.Server.Services
         private readonly IServiceProvider _serviceProvider;
         private static readonly string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
 
-        public UserService(AppDbContext context , IServiceProvider serviceProvider)
+        public UserService(AppDbContext context, IServiceProvider serviceProvider)
         {
             _context = context;
             _serviceProvider = serviceProvider;
@@ -43,7 +43,7 @@ namespace TaskManagementSystem.Server.Services
             _context.SaveChanges();
 
             var verificationToken = GenerateJwtToken(newUser);
-       
+
             string subject = "Verification Email";
             var verificationEndpoint = "https://localhost:5173/VerificationPage";
             var bodyBuilder = new BodyBuilder();
@@ -56,23 +56,23 @@ namespace TaskManagementSystem.Server.Services
         }
 
 
-        public UserRegistrationResult LoginUser(UserLoginViewModel model)
+        public UserResultWithToken LoginUser(UserLoginViewModel model)
         {
-            return CheckUserInfo(model.email , model.password);
+            return CheckUserInfo(model.email, model.password);
         }
 
-        private UserRegistrationResult CheckUserInfo(string email,string password)
+        private UserResultWithToken CheckUserInfo(string email, string password)
         {
             var user = _context.Users.FirstOrDefault(u => u.email == email);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.password))
             {
                 var jwtToken = GenerateJwtToken(user);
 
-                return new UserRegistrationResult(true, "Login Success");
+                return new UserResultWithToken(true, "Login Success", jwtToken);
             }
             else
             {
-                return new UserRegistrationResult(false, "Invalid Login, wrong email or password");
+                return new UserResultWithToken(false, "Invalid Login, wrong email or password", null);
             }
         }
         private bool IsEmailTaken(string email)
@@ -88,26 +88,27 @@ namespace TaskManagementSystem.Server.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("userId", user.id.ToString()),          
-                    new Claim("UserName", user.userName),  
-                    new Claim("userEmail", user.email),  
+                    new Claim("userId", user.id.ToString()),
+                    new Claim("UserName", user.userName),
+                    new Claim("userEmail", user.email),
                 }),
-                Expires = DateTime.UtcNow.AddHours(1), 
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        public class TokenValidationResult
-        {
-            public bool IsValid { get; set; }
-            public ClaimsPrincipal? ClaimsPrincipal { get; set; }
-        }
 
-        public TokenValidationResult ValidateToken(string token)
+        //public class TokenValidationResult
+        //{
+        //    public bool IsValid { get; set; }
+        //    public ClaimsPrincipal? ClaimsPrincipal { get; set; }
+        //}
+
+        public UserTokenValidationResult ValidateToken(string token)
         {
-            var result = new TokenValidationResult();
+            var result = new UserTokenValidationResult();
 
             try
             {
@@ -125,6 +126,7 @@ namespace TaskManagementSystem.Server.Services
                 SecurityToken validatedToken;
                 result.ClaimsPrincipal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken) as ClaimsPrincipal;
                 result.IsValid = true;
+                result.Token = token;
             }
             catch (Exception ex)
             {

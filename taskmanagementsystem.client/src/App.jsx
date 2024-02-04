@@ -8,10 +8,19 @@ import UserLoginForm from '.././src/Components/UserForms/UserLoginForm'
 import UserRegistrationForm from '.././src/Components/UserForms/UserRegistrationForm'
 import VerificationPage from '.././src/Components/UserForms/VerificationPage'
 import Home from '.././src/Components/Home/Home'
+import Cookies from 'js-cookie';
 function App() {
     useEffect(() => {
         populateWeatherData();
     }, []);
+
+    const token = Cookies.get("token");
+
+    useEffect(() => {
+        if (token) {
+            console.log("token: ", token);
+        }
+    }, [token])
 
     return (
         <Router>
