@@ -7,7 +7,7 @@ const Home = () => {
         <div className="container mt-4">           
             <div>
                 <Link to="/login">Login</Link>
-                <Link to="/login">Register</Link>
+                <Link to="/register">Register</Link>
             </div>
         </div>
     );
