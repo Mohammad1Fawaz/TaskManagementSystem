@@ -1,0 +1,39 @@
+﻿/* App.css */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+@import url(assets/Css/BootstrapAdditionalStyles.css);
+:root {
+    --main-color: #ff9a20;
+    --main-background-color: #ecf0f1;
+}
+body {
+    color: var(--main-color);
+    background-color: var(--main-background-color);
+}
+
+#root{
+    font-family: 'Poppins', sans-serif;
+    width:100% !important;
+    height:100vh !important;
+}
+.AppDiv{
+    display:flex;
+    justify-content:center !important;
+    align-items:center !important;
+}
+
+.LoginRegisterContainer{
+    width:100%;
+    height:100%;
+    align-items:center !important;
+    background-image:url("/src/assets/TaskManagementBg.jpeg");
+    background-attachment:fixed;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position:center;
+}
+.MediumLogo{
+    height:70px !important
+}
+

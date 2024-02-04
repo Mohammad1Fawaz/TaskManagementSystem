@@ -1,0 +1,38 @@
+# Ignore build artifacts
+/bin/
+/obj/
+/config/
+
+# Add any other files or folders to ignore
+/vs/
+node_modules/
+TaskManagementSystem.Server/
+TaskManagementSystem.sln
+node_modules/
+package-lock.json
+package.json
+taskmanagementsystem.client/
+
+# Ignore user-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Ignore logs and dumps
+*.log
+*.vsdbg
+
+# Ignore temporary files and folders
+[Tt]emp/
+[Oo]bj/
+
+# Ignore Visual Studio Code specific settings
+.vscode/
+
+# Ignore editor configuration
+.editorconfig
+
+# Ignore environment variables
+.env
+.env.local
