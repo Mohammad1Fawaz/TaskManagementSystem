@@ -122,7 +122,7 @@ namespace TaskManagementSystem.Server.Controllers
 
             var tokenValidationResult = _userService.ValidateToken(token);
 
-            if (tokenValidationResult.IsValid)
+            if (tokenValidationResult.isValid)
             {
                 string email = _userService.GetEmailFromToken(token);
                 if (!string.IsNullOrEmpty(email))
@@ -132,7 +132,7 @@ namespace TaskManagementSystem.Server.Controllers
                     {
                         user.isUserVerfied = true;
                         _context.SaveChanges();
-                        return Ok(new { success = true, message = $"Email: {email} verification successful. You can now log in.", token = tokenValidationResult.Token });
+                        return Ok(new { success = true, message = $"Email: {email} verification successful. You can now log in.", token = tokenValidationResult.token });
                     }
                     else
                     {

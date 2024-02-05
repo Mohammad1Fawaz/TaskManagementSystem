@@ -4,8 +4,8 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 @import url(assets/Css/BootstrapAdditionalStyles.css);
 :root {
-    --main-color: #ff9a20;
-    --main-background-color: #ecf0f1;
+    --main-color: #82A0D8;
+    --main-background-color: #251B37;
 }
 body {
     color: var(--main-color);
@@ -34,6 +34,6 @@ body {
     background-position:center;
 }
 .MediumLogo{
-    height:70px !important
+    height:70px !important;
 }
 

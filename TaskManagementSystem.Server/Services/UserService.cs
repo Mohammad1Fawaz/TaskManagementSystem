@@ -72,7 +72,7 @@ namespace TaskManagementSystem.Server.Services
             }
             else
             {
-                return new UserResultWithToken(false, "Invalid Login, wrong email or password", null);
+                return new UserResultWithToken(false, "Invalid Login, wrong email or password");
             }
         }
         private bool IsEmailTaken(string email)
@@ -124,13 +124,13 @@ namespace TaskManagementSystem.Server.Services
                 };
 
                 SecurityToken validatedToken;
-                result.ClaimsPrincipal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken) as ClaimsPrincipal;
-                result.IsValid = true;
-                result.Token = token;
+                result.claimsPrincipal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken) as ClaimsPrincipal;
+                result.isValid = true;
+                result.token = token;
             }
             catch (Exception ex)
             {
-                result.IsValid = false;
+                result.isValid = false;
             }
 
             return result;

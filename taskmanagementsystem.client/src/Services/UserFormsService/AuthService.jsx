@@ -45,7 +45,7 @@ export const loginUser = async (userData, setIsLoading) => {
 };
 
 
-export const VerifiyUser = async (token, setIsLoading) => {
+export const verifyUser = async (token, setIsLoading) => {
     const apiBaseUrl = config.apiBaseUrl;
 
     try {

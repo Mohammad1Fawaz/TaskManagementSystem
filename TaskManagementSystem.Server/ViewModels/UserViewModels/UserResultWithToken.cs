@@ -7,7 +7,7 @@
 
         public string token { get; }
 
-        public UserResultWithToken(bool success, string message, string token)
+        public UserResultWithToken(bool success, string message, string token = null)
         {
             this.success = success;
             this.message = message;

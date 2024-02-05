@@ -4,10 +4,10 @@ namespace TaskManagementSystem.Server.ViewModels.UserViewModels
 {
     public class UserTokenValidationResult
     {
-        public bool IsValid { get; set; }
+        public bool isValid { get; set; }
 
-        public ClaimsPrincipal? ClaimsPrincipal { get; set; }
+        public ClaimsPrincipal? claimsPrincipal { get; set; }
 
-        public string Token { get; set; }
+        public string token { get; set; }
     }
 }

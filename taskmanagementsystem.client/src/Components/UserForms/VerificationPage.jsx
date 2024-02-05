@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { VerifiyUser, errorNotify, successNotify } from '../../Services/UserFormsService/AuthService';
+import { verifyUser, errorNotify, successNotify } from '../../Services/UserFormsService/AuthService';
 import MediumLogo from '../CommonComponents/MediumLogo';
 import { useLocation } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const VerificationPage = () => {
         const fetchData = async () => {
             try {
                 console.log("token", token);
-                const result = await VerifiyUser(token);
+                const result = await verifyUser(token);
                 if (result.success) {
                     successNotify(result.message);
                     navigate('/');
