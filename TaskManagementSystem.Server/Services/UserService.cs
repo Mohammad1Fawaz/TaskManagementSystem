@@ -31,18 +31,27 @@ namespace TaskManagementSystem.Server.Services
                 return new UserRegistrationResult(false, "Email is already registered.");
             }
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.password);
-            var newUser = new User
+            var newClient = new Client
             {
                 userName = model.userName,
                 email = model.email,
                 password = hashedPassword,
                 isUserVerfied = false,
+                token = ""
             };
 
-            _context.Users.Add(newUser);
+            _context.Clients.Add(newClient);
             _context.SaveChanges();
 
-            var verificationToken = GenerateJwtToken(newUser);
+            var verificationToken = GenerateJwtToken(newClient);
+
+            //TODO:
+            //Client? currentClient = _context.Clients.FirstOrDefault(x => x.email == model.email);
+            //if (currentClient != null)
+            //{
+            //    currentClient.token = verificationToken;
+            //    _context.SaveChanges();
+            //}
 
             string subject = "Verification Email";
             var verificationEndpoint = "https://localhost:5173/VerificationPage";
@@ -63,7 +72,7 @@ namespace TaskManagementSystem.Server.Services
 
         private UserResultWithToken CheckUserInfo(string email, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.email == email);
+            var user = _context.Clients.FirstOrDefault(u => u.email == email);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.password))
             {
                 var jwtToken = GenerateJwtToken(user);
@@ -77,10 +86,10 @@ namespace TaskManagementSystem.Server.Services
         }
         private bool IsEmailTaken(string email)
         {
-            return _context.Users.Any(u => u.email == email);
+            return _context.Clients.Any(u => u.email == email);
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(Client client)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSecret);
@@ -88,9 +97,9 @@ namespace TaskManagementSystem.Server.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("userId", user.id.ToString()),
-                    new Claim("UserName", user.userName),
-                    new Claim("userEmail", user.email),
+                    new Claim("userId", client.id.ToString()),
+                    new Claim("UserName", client.userName),
+                    new Claim("userEmail", client.email),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

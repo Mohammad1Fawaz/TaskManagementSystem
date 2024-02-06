@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import { errorNotify, registerUser, successNotify } from '../../Services/UserFormsService/AuthService';
-import MediumLogo from '../CommonComponents/MediumLogo';
-import PrimaryButton from '../ui/PrimaryButton';
+import { registerUser } from '../../../Services/userService/AuthService';
+import { notify } from "../../../utils/notifications";
+import { saveToken } from "../../../utils/user"
+import PrimaryButton from '../buttons/PrimaryButton';
+import MediumLogo from '../images/MainLogo';
 
 const UserRegistrationForm = () => {
     const [formData, setFormData] = useState({
@@ -23,11 +24,15 @@ const UserRegistrationForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setIsLoading(true);
         try {
-            const result = await registerUser(formData, setIsLoading);
+            const result = await registerUser(formData);
             if (result.success) {
-                successNotify(result.message);
+                notify(result.message, "success");
+                setIsLoading(false);
+                const token = result.token;
+                saveToken(token);
+                //navigate to a specific page
             } else {
                 if (result.errors) {
                     setUserNameValidationMessage(result.errors.userName && result.errors.userName[0]);
@@ -35,18 +40,21 @@ const UserRegistrationForm = () => {
                     setPasswordNameValidationMessage(result.errors.password && result.errors.password[0]);
                 }
                 if (result.existUser) {
-                    errorNotify(result.message);
+                    notify(result.message, "error");
                 }
+                setIsLoading(false);
             }
         } catch (error) {
-            errorNotify('Error during registration');
+            notify('Error during registration', "error");
+            setIsLoading(false);
         }
     };
     return (
         <div className="d-flex justify-content-center LoginRegisterContainer ">
-            <ToastContainer />
-            <div className="col-md-3 shadow bg-white  p-5 rounded h-auto">
-                <MediumLogo />
+            <div className="col-md-3 shadow bg-white px-5 py-4 rounded h-auto">
+                <div className="w-100 text-middle mb-2">
+                    <MediumLogo />
+                </div>
                 <form onSubmit={handleSubmit}>
                     <small className="text-danger text-10">{userNameValidationMessage}</small>
                     <div className="mb-3  position-relative">

@@ -8,5 +8,5 @@ public class AppDbContext : DbContext
     }
 
     // Add DbSet properties for your entities
-    public DbSet<User> Users { get; set; }
+    public DbSet<Client> Clients { get; set; }
 }

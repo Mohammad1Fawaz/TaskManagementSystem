@@ -3,11 +3,11 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { NavLink } from 'react-router-dom';
-import MediumLogo from '../CommonComponents/MediumLogo';
+import MediumLogo from '../../ui/images/MainLogo';
 
 function NavBar() {
     return (
-        <Navbar fixed="top" expand="md" className="nav-bg mb-3 px-md-5">
+        <Navbar fixed="top" expand="md" className="bg-black mb-3 px-md-5">
             <Container fluid>
                 <Navbar.Brand as={NavLink} to="/"><MediumLogo /></Navbar.Brand>
                 <Navbar.Toggle aria-controls={`offcanvasNavbar-md`} />

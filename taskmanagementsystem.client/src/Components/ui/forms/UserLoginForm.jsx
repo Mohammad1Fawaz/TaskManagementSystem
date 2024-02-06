@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import { errorNotify, loginUser, successNotify } from '../../Services/UserFormsService/AuthService';
-import { saveToken } from '../../utils/user';
-import MediumLogo from '../CommonComponents/MediumLogo';
-import PrimaryButton from '../ui/PrimaryButton';
+import { loginUser } from '../../../Services/userService/AuthService';
+import { notify } from "../../../utils/notifications";
+import { saveToken } from '../../../utils/user';
+import PrimaryButton from '../buttons/PrimaryButton';
+import MediumLogo from '../images/MainLogo';
 
 const UserLoginForm = () => {
 
@@ -26,30 +26,34 @@ const UserLoginForm = () => {
         setIsLoading(true);
 
         try {
-            const result = await loginUser(formData, setIsLoading);
+            const result = await loginUser(formData);
 
             if (result.success) {
-                successNotify(result.message);
-                const token = result.token;
-                saveToken(token);
+                notify(result.message, "success");
+                setIsLoading(false);
+                saveToken(result.token);
+                //navigate to a specific page
             } else {
                 if (result.errors) {
                     setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
                     setPasswordNameValidationMessage(result.errors.password && result.errors.password[0]);
                 }
                 if (result.error) {
-                    errorNotify(result.message);
+                    notify(result.error, "error");
                 }
+                setIsLoading(false);
             }
         } catch (error) {
-            errorNotify('Error during Login');
+            notify('Error during Login', "error");
+            setIsLoading(false);
         }
     };
     return (
         <div className="d-flex justify-content-center LoginRegisterContainer ">
-            <ToastContainer />
-            <div className="col-md-3 shadow bg-white  p-5 rounded h-auto">
-                <MediumLogo />
+            <div className="col-md-3 shadow bg-white px-5 py-4 rounded h-auto">
+                <div className="w-100 text-middle mb-2">
+                    <MediumLogo />
+                </div>
                 <form onSubmit={handleSubmit}>
                     <small className="text-danger text-10">{userEmailValidationMessage}</small>
                     <div className="mb-3 position-relative">
@@ -61,7 +65,7 @@ const UserLoginForm = () => {
                         <input type="text" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
                         <i className="fas fa-key  position-absolute text-center end-5 top-20 rounded"></i>
                     </div>
-                    <Link to="/ResetPassord" className="text-end d-inline-block text-15 text-main mb-3">Forgot Password?</Link>
+                    <Link to="/ResetPassord" className="text-start d-inline-block text-15 text-main mb-3 w-100">Forgot Password?</Link>
                     <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
                 </form>
                 <div className="mt-3 w-100">

@@ -1,7 +1,3 @@
-.nav-bg {
-    background-color: var(--main-background-color);
-}
-
 .nav-item {
     color: var(--main-color) !important;
     font-weight: 600

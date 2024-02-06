@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import { verifyUser, errorNotify, successNotify } from '../../Services/UserFormsService/AuthService';
-import MediumLogo from '../CommonComponents/MediumLogo';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import MediumLogo from '../Components/ui/images/MainLogo';
+import { verifyUser } from '../Services/userService/AuthService';
+import { notify } from "../utils/notifications";
+import { saveToken } from "../utils/user"
 
 const VerificationPage = () => {
     const navigate = useNavigate();
@@ -13,16 +13,16 @@ const VerificationPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("token", token);
                 const result = await verifyUser(token);
                 if (result.success) {
-                    successNotify(result.message);
+                    notify(result.message, "success");
+                    saveToken(result.token);
                     navigate('/');
                 } else {
-                    errorNotify(result.message);
+                    notify(result.message, "success");
                 }
             } catch (error) {
-                errorNotify('Error during registration');
+                notify('Error during registration', "error");
             }
         };
 
@@ -31,7 +31,6 @@ const VerificationPage = () => {
 
     return (
         <div className="d-flex justify-content-center LoginRegisterContainer ">
-            <ToastContainer />
             <div className="col-md-3 shadow bg-white  p-5 rounded h-auto">
                 <MediumLogo />
                 <div>

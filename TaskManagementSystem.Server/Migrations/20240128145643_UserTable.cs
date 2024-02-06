@@ -13,7 +13,7 @@ namespace TaskManagementSystem.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "Clients",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -23,6 +23,8 @@ namespace TaskManagementSystem.Server.Migrations
                     email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    token = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     isUserVerfied = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
@@ -36,7 +38,7 @@ namespace TaskManagementSystem.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Clients");
         }
     }
 }

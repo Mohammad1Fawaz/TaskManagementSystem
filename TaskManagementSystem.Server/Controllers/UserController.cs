@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TaskManagementSystem.Server.Models;
 using TaskManagementSystem.Server.Services;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
@@ -127,10 +126,10 @@ namespace TaskManagementSystem.Server.Controllers
                 string email = _userService.GetEmailFromToken(token);
                 if (!string.IsNullOrEmpty(email))
                 {
-                    User? user = _context.Users.FirstOrDefault(x => x.email == email);
-                    if (user != null)
+                    Client? client = _context.Clients.FirstOrDefault(x => x.email == email);
+                    if (client != null)
                     {
-                        user.isUserVerfied = true;
+                        client.isUserVerfied = true;
                         _context.SaveChanges();
                         return Ok(new { success = true, message = $"Email: {email} verification successful. You can now log in.", token = tokenValidationResult.token });
                     }

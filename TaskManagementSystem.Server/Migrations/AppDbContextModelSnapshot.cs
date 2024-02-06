@@ -17,7 +17,7 @@ namespace TaskManagementSystem.Server.Migrations
                 .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("TaskManagementSystem.Server.Models.User", b =>
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.Client", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -34,13 +34,17 @@ namespace TaskManagementSystem.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("userName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("id");
 
-                    b.ToTable("Users");
+                    b.ToTable("clients");
                 });
 #pragma warning restore 612, 618
         }
