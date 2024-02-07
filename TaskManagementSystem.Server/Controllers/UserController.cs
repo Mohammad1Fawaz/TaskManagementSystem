@@ -23,7 +23,7 @@ namespace TaskManagementSystem.Server.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserRegisterViewModel model)
         {
-            if (string.IsNullOrEmpty(model.userName))
+            if (string.IsNullOrEmpty(model.companyName))
             {
                 ModelState.AddModelError("UserName", "Please enter a username.");
             }
@@ -66,6 +66,32 @@ namespace TaskManagementSystem.Server.Controllers
                         v => v.Errors.Select(e => e.ErrorMessage).ToList()
                     )
             });
+        }
+
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword([FromBody] UserResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var resetResult = _userService.ResetPassword(model);
+                if (resetResult.Result.success)
+                {
+                    return Ok(new { success = true, message = resetResult.Result.message });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        success = resetResult.Result.success,
+                        error = resetResult.Result.message
+                    });
+                }
+            }
+            else
+            {
+                var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(new { errors = errorMessages });
+            }
         }
 
         [HttpPost("login")]

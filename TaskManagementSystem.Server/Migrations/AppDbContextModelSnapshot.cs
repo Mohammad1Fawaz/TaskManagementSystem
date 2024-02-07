@@ -23,6 +23,10 @@ namespace TaskManagementSystem.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("companyName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("email")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -34,11 +38,11 @@ namespace TaskManagementSystem.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("token")
+                    b.Property<string>("phoneNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("userName")
+                    b.Property<string>("token")
                         .IsRequired()
                         .HasColumnType("longtext");
 

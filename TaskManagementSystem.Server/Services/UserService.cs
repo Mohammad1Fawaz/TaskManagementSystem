@@ -31,11 +31,13 @@ namespace TaskManagementSystem.Server.Services
                 return new UserRegistrationResult(false, "Email is already registered.");
             }
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.password);
+
             var newClient = new Client
             {
-                userName = model.userName,
+                companyName = model.companyName,
                 email = model.email,
                 password = hashedPassword,
+                phoneNumber = model.phoneNumber,
                 isUserVerfied = false,
                 token = ""
             };
@@ -45,13 +47,8 @@ namespace TaskManagementSystem.Server.Services
 
             var verificationToken = GenerateJwtToken(newClient);
 
-            //TODO:
-            //Client? currentClient = _context.Clients.FirstOrDefault(x => x.email == model.email);
-            //if (currentClient != null)
-            //{
-            //    currentClient.token = verificationToken;
-            //    _context.SaveChanges();
-            //}
+            newClient.token = verificationToken;
+            _context.SaveChanges();
 
             string subject = "Verification Email";
             var verificationEndpoint = "https://localhost:5173/VerificationPage";
@@ -70,6 +67,26 @@ namespace TaskManagementSystem.Server.Services
             return CheckUserInfo(model.email, model.password);
         }
 
+        public async Task<UserRegistrationResult> ResetPassword(UserResetPasswordViewModel model)
+        {
+            Client? user = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneNumber);
+            if (user != null)
+            {
+                var password = user.password;
+
+                string subject = "Reset Password";
+                var bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = $@"<p>{password}</p>";
+                var emailSender = _serviceProvider.GetRequiredService<IEmailSender>();
+                await emailSender.SendEmailAsync(model.email, subject, bodyBuilder.HtmlBody);
+
+                return new UserRegistrationResult(true, "Verification succeeded. Please check your email.");
+            }
+            else
+            {
+                return new UserRegistrationResult(false, "Email not found");
+            }
+        }
         private UserResultWithToken CheckUserInfo(string email, string password)
         {
             var user = _context.Clients.FirstOrDefault(u => u.email == email);
@@ -98,7 +115,7 @@ namespace TaskManagementSystem.Server.Services
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("userId", client.id.ToString()),
-                    new Claim("UserName", client.userName),
+                    new Claim("companyName", client.companyName),
                     new Claim("userEmail", client.email),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
@@ -161,8 +178,6 @@ namespace TaskManagementSystem.Server.Services
 
             return jwtToken?.Claims.FirstOrDefault(c => c.Type == "userEmail")?.Value ?? "";
         }
-
-
     }
 
 }

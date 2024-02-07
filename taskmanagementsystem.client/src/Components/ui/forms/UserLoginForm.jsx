@@ -9,7 +9,6 @@ import MediumLogo from '../images/MainLogo';
 const UserLoginForm = () => {
 
     const [formData, setFormData] = useState({
-        username: '',
         email: '',
         password: '',
     });
@@ -65,7 +64,7 @@ const UserLoginForm = () => {
                         <input type="text" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
                         <i className="fas fa-key  position-absolute text-center end-5 top-20 rounded"></i>
                     </div>
-                    <Link to="/ResetPassord" className="text-start d-inline-block text-15 text-main mb-3 w-100">Forgot Password?</Link>
+                    <Link to="/ResetPassword" className="text-start d-inline-block text-15 text-main mb-3 w-100">Forgot Password?</Link>
                     <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
                 </form>
                 <div className="mt-3 w-100">

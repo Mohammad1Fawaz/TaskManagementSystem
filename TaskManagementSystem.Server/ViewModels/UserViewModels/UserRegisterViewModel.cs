@@ -5,7 +5,7 @@ namespace TaskManagementSystem.Server.ViewModels.UserViewModels
     public class UserRegisterViewModel
     {
         [Required]
-        public string userName { get; set; }
+        public string companyName { get; set; }
 
         [Required]
         [EmailAddress]
@@ -13,6 +13,9 @@ namespace TaskManagementSystem.Server.ViewModels.UserViewModels
 
         [Required]
         public string password { get; set; }
+
+        [Required]
+        public string phoneNumber { get; set; }
     }
 
 }
