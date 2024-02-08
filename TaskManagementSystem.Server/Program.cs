@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -41,7 +42,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 builder.Services.AddScoped<UserService>();
-builder.Services.AddTransient<IEmailSender,MailService>();
+builder.Services.AddTransient<IEmailSender, MailService>();
+builder.Services.AddScoped<IEncryptionService, EncryptionService>(ServiceProvider =>
+{
+    var dataProtectionProvider = ServiceProvider.GetRequiredService<IDataProtectionProvider>();
+    var purpose = "password-protection";
+    return new EncryptionService(dataProtectionProvider, purpose);
+});
 
 var app = builder.Build();
 

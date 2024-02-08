@@ -30,7 +30,7 @@ namespace TaskManagementSystem.Server.Services
             {
                 return new UserRegistrationResult(false, "Email is already registered.");
             }
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.password);
+            var hashedPassword = passwordProtection(model.password, "encrypt");
 
             var newClient = new Client
             {
@@ -72,7 +72,7 @@ namespace TaskManagementSystem.Server.Services
             Client? user = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneNumber);
             if (user != null)
             {
-                var password = user.password;
+                var password = passwordProtection(user.password, "decrypt");
 
                 string subject = "Reset Password";
                 var bodyBuilder = new BodyBuilder();
@@ -84,15 +84,19 @@ namespace TaskManagementSystem.Server.Services
             }
             else
             {
-                return new UserRegistrationResult(false, "Email not found");
+                return new UserRegistrationResult(false, "User not found");
             }
         }
         private UserResultWithToken CheckUserInfo(string email, string password)
         {
             var user = _context.Clients.FirstOrDefault(u => u.email == email);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.password))
+            var decryptedPassword = passwordProtection(user.password, "decrypt");
+
+            if (user != null && decryptedPassword == password)
             {
                 var jwtToken = GenerateJwtToken(user);
+                user.token = jwtToken;
+                _context.SaveChanges();
 
                 return new UserResultWithToken(true, "Login Success", jwtToken);
             }
@@ -177,6 +181,19 @@ namespace TaskManagementSystem.Server.Services
             var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
             return jwtToken?.Claims.FirstOrDefault(c => c.Type == "userEmail")?.Value ?? "";
+        }
+
+        public string passwordProtection(string password, string type)
+        {
+            var passwordProtection = _serviceProvider.GetRequiredService<IEncryptionService>();
+            if (type == "encrypt")
+            {
+                return passwordProtection.Encrypt(password);
+            }
+            else
+            {
+                return passwordProtection.Decrypt(password);
+            }
         }
     }
 
