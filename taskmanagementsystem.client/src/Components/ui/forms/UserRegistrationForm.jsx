@@ -59,11 +59,6 @@ const UserRegistrationForm = () => {
                     <MediumLogo />
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <small className="text-danger text-10">{companyNameValidationMessage}</small>
-                    <div className="mb-3  position-relative">
-                        <input type="text" name="companyName" className="form-control text-15 pe-5" placeholder="Company Name" onChange={handleInputChange} />
-                        <i className="fas fa-building position-absolute text-center text-middle end-5 top-5  h-95"></i>
-                    </div>
                     <small className="text-danger text-10">{userEmailValidationMessage}</small>
                     <div className="mb-3 position-relative">
                         <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" onChange={handleInputChange} />
@@ -74,6 +69,11 @@ const UserRegistrationForm = () => {
                         <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
                         <i className="fas fa-lock position-absolute text-center text-middle end-5 top-5 h-95"></i>
                     </div>
+                    <small className="text-danger text-10">{companyNameValidationMessage}</small>
+                    <div className="mb-3  position-relative">
+                        <input type="text" name="companyName" className="form-control text-15 pe-5" placeholder="Company Name" onChange={handleInputChange} />
+                        <i className="fas fa-building position-absolute text-center text-middle end-5 top-5  h-95"></i>
+                    </div>
                     <small className="text-danger text-10">{userPhoneNumberValidationMessage}</small>
                     <div className="mb-3 position-relative">
                         <input type="text" name="phoneNumber" className="form-control text-15 pe-5" placeholder="Phone number" onChange={handleInputChange} />
@@ -82,7 +82,7 @@ const UserRegistrationForm = () => {
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />
                 </form>
                 <div className="mt-3 w-100">
-                    <span className="text-15">Already have an account? </span><Link to="/login" className="text-end d-inline-block text-black text-15">Login here.</Link>
+                    <span className="text-14 text-black">Already have an account? </span><Link to="/login" className="text-end d-inline-block text-main-color text-15">Login here.</Link>
                 </div>
             </div>
         </div>

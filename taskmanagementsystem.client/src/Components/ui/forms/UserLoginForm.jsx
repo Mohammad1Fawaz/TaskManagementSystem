@@ -57,18 +57,18 @@ const UserLoginForm = () => {
                     <small className="text-danger text-10">{userEmailValidationMessage}</small>
                     <div className="mb-3 position-relative">
                         <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" onChange={handleInputChange} />
-                        <i className="fas fa-envelope  position-absolute text-center end-5 top-20 rounded"></i>
+                        <i className="fas fa-envelope position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <small className="text-danger text-10">{userPasswordValidationMessage}</small>
                     <div className="mb-1 position-relative">
                         <input type="text" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
-                        <i className="fas fa-key  position-absolute text-center end-5 top-20 rounded"></i>
+                        <i className="fas fa-key position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
-                    <Link to="/ResetPassword" className="text-start d-inline-block text-15 text-main mb-3 w-100">Forgot Password?</Link>
+                    <Link to="/ResetPassword" className="text-start d-inline-block text-14 text-main-color mb-3 mt-2 w-100">Forgot password?</Link>
                     <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
                 </form>
                 <div className="mt-3 w-100">
-                    <span className="text-15">Don&apos;t have an account? </span><Link to="/register" className="text-end d-inline-block text-black text-15">Register here.</Link>
+                    <span className="text-14 text-black">Don&apos;t have an account? </span><Link to="/register" className="text-end d-inline-block text-main-color text-15">Register here.</Link>
                 </div>
             </div>
         </div>
