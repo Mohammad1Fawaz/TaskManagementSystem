@@ -206,6 +206,10 @@
     font-size: 100px !important;
 }
 
+.gap-2 {
+    gap: 2
+}
+
 .text-middle{
     display:flex;
     justify-content:center;

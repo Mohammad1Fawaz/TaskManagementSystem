@@ -31,9 +31,6 @@ namespace TaskManagementSystem.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("isUserVerfied")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("password")
                         .IsRequired()
                         .HasColumnType("longtext");

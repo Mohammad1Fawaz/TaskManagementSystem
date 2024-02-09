@@ -149,24 +149,22 @@ namespace TaskManagementSystem.Server.Controllers
 
             if (tokenValidationResult.isValid)
             {
-                string email = _userService.GetEmailFromToken(token);
-                if (!string.IsNullOrEmpty(email))
+                var clientData = _userService.GetDataFromToken(token);
+                if (clientData != null)
                 {
-                    Client? client = _context.Clients.FirstOrDefault(x => x.email == email);
-                    if (client != null)
+                    Client client = new Client
                     {
-                        client.isUserVerfied = true;
-                        _context.SaveChanges();
-                        return Ok(new { success = true, message = $"Email: {email} verification successful. You can now log in.", token = tokenValidationResult.token });
-                    }
-                    else
-                    {
-                        return BadRequest(new
-                        {
-                            success = false,
-                            message = "Something went wrong , please contact support",
-                        });
-                    }
+                        companyName = clientData.companyName,
+                        email = clientData.email,
+                        phoneNumber = clientData.phoneNumber,
+                        password = clientData.password,
+                        token = tokenValidationResult.token
+                    };
+
+                    _context.Clients.Add(client);
+                    _context.SaveChanges();
+
+                    return Ok(new { success = true, message = $"Email: {clientData.email} verification successful.", token = tokenValidationResult.token });
                 }
                 else
                 {
