@@ -14,9 +14,6 @@ function App() {
 
     return (
         <Router>
-            <header>
-                <NavBar />
-            </header>
             <ToastContainer autoClose={false} />
             <main className="AppDiv w-100 h-100">
                 <Routes>

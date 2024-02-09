@@ -1,10 +1,9 @@
 // RegistrationForm.jsx
-
+import LoginPage from '../../../pages/Login'
 const Home = () => {
     
     return (
-        <div className="container mt-4">
-        </div>
+        <LoginPage/>
     );
 }
 export default Home;
