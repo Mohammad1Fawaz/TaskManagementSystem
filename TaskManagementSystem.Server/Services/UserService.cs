@@ -35,7 +35,7 @@ namespace TaskManagementSystem.Server.Services
             var body = $@"<p style='font-family: Arial, sans-serif; font-size: 18px; color: #333;'>Click the following link to verify your email:</p>
             <a href='{verificationEndpoint}?token={verificationToken}' style='font-family: Arial, sans-serif; font-size: 16px; color: #007bff; text-decoration: underline;'>Verify Email</a>";
 
-            await SendEmail(model.email, subject, body);
+            await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
 
             return new UserRegistrationResult(true, "Registration success. Please check your email for verification.");
         }
@@ -61,7 +61,7 @@ namespace TaskManagementSystem.Server.Services
                             <p>Thank you for using <strong>ToTask</strong>.</p>
                             <p>Best Regards,<br>ToTask<br>Support: <a href=""mailto:totask@gmail.com"" style=""text-decoration: none;"">totask@gmail.com</a></p></div>";
 
-                await SendEmail(model.email, subject, body);
+                await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
 
                 return new UserRegistrationResult(true, "Verification succeeded. Please check your email.");
             }
@@ -87,24 +87,6 @@ namespace TaskManagementSystem.Server.Services
             {
                 return new UserResultWithToken(false, "Login failed, wrong email or password");
             }
-        }
-        private async Task SendEmail(string email, string subject, string body)
-        {
-            var logoUrl = "https://i.im.ge/2024/02/10/cjY88M.TaskManagementLogo.png";
-            string navbarHtml = $@"
-            <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"">
-            <div style='background-color: #333; color: white; padding: 10px; text-align: center;'>
-                <img src={logoUrl} alt='Logo' style='height: 50px; object-fit:contain;' />
-            </div>";
-
-            string footerHtml = @"
-            <footer style='background-color: #333; color: white; padding: 10px; text-align: center;'>
-                <p style=""font-size: 14px; color: #fff;"">This is an automated message. Please do not reply to this email as responses are not monitored.</p>
-            </footer></div>";
-
-            var bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = $"{navbarHtml}{body}{footerHtml}";
-            await _emailSender.SendEmailAsync(email, subject, bodyBuilder.HtmlBody);
         }
         private bool IsEmailTaken(string email)
         {
@@ -191,7 +173,7 @@ namespace TaskManagementSystem.Server.Services
 
         //    return jwtToken?.Claims.FirstOrDefault(c => c.Type == "UserName")?.Value;
         //}
-        public UserRegisterViewModel GetDataFromToken(string token)
+        public UserResultWithToken GetDataFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
@@ -204,7 +186,26 @@ namespace TaskManagementSystem.Server.Services
                 password = jwtToken.Claims.FirstOrDefault(c => c.Type == "password")?.Value
             };
 
-            return userData;
+            try
+            {
+                Client client = new Client
+                {
+                    companyName = userData.companyName,
+                    email = userData.email,
+                    phoneNumber = userData.phoneNumber,
+                    password = userData.password,
+                    token = token
+                };
+
+                _context.Clients.Add(client);
+                _context.SaveChanges();
+
+                return new UserResultWithToken(true, $"Email: {client.email} verification successful.", token);
+            }
+            catch
+            {
+                return new UserResultWithToken(false, "Registration failed. Contact support");
+            }
         }
     }
 
