@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
 import { registerUser } from '../../../Services/userService/AuthService';
+import { getCountries } from '../../../Services/ConstantsService/ConstantsService';
 import { notify } from "../../../utils/notifications";
 import { saveToken } from "../../../utils/user"
 import PrimaryButton from '../buttons/PrimaryButton';
@@ -19,7 +21,61 @@ const UserRegistrationForm = () => {
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
     const [userPhoneNumberValidationMessage, setPhoneNumberNameValidationMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [countries, setCountries] = useState([]);
 
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const response = await getCountries();
+                setCountries(response);
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+            }
+        };
+        //const hhhh = async () => {
+        //    try {
+        //        fetch('https://restcountries.com/v3.1/all')
+        //            .then(res => {
+        //                if (!res.ok) {
+        //                    throw new Error('Network response was not ok');
+        //                }
+        //                return res.json();
+        //            })
+        //            .then(data => {
+        //                if (!Array.isArray(data)) {
+        //                    throw new Error('Invalid data format received');
+        //                }
+        //                const selectedData = data.map((country, index) => ({
+        //                    id: index,
+        //                    name: country.name.common,
+        //                    phoneCode: country.ccn3,
+        //                    flagSvg: country.flags ? country.flags.svg : '',
+        //                    countryCode: country.cca2,
+        //                    timeZone: country.timezones ? country.timezones[0] : 'Unknown'
+        //                }));
+        //                console.log(selectedData);
+        //            })
+        //            .catch(error => {
+        //                console.error('Error fetching or processing countries data:', error);
+        //            });
+        //    } catch (error) {
+        //        console.error('Error occurred outside of asynchronous operation:', error);
+        //    }
+
+        //};
+        fetchCountries();
+        //hhhh();
+    }, []);
+    const customStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            borderRight: 'none',
+            borderRadius: ' 0.25rem 0  0 0.25rem',
+        }),
+    };
+    
+
+   
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -75,8 +131,31 @@ const UserRegistrationForm = () => {
                         <i className="fas fa-building position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <small className="text-danger text-10">{userPhoneNumberValidationMessage}</small>
-                    <div className="mb-3 position-relative">
-                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5" placeholder="Phone number" onChange={handleInputChange} />
+                    <div className="mb-3 position-relative d-flex">
+                        <Select
+                            options={countries.map(country => ({
+                                label: <div className="d-flex justify-conetnt-center align-items-center gap-2">{country.phoneCode}<img src={country.flagSvg} className="w-30 h-15 z-100" ></img></div>,
+                                value: country.phoneCode,
+                                isSelected: country.phoneCode === "+961"
+                            }))}
+                            isSearchable={true}
+                            className="w-45"
+                            placeholder=""
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    height:'0.25rem',
+                                    borderRadius: '0.25rem 0 0 0.25rem',
+                                    boxShadow: 'none',
+                                    outline: 'none',
+                                    borderColor: state.isFocused ? '#ff6813' : '#ced4da', 
+                                    '&:hover': {
+                                        borderColor: '#ced4da'
+                                    }
+                                })
+                            }}
+                        />
+                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" onChange={handleInputChange} />
                         <i className="fas fa-phone position-absolute text-center text-middle end-5 top-5 h-95"></i>
                     </div>
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />

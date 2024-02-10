@@ -1,14 +1,11 @@
-﻿using TaskManagementSystem.Server.Models;
-using TaskManagementSystem.Server.ViewModels.UserViewModels;
-using BCrypt.Net;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Security.Cryptography;
-using MailKit;
 using TaskManagementSystem.Server.Interfaces;
-using MimeKit;
+using TaskManagementSystem.Server.Models;
+using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Services
 {

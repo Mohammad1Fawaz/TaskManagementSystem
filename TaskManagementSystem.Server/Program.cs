@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.Text;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.Services;
@@ -13,8 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion("8.0.28")));
+{
+    string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+    AppDbContext.Configure(options, connectionString);
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
@@ -42,6 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ConstantsService>();
 builder.Services.AddTransient<IEmailSender, MailService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>(ServiceProvider =>
 {
@@ -55,7 +59,6 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

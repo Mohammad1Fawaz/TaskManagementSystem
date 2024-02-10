@@ -61,7 +61,7 @@ const UserLoginForm = () => {
                     </div>
                     <small className="text-danger text-10">{userPasswordValidationMessage}</small>
                     <div className="mb-1 position-relative">
-                        <input type="text" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
+                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
                         <i className="fas fa-key position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <Link to="/ResetPassword" className="text-start d-inline-block text-14 text-main-color mb-3 mt-2 w-100">Forgot password?</Link>

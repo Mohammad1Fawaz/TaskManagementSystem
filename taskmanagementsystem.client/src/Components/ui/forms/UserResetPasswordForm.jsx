@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Select from 'react-select';
 import { resetPassword } from '../../../Services/userService/AuthService';
+import { getCountries } from '../../../Services/ConstantsService/ConstantsService';
 import { notify } from '../../../utils/notifications';
 import PrimaryButton from "../buttons/PrimaryButton";
 import MediumLogo from "../images/MainLogo";
@@ -12,6 +14,26 @@ export default function UserResetPasswordForm() {
     });
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
+    const [countries, setCountries] = useState([]);
+
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const response = await getCountries();
+                setCountries(response);
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+            }
+        };
+        fetchCountries();
+    }, []);
+    const customStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            borderRight: 'none',
+            borderRadius: ' 0.25rem 0  0 0.25rem',
+        }),
+    };
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,8 +77,31 @@ export default function UserResetPasswordForm() {
                     <i className="fas fa-envelope position-absolute text-center end-5 top-20 rounded"></i>
                 </div>
                 <small className="text-danger text-10">{phoneNumberValidationMessage}</small>
-                <div className="mb-3 position-relative">
-                    <input type="text" name="phoneNumber" className="form-control text-15 pe-5" placeholder="Phone number" onChange={handleInputChange} />
+                <div className="mb-3 position-relative d-flex">
+                    <Select
+                        options={countries.map(country => ({
+                            label: <div className="d-flex justify-conetnt-center align-items-center gap-2">{country.phoneCode}<img src={country.flagSvg} className="w-30 h-15 z-100" ></img></div>,
+                            value: country.phoneCode,
+                            isSelected: country.phoneCode === "+961"
+                        }))}
+                        isSearchable={true}
+                        className="w-45"
+                        placeholder=""
+                        styles={{
+                            control: (provided, state) => ({
+                                ...provided,
+                                height: '0.25rem',
+                                borderRadius: '0.25rem 0 0 0.25rem',
+                                boxShadow: 'none',
+                                outline: 'none',
+                                borderColor: state.isFocused ? '#ff6813' : '#ced4da', 
+                                '&:hover': {
+                                    borderColor: '#ced4da'
+                                }
+                            })
+                        }}
+                    />
+                    <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" onChange={handleInputChange} />
                     <i className="fas fa-phone position-absolute text-center end-5 top-20 rounded"></i>
                 </div>
                 <div className="mt-3">
