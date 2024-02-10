@@ -1,84 +1,67 @@
-﻿using TaskManagementSystem.Server.Models;
-using TaskManagementSystem.Server.ViewModels.UserViewModels;
-using BCrypt.Net;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Security.Cryptography;
-using MailKit;
 using TaskManagementSystem.Server.Interfaces;
-using MimeKit;
+using TaskManagementSystem.Server.Models;
+using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Services
 {
     public class UserService
     {
         private readonly AppDbContext _context;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IEncryptionService _encryptionService;
+        private readonly IEmailSender _emailSender;
         private static readonly string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
 
-        public UserService(AppDbContext context, IServiceProvider serviceProvider)
+        public UserService(AppDbContext context, IEncryptionService encryptionService, IEmailSender mailSender)
         {
             _context = context;
-            _serviceProvider = serviceProvider;
+            _encryptionService = encryptionService;
+            _emailSender = mailSender;
         }
-
         public async Task<UserRegistrationResult> RegisterUser(UserRegisterViewModel model)
         {
             if (IsEmailTaken(model.email))
             {
                 return new UserRegistrationResult(false, "Email is already registered.");
             }
-            var hashedPassword = passwordProtection(model.password, "encrypt");
 
-            var newClient = new Client
-            {
-                companyName = model.companyName,
-                email = model.email,
-                password = hashedPassword,
-                phoneNumber = model.phoneNumber,
-                isUserVerfied = false,
-                token = ""
-            };
-
-            _context.Clients.Add(newClient);
-            _context.SaveChanges();
-
-            var verificationToken = GenerateJwtToken(newClient);
-
-            newClient.token = verificationToken;
-            _context.SaveChanges();
-
-            string subject = "Verification Email";
             var verificationEndpoint = "https://localhost:5173/VerificationPage";
-            var bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = $@"<p>Click the following link to verify your email: 
-            <a href='{verificationEndpoint}?token={verificationToken}'>Verify Email</a></p>";
-            var emailSender = _serviceProvider.GetRequiredService<IEmailSender>();
-            await emailSender.SendEmailAsync(model.email, subject, bodyBuilder.HtmlBody);
+            var verificationToken = GenerateJwtTokenForRegistration(model);
+            var subject = "Verification Email";
+            var body = $@"<p style='font-family: Arial, sans-serif; font-size: 18px; color: #333;'>Click the following link to verify your email:</p>
+            <a href='{verificationEndpoint}?token={verificationToken}' style='font-family: Arial, sans-serif; font-size: 16px; color: #007bff; text-decoration: underline;'>Verify Email</a>";
+
+            await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
 
             return new UserRegistrationResult(true, "Registration success. Please check your email for verification.");
         }
-
-
         public UserResultWithToken LoginUser(UserLoginViewModel model)
         {
             return CheckUserInfo(model.email, model.password);
         }
-
         public async Task<UserRegistrationResult> ResetPassword(UserResetPasswordViewModel model)
         {
-            Client? user = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneNumber);
-            if (user != null)
+            Client? client = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneNumber);
+            if (client != null)
             {
-                var password = passwordProtection(user.password, "decrypt");
+                var password = _encryptionService.Decrypt(client.password);
 
-                string subject = "Reset Password";
-                var bodyBuilder = new BodyBuilder();
-                bodyBuilder.HtmlBody = $@"<p>{password}</p>";
-                var emailSender = _serviceProvider.GetRequiredService<IEmailSender>();
-                await emailSender.SendEmailAsync(model.email, subject, bodyBuilder.HtmlBody);
+                string subject = "Password Reset Request";
+                var body = $@"<div style=""color: #000""><p>We have received a request to reset your password associated with this email address {client.email}.
+                            as requested. </p><p>Here is your password: {password}</p>
+                            <p>For your security, we recommend changing this password immediately after logging in</p>
+                            <p>If you did not request a password reset,
+                            or if you believe you have received this email in error, please ignore this message. However,
+                            if you are concerned about unauthorized access to your account, we recommend that you
+                            log into your account as soon as possible to change your password or contact our support team.</p>
+                            <p>Thank you for using <strong>ToTask</strong>.</p>
+                            <p>Best Regards,<br>ToTask<br>Support: <a href=""mailto:totask@gmail.com"" style=""text-decoration: none;"">totask@gmail.com</a></p></div>";
+
+                await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
 
                 return new UserRegistrationResult(true, "Verification succeeded. Please check your email.");
             }
@@ -90,11 +73,11 @@ namespace TaskManagementSystem.Server.Services
         private UserResultWithToken CheckUserInfo(string email, string password)
         {
             var user = _context.Clients.FirstOrDefault(u => u.email == email);
-            var decryptedPassword = passwordProtection(user.password, "decrypt");
+            var decryptedPassword = _encryptionService.Decrypt(user.password);
 
             if (user != null && decryptedPassword == password)
             {
-                var jwtToken = GenerateJwtToken(user);
+                var jwtToken = GenerateJwtTokenForLogin(user);
                 user.token = jwtToken;
                 _context.SaveChanges();
 
@@ -102,15 +85,14 @@ namespace TaskManagementSystem.Server.Services
             }
             else
             {
-                return new UserResultWithToken(false, "Invalid Login, wrong email or password");
+                return new UserResultWithToken(false, "Login failed, wrong email or password");
             }
         }
         private bool IsEmailTaken(string email)
         {
             return _context.Clients.Any(u => u.email == email);
         }
-
-        private string GenerateJwtToken(Client client)
+        private string GenerateJwtTokenForRegistration(UserRegisterViewModel client)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSecret);
@@ -118,9 +100,10 @@ namespace TaskManagementSystem.Server.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("userId", client.id.ToString()),
                     new Claim("companyName", client.companyName),
-                    new Claim("userEmail", client.email),
+                    new Claim("email", client.email),
+                    new Claim("phoneNumber", client.phoneNumber),
+                    new Claim("password", _encryptionService.Encrypt(client.password)),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -129,13 +112,31 @@ namespace TaskManagementSystem.Server.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        private string GenerateJwtTokenForLogin(Client client)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("companyName", client.companyName),
+                    new Claim("email", client.email),
+                    new Claim("phoneNumber", client.phoneNumber),
+                    new Claim("password", _encryptionService.Encrypt(client.password)),
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
         //public class TokenValidationResult
         //{
         //    public bool IsValid { get; set; }
         //    public ClaimsPrincipal? ClaimsPrincipal { get; set; }
         //}
-
         public UserTokenValidationResult ValidateToken(string token)
         {
             var result = new UserTokenValidationResult();
@@ -165,8 +166,6 @@ namespace TaskManagementSystem.Server.Services
 
             return result;
         }
-
-
         //public string GetUserNameFromToken(string token)
         //{
         //    var tokenHandler = new JwtSecurityTokenHandler();
@@ -174,25 +173,38 @@ namespace TaskManagementSystem.Server.Services
 
         //    return jwtToken?.Claims.FirstOrDefault(c => c.Type == "UserName")?.Value;
         //}
-
-        public string GetEmailFromToken(string token)
+        public UserResultWithToken GetDataFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
-            return jwtToken?.Claims.FirstOrDefault(c => c.Type == "userEmail")?.Value ?? "";
-        }
+            var userData = new UserRegisterViewModel
+            {
+                companyName = jwtToken.Claims.FirstOrDefault(c => c.Type == "companyName")?.Value,
+                email = jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value,
+                phoneNumber = jwtToken.Claims.FirstOrDefault(c => c.Type == "phoneNumber")?.Value,
+                password = jwtToken.Claims.FirstOrDefault(c => c.Type == "password")?.Value
+            };
 
-        public string passwordProtection(string password, string type)
-        {
-            var passwordProtection = _serviceProvider.GetRequiredService<IEncryptionService>();
-            if (type == "encrypt")
+            try
             {
-                return passwordProtection.Encrypt(password);
+                Client client = new Client
+                {
+                    companyName = userData.companyName,
+                    email = userData.email,
+                    phoneNumber = userData.phoneNumber,
+                    password = userData.password,
+                    token = token
+                };
+
+                _context.Clients.Add(client);
+                _context.SaveChanges();
+
+                return new UserResultWithToken(true, $"Email: {client.email} verification successful.", token);
             }
-            else
+            catch
             {
-                return passwordProtection.Decrypt(password);
+                return new UserResultWithToken(false, "Registration failed. Contact support");
             }
         }
     }

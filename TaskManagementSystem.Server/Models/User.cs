@@ -14,6 +14,5 @@ namespace TaskManagementSystem.Server.Models
         public string password { get; set; }
         public string phoneNumber { get; set; }
         public string token { get; set; }
-        public bool isUserVerfied { get; set; }
     }
 }
