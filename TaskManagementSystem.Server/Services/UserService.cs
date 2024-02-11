@@ -1,5 +1,4 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -32,8 +31,8 @@ namespace TaskManagementSystem.Server.Services
             var verificationEndpoint = "https://localhost:5173/VerificationPage";
             var verificationToken = GenerateJwtTokenForRegistration(model);
             var subject = "Verification Email";
-            var body = $@"<p style='font-family: Arial, sans-serif; font-size: 18px; color: #333;'>Click the following link to verify your email:</p>
-            <a href='{verificationEndpoint}?token={verificationToken}' style='font-family: Arial, sans-serif; font-size: 16px; color: #007bff; text-decoration: underline;'>Verify Email</a>";
+            var body = $@"<p style='font-family: Arial, sans-serif; text-align: center; font-size: 18px; color: #333;'>Click the following link to verify your email:</p>
+            <div style='width: 100%; text-align: center; margin: auto;'><a href='{verificationEndpoint}?token={verificationToken}' style='font-family: Arial, sans-serif; font-size: 16px; color: #007bff; text-decoration: underline;'>Verify Email</a></div>";
 
             await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
 
@@ -73,19 +72,25 @@ namespace TaskManagementSystem.Server.Services
         private UserResultWithToken CheckUserInfo(string email, string password)
         {
             var user = _context.Clients.FirstOrDefault(u => u.email == email);
-            var decryptedPassword = _encryptionService.Decrypt(user.password);
-
-            if (user != null && decryptedPassword == password)
+            if (user == null)
             {
-                var jwtToken = GenerateJwtTokenForLogin(user);
-                user.token = jwtToken;
-                _context.SaveChanges();
-
-                return new UserResultWithToken(true, "Login Success", jwtToken);
+                return new UserResultWithToken(false, "Login failed, wrong email or password");
             }
             else
             {
-                return new UserResultWithToken(false, "Login failed, wrong email or password");
+                var decryptedPassword = _encryptionService.Decrypt(user.password);
+                if (decryptedPassword != password)
+                {
+                    return new UserResultWithToken(false, "Login failed, wrong email or password");
+                }
+                else
+                {
+                    var jwtToken = GenerateJwtTokenForLogin(user);
+                    user.token = jwtToken;
+                    _context.SaveChanges();
+
+                    return new UserResultWithToken(true, "Login Success", jwtToken);
+                }
             }
         }
         private bool IsEmailTaken(string email)

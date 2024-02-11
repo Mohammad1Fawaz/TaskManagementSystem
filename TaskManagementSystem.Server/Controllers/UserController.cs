@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskManagementSystem.Server.Models;
 using TaskManagementSystem.Server.Services;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
@@ -9,14 +8,12 @@ namespace TaskManagementSystem.Server.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly UserService _userService;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(ILogger<UserController> logger, AppDbContext context, UserService userService)
+        public UserController(ILogger<UserController> logger, UserService userService)
         {
             _logger = logger;
-            _context = context;
             _userService = userService;
         }
 

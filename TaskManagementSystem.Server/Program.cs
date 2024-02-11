@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.Text;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.Services;
@@ -19,7 +17,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("https://localhost:5173")
+        builder.WithOrigins(["https://localhost:5173","https://localhost:5174"])
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
