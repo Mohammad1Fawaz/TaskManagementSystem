@@ -5523,8 +5523,12 @@
 .btn-primary:hover {
     background-color: var(--main-hover-color) !important;
 }
-
-
-.css-1nmdiq5-menu{
+.btn-danger {
+    background-color: var(--main-hover-color) !important;
+    outline: none !important;
+    border: none !important;
+    transition: 0.6s;
+}
+.btn-danger:hover {
     background-color: var(--main-background-color) !important;
 }

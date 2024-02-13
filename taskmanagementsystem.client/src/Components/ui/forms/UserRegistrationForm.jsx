@@ -9,12 +9,14 @@ import PrimaryButton from '../buttons/PrimaryButton';
 import MediumLogo from '../images/MainLogo';
 
 const UserRegistrationForm = () => {
-    const [formData, setFormData] = useState({
+    const initialFormData = {
         companyName: '',
         email: '',
         password: '',
-        phoneNumber: ''
-    });
+        phoneNumber: '',
+        phoneCode: ''
+    };
+    const [formData, setFormData] = useState(initialFormData);
 
     const [companyNameValidationMessage, setCompanyNameValidationMessage] = useState('');
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
@@ -35,6 +37,21 @@ const UserRegistrationForm = () => {
         fetchCountries();
     }, []);
 
+
+    const reset = () => {
+        setFormData(initialFormData);
+        setCompanyNameValidationMessage('');
+        setEmailNameValidationMessage('');
+        setPasswordNameValidationMessage('');
+        setPhoneNumberNameValidationMessage('');
+    };
+
+    const handleSelectChange = (selectedOption) => {
+        if (selectedOption && selectedOption.value) {
+            setFormData({ ...formData, phoneCode: selectedOption.value });
+        }
+    };
+
        
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,13 +67,14 @@ const UserRegistrationForm = () => {
                 setIsLoading(false);
                 const token = result.token;
                 saveToken(token);
-                //navigate to a specific page
+                reset();
+                //navigate to page ...
             } else {
                 if (result.errors) {
                     setCompanyNameValidationMessage(result.errors.companyName && result.errors.companyName[0]);
                     setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
                     setPasswordNameValidationMessage(result.errors.password && result.errors.password[0]);
-                    setPhoneNumberNameValidationMessage(result.errors.phoneNumber && result.errors.phoneNumber[0])
+                    setPhoneNumberNameValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
                 }
                 if (result.existUser) {
                     notify(result.message, "error");
@@ -68,6 +86,7 @@ const UserRegistrationForm = () => {
             setIsLoading(false);
         }
     };
+
     return (
         <div className="d-flex justify-content-center LoginRegisterContainer ">
             <div className="col-md-3 shadow bg-white px-5 py-4 rounded h-auto">
@@ -77,17 +96,17 @@ const UserRegistrationForm = () => {
                 <form onSubmit={handleSubmit}>
                     <small className="text-danger text-10">{userEmailValidationMessage}</small>
                     <div className="mb-3 position-relative">
-                        <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" onChange={handleInputChange} />
+                        <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" value={formData.email} onChange={handleInputChange} />
                         <i className="fas fa-envelope position-absolute text-center text-middle end-5 top-5 h-95"></i>
                     </div>
                     <small className="text-danger text-10">{userPasswordValidationMessage}</small>
                     <div className="mb-3 position-relative">
-                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
+                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" value={formData.password} onChange={handleInputChange} />
                         <i className="fas fa-lock position-absolute text-center text-middle end-5 top-5 h-95"></i>
                     </div>
                     <small className="text-danger text-10">{companyNameValidationMessage}</small>
                     <div className="mb-3  position-relative">
-                        <input type="text" name="companyName" className="form-control text-15 pe-5" placeholder="Company Name" onChange={handleInputChange} />
+                        <input type="text" name="companyName" className="form-control text-15 pe-5" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} />
                         <i className="fas fa-building position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <small className="text-danger text-10">{userPhoneNumberValidationMessage}</small>
@@ -98,6 +117,7 @@ const UserRegistrationForm = () => {
                                 value: country.phoneCode,
                                 isSelected: country.phoneCode === "+961"
                             }))}
+                            onChange={(selectedOption) => handleSelectChange(selectedOption)}
                             isSearchable={true}
                             className="w-45"
                             placeholder=""
@@ -129,7 +149,7 @@ const UserRegistrationForm = () => {
                                 })
                             }}
                         />
-                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" onChange={handleInputChange} />
+                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" value={formData.phoneNumber} onChange={handleInputChange} />
                         <i className="fas fa-phone position-absolute text-center text-middle end-5 top-5 h-95"></i>
                     </div>
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />

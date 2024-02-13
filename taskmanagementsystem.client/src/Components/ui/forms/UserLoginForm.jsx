@@ -7,14 +7,23 @@ import PrimaryButton from '../buttons/PrimaryButton';
 import MediumLogo from '../images/MainLogo';
 
 const UserLoginForm = () => {
-
-    const [formData, setFormData] = useState({
+    const initialFormData = {
         email: '',
         password: '',
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
+
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+
+    const reset = () => {
+        setFormData(initialFormData);
+        setEmailNameValidationMessage('');
+        setPasswordNameValidationMessage('');
+    };
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,7 +40,8 @@ const UserLoginForm = () => {
                 notify(result.message, "success");
                 setIsLoading(false);
                 saveToken(result.token);
-                //navigate to a specific page
+                reset();
+                //navigate to ...
             } else {
                 if (result.errors) {
                     setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
@@ -56,12 +66,12 @@ const UserLoginForm = () => {
                 <form onSubmit={handleSubmit}>
                     <small className="text-danger text-10">{userEmailValidationMessage}</small>
                     <div className="mb-3 position-relative">
-                        <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" onChange={handleInputChange} />
+                        <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" value={formData.email} onChange={handleInputChange} />
                         <i className="fas fa-envelope position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <small className="text-danger text-10">{userPasswordValidationMessage}</small>
                     <div className="mb-1 position-relative">
-                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" onChange={handleInputChange} />
+                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" value={formData.password} onChange={handleInputChange} />
                         <i className="fas fa-key position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <Link to="/ResetPassword" className="text-start d-inline-block text-14 text-main-color mb-3 mt-2 w-100">Forgot password?</Link>

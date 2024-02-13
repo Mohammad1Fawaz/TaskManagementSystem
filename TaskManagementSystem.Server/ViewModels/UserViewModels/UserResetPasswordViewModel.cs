@@ -4,12 +4,14 @@ namespace TaskManagementSystem.Server.ViewModels.UserViewModels
 {
     public class UserResetPasswordViewModel
     {
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Required(ErrorMessage = "Please provide your email address.")]
+        [EmailAddress(ErrorMessage = "The email address format is invalid.")]
         public string email { get; set; }
 
-        [Required(ErrorMessage = "Phone number is required")]
-        [Phone(ErrorMessage = "Invalid phone number")]
+        [Required(ErrorMessage = "Please provide your phone number.")]
         public string phoneNumber { get; set; }
+
+        [Required(ErrorMessage = "Please select your country's phone code.")]
+        public string phoneCode { get; set; }
     }
 }

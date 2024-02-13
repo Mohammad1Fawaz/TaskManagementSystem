@@ -19,22 +19,7 @@ namespace TaskManagementSystem.Server.Controllers
 
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserRegisterViewModel model)
-        {
-            if (string.IsNullOrEmpty(model.companyName))
-            {
-                ModelState.AddModelError("UserName", "Please enter a username.");
-            }
-
-            if (string.IsNullOrEmpty(model.email))
-            {
-                ModelState.AddModelError("Email", "Please enter a valid email address.");
-            }
-
-            if (string.IsNullOrEmpty(model.password))
-            {
-                ModelState.AddModelError("Password", "Please enter a password.");
-            }
-
+        {          
             if (ModelState.IsValid)
             {
                 var registrationResult = _userService.RegisterUser(model);
@@ -94,16 +79,6 @@ namespace TaskManagementSystem.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginViewModel model)
         {
-            if (string.IsNullOrEmpty(model.email))
-            {
-                ModelState.AddModelError("Email", "Please enter a valid email address.");
-            }
-
-            if (string.IsNullOrEmpty(model.password))
-            {
-                ModelState.AddModelError("Password", "Please enter a password.");
-            }
-
             if (ModelState.IsValid)
             {
                 var registrationResult = _userService.LoginUser(model);

@@ -1,7 +1,9 @@
 ﻿namespace TaskManagementSystem.Server.Common
 {
     public static class Constants
-    {        
+    {
+        public static string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
+
         public static List<Country> allCountries = new List<Country>()
         {
             new Country() { id = 100, name = "Libya", phoneCode = "+434", flagSvg = "https://flagcdn.com/ly.svg", countryCode = "LY", timeZone = "UTC+01:00" },
