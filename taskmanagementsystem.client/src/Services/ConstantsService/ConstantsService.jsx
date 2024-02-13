@@ -11,5 +11,5 @@ export const getCountries = async (userData) => {
     });
 
     const responseData = await response.json();
-    return await responseData;
+    return  responseData;
 };
