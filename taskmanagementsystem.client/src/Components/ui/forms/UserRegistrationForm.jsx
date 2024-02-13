@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
 import { registerUser } from '../../../Services/userService/AuthService';
+import { getCountries } from '../../../Services/ConstantsService/ConstantsService';
 import { notify } from "../../../utils/notifications";
 import { saveToken } from "../../../utils/user"
 import PrimaryButton from '../buttons/PrimaryButton';
@@ -19,7 +21,21 @@ const UserRegistrationForm = () => {
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
     const [userPhoneNumberValidationMessage, setPhoneNumberNameValidationMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [countries, setCountries] = useState([]);
 
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const response = await getCountries();
+                setCountries(response);
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+            }
+        };
+        fetchCountries();
+    }, []);
+
+       
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -75,8 +91,45 @@ const UserRegistrationForm = () => {
                         <i className="fas fa-building position-absolute text-center text-middle end-5 top-5  h-95"></i>
                     </div>
                     <small className="text-danger text-10">{userPhoneNumberValidationMessage}</small>
-                    <div className="mb-3 position-relative">
-                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5" placeholder="Phone number" onChange={handleInputChange} />
+                    <div className="mb-3 position-relative d-flex">
+                        <Select
+                            options={countries.map(country => ({
+                                label: <div className="d-flex justify-conetnt-center align-items-center gap-2">{country.phoneCode}<img src={country.flagSvg} className="w-30 h-15 z-100" ></img></div>,
+                                value: country.phoneCode,
+                                isSelected: country.phoneCode === "+961"
+                            }))}
+                            isSearchable={true}
+                            className="w-45"
+                            placeholder=""
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    height: '0.25rem',
+                                    fontSize: "13px",
+                                    borderRadius: '0.25rem 0 0 0.25rem',
+                                    boxShadow: 'none',
+                                    outline: 'none',
+                                    borderColor: state.isFocused ? '#ff6813' : '#ced4da', 
+                                    '&:hover': {
+                                        borderColor: '#ced4da'
+                                    },
+                                    
+                                }),
+                                menu: (provided) => ({
+                                    ...provided,
+                                    height: "25vh",
+                                    overflow:"hidden"
+                                }),
+                                option: (provided) => ({
+                                    ...provided,
+                                    '&:hover': {
+                                        backgroundColor: 'var(--main-hover-color)',
+                                        color: "#fff"
+                                    },
+                                })
+                            }}
+                        />
+                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" onChange={handleInputChange} />
                         <i className="fas fa-phone position-absolute text-center text-middle end-5 top-5 h-95"></i>
                     </div>
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />
