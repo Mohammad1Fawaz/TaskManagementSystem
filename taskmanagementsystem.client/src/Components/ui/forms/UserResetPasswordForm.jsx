@@ -91,13 +91,27 @@ export default function UserResetPasswordForm() {
                             control: (provided, state) => ({
                                 ...provided,
                                 height: '0.25rem',
+                                fontSize: "13px",
                                 borderRadius: '0.25rem 0 0 0.25rem',
                                 boxShadow: 'none',
                                 outline: 'none',
-                                borderColor: state.isFocused ? '#ff6813' : '#ced4da', 
+                                borderColor: state.isFocused ? '#ff6813' : '#ced4da',
                                 '&:hover': {
                                     borderColor: '#ced4da'
-                                }
+                                },
+
+                            }),
+                            menu: (provided) => ({
+                                ...provided,
+                                height: "25vh",
+                                overflow: "hidden"
+                            }),
+                            option: (provided) => ({
+                                ...provided,
+                                '&:hover': {
+                                    backgroundColor: 'var(--main-hover-color)',
+                                    color: "#fff"
+                                },
                             })
                         }}
                     />

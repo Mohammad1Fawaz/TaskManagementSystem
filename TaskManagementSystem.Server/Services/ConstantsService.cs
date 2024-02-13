@@ -2,6 +2,7 @@
 using TaskManagementSystem.Server.Models;
 using System.Collections.Generic;
 using System.Linq;
+using TaskManagementSystem.Server.Common;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -15,7 +16,7 @@ namespace TaskManagementSystem.Server.Services
 
         public List<Country> GetCountries()
         {
-            return _context.Countries.AsNoTracking().ToList();
+            return Constants.allCountries;
         }
     }
 }

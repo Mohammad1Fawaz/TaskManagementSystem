@@ -32,50 +32,10 @@ const UserRegistrationForm = () => {
                 console.error('Error fetching countries:', error);
             }
         };
-        //const hhhh = async () => {
-        //    try {
-        //        fetch('https://restcountries.com/v3.1/all')
-        //            .then(res => {
-        //                if (!res.ok) {
-        //                    throw new Error('Network response was not ok');
-        //                }
-        //                return res.json();
-        //            })
-        //            .then(data => {
-        //                if (!Array.isArray(data)) {
-        //                    throw new Error('Invalid data format received');
-        //                }
-        //                const selectedData = data.map((country, index) => ({
-        //                    id: index,
-        //                    name: country.name.common,
-        //                    phoneCode: country.ccn3,
-        //                    flagSvg: country.flags ? country.flags.svg : '',
-        //                    countryCode: country.cca2,
-        //                    timeZone: country.timezones ? country.timezones[0] : 'Unknown'
-        //                }));
-        //                console.log(selectedData);
-        //            })
-        //            .catch(error => {
-        //                console.error('Error fetching or processing countries data:', error);
-        //            });
-        //    } catch (error) {
-        //        console.error('Error occurred outside of asynchronous operation:', error);
-        //    }
-
-        //};
         fetchCountries();
-        //hhhh();
     }, []);
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            borderRight: 'none',
-            borderRadius: ' 0.25rem 0  0 0.25rem',
-        }),
-    };
-    
 
-   
+       
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -144,14 +104,28 @@ const UserRegistrationForm = () => {
                             styles={{
                                 control: (provided, state) => ({
                                     ...provided,
-                                    height:'0.25rem',
+                                    height: '0.25rem',
+                                    fontSize: "13px",
                                     borderRadius: '0.25rem 0 0 0.25rem',
                                     boxShadow: 'none',
                                     outline: 'none',
                                     borderColor: state.isFocused ? '#ff6813' : '#ced4da', 
                                     '&:hover': {
                                         borderColor: '#ced4da'
-                                    }
+                                    },
+                                    
+                                }),
+                                menu: (provided) => ({
+                                    ...provided,
+                                    height: "25vh",
+                                    overflow:"hidden"
+                                }),
+                                option: (provided) => ({
+                                    ...provided,
+                                    '&:hover': {
+                                        backgroundColor: 'var(--main-hover-color)',
+                                        color: "#fff"
+                                    },
                                 })
                             }}
                         />
