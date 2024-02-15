@@ -3,6 +3,7 @@ using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.Models;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
@@ -12,15 +13,14 @@ namespace TaskManagementSystem.Server.Services
     public class UserService
     {
         private readonly AppDbContext _context;
-        private readonly IEncryptionService _encryptionService;
-        private readonly IEmailSender _emailSender;
-        private static readonly string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
+        private readonly EncryptionService _encryptionService;
+        private readonly MailService _mailService;
 
-        public UserService(AppDbContext context, IEncryptionService encryptionService, IEmailSender mailSender)
+        public UserService(AppDbContext context, EncryptionService encryptionService, MailService mailService)
         {
             _context = context;
             _encryptionService = encryptionService;
-            _emailSender = mailSender;
+            _mailService = mailService;
         }
         public async Task<UserRegistrationResult> RegisterUser(UserRegisterViewModel model)
         {
@@ -29,13 +29,12 @@ namespace TaskManagementSystem.Server.Services
                 return new UserRegistrationResult(false, "Email is already registered.");
             }
 
-            var verificationEndpoint = "https://localhost:5173/VerificationPage";
-            var verificationToken = GenerateJwtTokenForRegistration(model);
-            var subject = "Verification Email";
-            var body = $@"<p style='font-family: Arial, sans-serif; text-align: center; font-size: 18px; color: #333;'>Click the following link to verify your email:</p>
-            <div style='width: 100%; text-align: center; margin: auto;'><a href='{verificationEndpoint}?token={verificationToken}' style='font-family: Arial, sans-serif; font-size: 16px; color: #007bff; text-decoration: underline;'>Verify Email</a></div>";
+            string verificationEndpoint = "https://localhost:5173/VerificationPage";
+            string verificationToken = GenerateJwtTokenForRegistration(model);
+            string subject = "Verification Email";
+            string body = _mailService.getVerificationEmailBody(verificationEndpoint, verificationToken); 
 
-            await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
+            await _mailService.SendEmailAsync(model.email, subject, body, true, true);
 
             return new UserRegistrationResult(true, "Registration success. Please check your email for verification.");
         }
@@ -45,23 +44,15 @@ namespace TaskManagementSystem.Server.Services
         }
         public async Task<UserRegistrationResult> ResetPassword(UserResetPasswordViewModel model)
         {
-            Client? client = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneNumber);
+            Client? client = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneCode + " " + model.phoneNumber);
             if (client != null)
             {
-                var password = _encryptionService.Decrypt(client.password);
+                string password = _encryptionService.Decrypt(client.password);
 
                 string subject = "Password Reset Request";
-                var body = $@"<div style=""color: #000""><p>We have received a request to reset your password associated with this email address {client.email}.
-                            as requested. </p><p>Here is your password: {password}</p>
-                            <p>For your security, we recommend changing this password immediately after logging in</p>
-                            <p>If you did not request a password reset,
-                            or if you believe you have received this email in error, please ignore this message. However,
-                            if you are concerned about unauthorized access to your account, we recommend that you
-                            log into your account as soon as possible to change your password or contact our support team.</p>
-                            <p>Thank you for using <strong>ToTask</strong>.</p>
-                            <p>Best Regards,<br>ToTask<br>Support: <a href=""mailto:totask@gmail.com"" style=""text-decoration: none;"">totask@gmail.com</a></p></div>";
+                string body = _mailService.getResetPasswordEmailBody(password, client.email);
 
-                await _emailSender.SendEmailAsync(model.email, subject, body, true, true);
+                await _mailService.SendEmailAsync(model.email, subject, body, true, true);
 
                 return new UserRegistrationResult(true, "Verification succeeded. Please check your email.");
             }
@@ -100,29 +91,29 @@ namespace TaskManagementSystem.Server.Services
         }
         private string GenerateJwtTokenForRegistration(UserRegisterViewModel client)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            byte[] key = Encoding.ASCII.GetBytes(Constants._jwtSecret);
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("companyName", client.companyName),
                     new Claim("email", client.email),
-                    new Claim("phoneNumber", client.phoneNumber),
+                    new Claim("phoneNumber",client.phoneCode +" " + client.phoneNumber),
                     new Claim("password", _encryptionService.Encrypt(client.password)),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
         private string GenerateJwtTokenForLogin(Client client)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            byte[] key = Encoding.ASCII.GetBytes(Constants._jwtSecret);
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
@@ -135,29 +126,25 @@ namespace TaskManagementSystem.Server.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        //public class TokenValidationResult
-        //{
-        //    public bool IsValid { get; set; }
-        //    public ClaimsPrincipal? ClaimsPrincipal { get; set; }
-        //}
+        
         public UserTokenValidationResult ValidateToken(string token)
         {
-            var result = new UserTokenValidationResult();
+            UserTokenValidationResult result = new UserTokenValidationResult();
 
             try
             {
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                var validationParameters = new TokenValidationParameters
+                TokenValidationParameters validationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret)), // Use the correct conversion here
-                    ValidateIssuer = false, // Set to true if you have an issuer
-                    ValidateAudience = false, // Set to true if you have an audience
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Constants._jwtSecret)), 
+                    ValidateIssuer = false, 
+                    ValidateAudience = false,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero, // Adjust as needed
+                    ClockSkew = TimeSpan.Zero, 
                 };
 
                 SecurityToken validatedToken;
@@ -165,41 +152,58 @@ namespace TaskManagementSystem.Server.Services
                 result.isValid = true;
                 result.token = token;
             }
-            catch (Exception ex)
+            catch
             {
                 result.isValid = false;
             }
 
             return result;
         }
-        //public string GetUserNameFromToken(string token)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
-        //    return jwtToken?.Claims.FirstOrDefault(c => c.Type == "UserName")?.Value;
-        //}
         public UserResultWithToken GetDataFromToken(string token)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-            var userData = new UserRegisterViewModel
-            {
-                companyName = jwtToken.Claims.FirstOrDefault(c => c.Type == "companyName")?.Value,
-                email = jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value,
-                phoneNumber = jwtToken.Claims.FirstOrDefault(c => c.Type == "phoneNumber")?.Value,
-                password = jwtToken.Claims.FirstOrDefault(c => c.Type == "password")?.Value
-            };
-
             try
             {
-                Client client = new Client
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                SecurityToken securityToken;
+                JwtSecurityToken? jwtToken;
+
+                if (tokenHandler.CanReadToken(token))
                 {
-                    companyName = userData.companyName,
-                    email = userData.email,
-                    phoneNumber = userData.phoneNumber,
-                    password = userData.password,
+                    securityToken = tokenHandler.ReadToken(token);
+                    jwtToken = securityToken as JwtSecurityToken;
+
+                    if (jwtToken == null)
+                    {
+                        return new UserResultWithToken(false, "Invalid token format");
+                    }
+                }
+                else
+                {
+                    return new UserResultWithToken(false, "Unable to read token");
+                }
+
+                Claim? companyNameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "companyName");
+                Claim? emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "email");
+                Claim? phoneNumberClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "phoneNumber");
+                Claim? passwordClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "password");
+
+                if (companyNameClaim == null || emailClaim == null || phoneNumberClaim == null || passwordClaim == null)
+                {
+                    return new UserResultWithToken(false, "Token is missing required claims");
+                }
+
+                string companyName = companyNameClaim.Value;
+                string email = emailClaim.Value;
+                string phoneNumber = phoneNumberClaim.Value;
+                string password = passwordClaim.Value;
+
+                var client = new Client
+                {
+                    companyName = companyName,
+                    email = email,
+                    phoneNumber = phoneNumber,
+                    password = password,
                     token = token
                 };
 
@@ -213,6 +217,7 @@ namespace TaskManagementSystem.Server.Services
                 return new UserResultWithToken(false, "Registration failed. Contact support");
             }
         }
+
     }
 
 }

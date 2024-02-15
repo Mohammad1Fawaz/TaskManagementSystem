@@ -10,12 +10,14 @@ import DangerButton from '../buttons/DangerButton';
 
 export default function UserResetPasswordForm() {
     let navigate = useNavigate();
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState({
+    const initialFormData = {
         email: '',
         phoneNumber: '',
-    });
+    };
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState(initialFormData);
+
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
     const [countries, setCountries] = useState([]);
@@ -31,12 +33,17 @@ export default function UserResetPasswordForm() {
         };
         fetchCountries();
     }, []);
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            borderRight: 'none',
-            borderRadius: ' 0.25rem 0  0 0.25rem',
-        }),
+
+    const reset = () => {
+        setFormData(initialFormData);
+        setEmailValidationMessage('');
+        setPhoneNumberValidationMessage('');
+    };
+
+    const handleSelectChange = (selectedOption) => {
+        if (selectedOption && selectedOption.value) {
+            setFormData({ ...formData, phoneCode: selectedOption.value });
+        }
     };
 
     const handleInputChange = (e) => {
@@ -46,17 +53,19 @@ export default function UserResetPasswordForm() {
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
-
         try {
             const result = await resetPassword(formData);
             if (result.success) {
                 notify(result.message, "success");
                 setIsLoading(false);
+                reset(initialFormData);
+
                 navigate('/login');
             } else {
                 if (result.errors) {
                     setEmailValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPhoneNumberValidationMessage(result.errors.phoneNumber && result.errors.phoneNumber[0]);
+                    setPhoneNumberValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+
                 }
                 if (result.error) {
                     notify(result.error, "error");
@@ -79,10 +88,10 @@ export default function UserResetPasswordForm() {
                 <MediumLogo />
             </div>
             <form onSubmit={handleSubmit}>
-                <small className="d-block">Enter your email and phone number to receive your password by email.</small>
+                <small className="d-block text-danger text-12">Enter your email and phone number to receive your password by email.</small>
                 <small className="text-danger text-10">{emailValidationMessage}</small>
                 <div className="mt-2 mb-3 position-relative">
-                    <input type="text" name="email" className="form-control text-15 pe-5" placeholder="Email" onChange={handleInputChange} />
+                    <input type="text" name="email" className="form-control text-15 pe-5" placeholder="Email" value={formData.email} onChange={handleInputChange} />
                     <i className="fas fa-envelope position-absolute text-center end-5 top-20 rounded"></i>
                 </div>
                 <small className="text-danger text-10">{phoneNumberValidationMessage}</small>
@@ -93,6 +102,7 @@ export default function UserResetPasswordForm() {
                             value: country.phoneCode,
                             isSelected: country.phoneCode === "+961"
                         }))}
+                        onChange={(selectedOption) => handleSelectChange(selectedOption)}
                         isSearchable={true}
                         className="w-45"
                         placeholder=""
@@ -124,12 +134,12 @@ export default function UserResetPasswordForm() {
                             })
                         }}
                     />
-                    <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" onChange={handleInputChange} />
+                    <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" value={formData.phoneNumber} onChange={handleInputChange} />
                     <i className="fas fa-phone position-absolute text-center end-5 top-20 rounded"></i>
                 </div>
-                <div className="text-middle gap-2 mt-3">
-                    <PrimaryButton isLoading={isLoading} text="Verify" type="submit" width="w-50" />
+                <div className="text-middle gap-2 mt-4">
                     <DangerButton width="w-50" onClick={navigateBackHandler} />
+                    <PrimaryButton isLoading={isLoading} text="Verify" type="submit" width="w-50" />
                 </div>
             </form>
         </div>

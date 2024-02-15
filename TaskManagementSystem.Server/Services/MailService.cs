@@ -1,6 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
 using TaskManagementSystem.Server.Interfaces;
+using TaskManagementSystem.Server.Models;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -11,7 +12,7 @@ namespace TaskManagementSystem.Server.Services
             return $@"
             <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"">
             <div style='background-color: #333; color: white; padding: 10px; text-align: center;'>
-                <img src={logo} alt='Logo' style='height: 50px; object-fit:contain;' />
+                <img src={logo} alt='Logo' style='height: 60px; object-fit:contain;' />
             </div>";
         }
 
@@ -54,5 +55,27 @@ namespace TaskManagementSystem.Server.Services
                 client.Disconnect(true);
             }
         }
+
+        public string getVerificationEmailBody(string verificationEndpoint, string verificationToken)
+        {
+            return $@"<p style='font-family: Arial, sans-serif; text-align: center; font-size: 18px; color: #333;'>Click the following link to verify your email:</p>
+            <div style='width: 100%; text-align: center; margin: auto;'><a href='{verificationEndpoint}?token={verificationToken}' style='font-family: Arial, sans-serif; font-size: 16px; color: #007bff; text-decoration: underline;'>Verify Email</a></div>";
+        }
+
+        public string getResetPasswordEmailBody(string password, string email)
+        {
+            return 
+                $@"<div style=""color: #000""><p>We have received a request to reset your password associated with this email address {email}.
+                            as requested. </p><p>Here is your password: {password}</p>
+                            <p>For your security, we recommend changing this password immediately after logging in</p>
+                            <p>If you did not request a password reset,
+                            or if you believe you have received this email in error, please ignore this message. However,
+                            if you are concerned about unauthorized access to your account, we recommend that you
+                            log into your account as soon as possible to change your password or contact our support team.</p>
+                            <p>Thank you for using <strong>ToTask</strong>.</p>
+                            <p>Best Regards,<br>ToTask<br>Support: <a href=""mailto:totask@gmail.com"" style=""text-decoration: none;"">totask@gmail.com</a></p>
+                </div>";
+        }
+        
     }
 }
