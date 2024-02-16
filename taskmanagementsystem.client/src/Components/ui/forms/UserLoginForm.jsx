@@ -78,7 +78,7 @@ const UserLoginForm = () => {
                     <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
                 </form>
                 <div className="mt-3 w-full">
-                    <span className="text-sm text-black">Don&apos;t have an account? </span><Link to="/register" className="w-fit block text-main_color text-sm">Register here.</Link>
+                    <span className="text-sm text-black">Don&apos;t have an account? </span><Link to="/register" className="w-fit text-main_color text-sm">Register here.</Link>
                 </div>
             </div>
         </div>

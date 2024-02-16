@@ -3,7 +3,7 @@ import config from '../../.././config';
 export const registerUser = async (userData) => {
     const apiBaseUrl = config.apiBaseUrl;
 
-    const response = await fetch(`${apiBaseUrl}/User/register`, {
+    const response = await fetch(`${apiBaseUrl}/Client/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (userData) => {
     const apiBaseUrl = config.apiBaseUrl;
-    const response = await fetch(`${apiBaseUrl}/User/login`, {
+    const response = await fetch(`${apiBaseUrl}/Client/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const loginUser = async (userData) => {
 
 export const resetPassword = async (userData) => {
     const apiBaseUrl = config.apiBaseUrl;
-    const response = await fetch(`${apiBaseUrl}/User/reset-password`, {
+    const response = await fetch(`${apiBaseUrl}/Client/reset-password`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export const resetPassword = async (userData) => {
 export const verifyUser = async (token) => {
     const apiBaseUrl = config.apiBaseUrl;
 
-    const response = await fetch(`${apiBaseUrl}/User/verify-email`, {
+    const response = await fetch(`${apiBaseUrl}/Client/verify-email`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
