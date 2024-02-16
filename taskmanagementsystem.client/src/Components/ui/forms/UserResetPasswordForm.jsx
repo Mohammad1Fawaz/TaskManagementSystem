@@ -106,7 +106,7 @@ export default function UserResetPasswordForm() {
                     />
                 </div>
                 <div className="text-middle gap-2 mt-4">
-                    <DangerButton onClick={navigateBackHandler} width="w-1/2" />
+                    <DangerButton onClick={navigateBackHandler} type="button" width="w-1/2" />
                     <PrimaryButton isLoading={isLoading} text="Verify" type="submit" width="w-1/2" />
                 </div>
             </form>

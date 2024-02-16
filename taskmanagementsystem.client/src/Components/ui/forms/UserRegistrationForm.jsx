@@ -16,7 +16,7 @@ const UserRegistrationForm = () => {
         email: '',
         password: '',
         phoneNumber: '',
-        phoneCode: ''
+        phoneCode: '+961'
     };
     const [formData, setFormData] = useState(initialFormData);
 
@@ -110,12 +110,18 @@ const UserRegistrationForm = () => {
                     </div>
                     <small className="text-danger text-xs">{userPhoneNumberValidationMessage}</small>
                     <div className="mb-3 relative flex w-full">
-                        <PhoneInput countries={countries} handleInputChange={handleInputChange} handleSelectChange={handleSelectChange} phoneValue={formData.phoneNumber} />
+                        <PhoneInput
+                            countries={countries}
+                            handleInputChange={handleInputChange}
+                            handleSelectChange={handleSelectChange}
+                            phoneNumberValue={formData.phoneNumber}
+                            phoneCodeValue={formData.phoneCode}
+                        />
                     </div>
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />
                 </form>
                 <div className="mt-3 w-full">
-                    <span className="text-sm text-black">Already have an account? </span><Link to="/login" className="w-fit block text-main_color text-sm">Login here.</Link>
+                    <span className="text-sm text-black">Already have an account? </span><Link to="/login" className="w-fit text-main_color text-sm">Login here.</Link>
                 </div>
             </div>
         </div>

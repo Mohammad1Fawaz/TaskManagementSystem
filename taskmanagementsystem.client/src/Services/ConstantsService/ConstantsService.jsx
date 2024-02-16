@@ -1,6 +1,6 @@
 import config from '../../.././config';
 
-export const getCountries = async (userData) => {
+export const getCountries = async () => {
     const apiBaseUrl = config.apiBaseUrl;
 
     const response = await fetch(`${apiBaseUrl}/constants/countries`, {
