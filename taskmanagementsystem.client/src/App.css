@@ -16,11 +16,6 @@
     width:100% !important;
     height:100vh !important;
 }
-.AppDiv{
-    display:flex;
-    justify-content:center !important;
-    align-items:center !important;
-}
 
 
 a {

@@ -1,12 +1,14 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Select from 'react-select';
 import { registerUser } from '../../../Services/userService/AuthService';
 import { getCountries } from '../../../Services/ConstantsService/ConstantsService';
 import { notify } from "../../../utils/notifications";
 import { saveToken } from "../../../utils/user"
 import PrimaryButton from '../buttons/PrimaryButton';
 import MediumLogo from '../images/MainLogo';
+import PhoneInput from '../inputs/PhoneInput';
+import TextInput from '../inputs/TextInput';
+import PasswordInput from '../inputs/PasswordInput';
 
 const UserRegistrationForm = () => {
     const initialFormData = {
@@ -52,7 +54,7 @@ const UserRegistrationForm = () => {
         }
     };
 
-       
+
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -88,74 +90,32 @@ const UserRegistrationForm = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center LoginRegisterContainer ">
-            <div className="col-md-3 shadow bg-white px-5 py-4 rounded h-auto">
-                <div className="w-100 text-middle mb-2">
+        <div className="flex-center w-full h-full bg-[url('/src/assets/TaskManagementBg.jpeg')] bg-no-repeat bg-fixed bg-cover bg-center">
+            <div className="col-sm-6 col-md-3 shadow bg-white p-4 rounded h-auto">
+                <div className="w-full flex-center mb-2">
                     <MediumLogo />
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <small className="text-danger text-10">{userEmailValidationMessage}</small>
-                    <div className="mb-3 position-relative">
-                        <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" value={formData.email} onChange={handleInputChange} />
-                        <i className="fas fa-envelope position-absolute text-center text-middle end-5 top-5 h-95"></i>
+                    <small className="text-danger text-xs">{userEmailValidationMessage}</small>
+                    <div className="mb-3 relative">
+                        <TextInput type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
                     </div>
-                    <small className="text-danger text-10">{userPasswordValidationMessage}</small>
-                    <div className="mb-3 position-relative">
-                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" value={formData.password} onChange={handleInputChange} />
-                        <i className="fas fa-lock position-absolute text-center text-middle end-5 top-5 h-95"></i>
+                    <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
+                    <div className="mb-3 relative">
+                        <PasswordInput value={formData.password} onChange={handleInputChange} />
                     </div>
-                    <small className="text-danger text-10">{companyNameValidationMessage}</small>
-                    <div className="mb-3  position-relative">
-                        <input type="text" name="companyName" className="form-control text-15 pe-5" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} />
-                        <i className="fas fa-building position-absolute text-center text-middle end-5 top-5  h-95"></i>
+                    <small className="text-danger text-xs">{companyNameValidationMessage}</small>
+                    <div className="mb-3 relative">
+                        <TextInput type="text" name="companyName" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} icon="fa-building" />
                     </div>
-                    <small className="text-danger text-10">{userPhoneNumberValidationMessage}</small>
-                    <div className="mb-3 position-relative d-flex">
-                        <Select
-                            options={countries.map(country => ({
-                                label: <div className="d-flex justify-conetnt-center align-items-center gap-2">{country.phoneCode}<img src={country.flagSvg} className="w-30 h-15 z-100" ></img></div>,
-                                value: country.phoneCode,
-                                isSelected: country.phoneCode === "+961"
-                            }))}
-                            onChange={(selectedOption) => handleSelectChange(selectedOption)}
-                            isSearchable={true}
-                            className="w-45"
-                            placeholder=""
-                            styles={{
-                                control: (provided, state) => ({
-                                    ...provided,
-                                    height: '0.25rem',
-                                    fontSize: "13px",
-                                    borderRadius: '0.25rem 0 0 0.25rem',
-                                    boxShadow: 'none',
-                                    outline: 'none',
-                                    borderColor: state.isFocused ? '#ff6813' : '#ced4da', 
-                                    '&:hover': {
-                                        borderColor: '#ced4da'
-                                    },
-                                    
-                                }),
-                                menu: (provided) => ({
-                                    ...provided,
-                                    height: "25vh",
-                                    overflow:"hidden"
-                                }),
-                                option: (provided) => ({
-                                    ...provided,
-                                    '&:hover': {
-                                        backgroundColor: 'var(--main-hover-color)',
-                                        color: "#fff"
-                                    },
-                                })
-                            }}
-                        />
-                        <input type="text" name="phoneNumber" className="form-control text-15 pe-5 w-70 ms--2" placeholder="Phone number" value={formData.phoneNumber} onChange={handleInputChange} />
-                        <i className="fas fa-phone position-absolute text-center text-middle end-5 top-5 h-95"></i>
+                    <small className="text-danger text-xs">{userPhoneNumberValidationMessage}</small>
+                    <div className="mb-3 relative flex w-full">
+                        <PhoneInput countries={countries} handleInputChange={handleInputChange} handleSelectChange={handleSelectChange} phoneValue={formData.phoneNumber} />
                     </div>
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />
                 </form>
-                <div className="mt-3 w-100">
-                    <span className="text-14 text-black">Already have an account? </span><Link to="/login" className="text-end d-inline-block text-main-color text-15">Login here.</Link>
+                <div className="mt-3 w-full">
+                    <span className="text-sm text-black">Already have an account? </span><Link to="/login" className="w-fit block text-main_color text-sm">Login here.</Link>
                 </div>
             </div>
         </div>

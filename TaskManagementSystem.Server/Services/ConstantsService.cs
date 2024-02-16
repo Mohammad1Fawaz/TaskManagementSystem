@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TaskManagementSystem.Server.Models;
-using System.Collections.Generic;
-using System.Linq;
-using TaskManagementSystem.Server.Common;
+﻿using TaskManagementSystem.Server.Common;
 
 namespace TaskManagementSystem.Server.Services
 {

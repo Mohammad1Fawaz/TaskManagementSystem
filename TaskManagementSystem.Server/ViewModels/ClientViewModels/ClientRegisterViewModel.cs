@@ -2,7 +2,7 @@
 
 namespace TaskManagementSystem.Server.ViewModels.UserViewModels
 {
-    public class UserRegisterViewModel
+    public class ClientRegisterViewModel
     {
         [Required(ErrorMessage = "Please provide the name of your company.")]
         public string companyName { get; set; }
