@@ -19,10 +19,8 @@ namespace TaskManagementSystem.Server
                 var purpose = "password-protection";
                 return new EncryptionService(dataProtectionProvider, purpose);
             });
-            services.AddScoped<UserService>();
+            services.AddScoped<ClientService>();
             services.AddScoped<ConstantsService>();
-            
-
         }
     }
 }

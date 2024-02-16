@@ -2,7 +2,7 @@
 
 namespace TaskManagementSystem.Server.ViewModels.UserViewModels
 {
-    public class UserTokenValidationResult
+    public class ClientTokenValidationResult
     {
         public bool isValid { get; set; }
 

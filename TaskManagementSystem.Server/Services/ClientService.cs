@@ -1,48 +1,46 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TaskManagementSystem.Server.Common;
-using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.Models;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Services
 {
-    public class UserService
+    public class ClientService
     {
         private readonly AppDbContext _context;
         private readonly EncryptionService _encryptionService;
         private readonly MailService _mailService;
 
-        public UserService(AppDbContext context, EncryptionService encryptionService, MailService mailService)
+        public ClientService(AppDbContext context, EncryptionService encryptionService, MailService mailService)
         {
             _context = context;
             _encryptionService = encryptionService;
             _mailService = mailService;
         }
-        public async Task<UserRegistrationResult> RegisterUser(UserRegisterViewModel model)
+        public async Task<ClientResultViewModel> RegisterClient(ClientRegisterViewModel model)
         {
             if (IsEmailTaken(model.email))
             {
-                return new UserRegistrationResult(false, "Email is already registered.");
+                return new ClientResultViewModel(false, "Email is already registered.");
             }
 
             string verificationEndpoint = "https://localhost:5173/VerificationPage";
             string verificationToken = GenerateJwtTokenForRegistration(model);
             string subject = "Verification Email";
-            string body = _mailService.getVerificationEmailBody(verificationEndpoint, verificationToken); 
+            string body = _mailService.getVerificationEmailBody(verificationEndpoint, verificationToken);
 
             await _mailService.SendEmailAsync(model.email, subject, body, true, true);
 
-            return new UserRegistrationResult(true, "Registration success. Please check your email for verification.");
+            return new ClientResultViewModel(true, "Registration success. Please check your email for verification.");
         }
-        public UserResultWithToken LoginUser(UserLoginViewModel model)
+        public ClientResultViewModel LoginClient(ClientLoginViewModel model)
         {
-            return CheckUserInfo(model.email, model.password);
+            return CheckClientInfo(model.email, model.password);
         }
-        public async Task<UserRegistrationResult> ResetPassword(UserResetPasswordViewModel model)
+        public async Task<ClientResultViewModel> ResetPassword(ClientResetPasswordViewModel model)
         {
             Client? client = _context.Clients.FirstOrDefault(u => u.email == model.email && u.phoneNumber == model.phoneCode + " " + model.phoneNumber);
             if (client != null)
@@ -54,26 +52,26 @@ namespace TaskManagementSystem.Server.Services
 
                 await _mailService.SendEmailAsync(model.email, subject, body, true, true);
 
-                return new UserRegistrationResult(true, "Verification succeeded. Please check your email.");
+                return new ClientResultViewModel(true, "Verification succeeded. Please check your email.");
             }
             else
             {
-                return new UserRegistrationResult(false, "User not found");
+                return new ClientResultViewModel(false, "User not found");
             }
         }
-        private UserResultWithToken CheckUserInfo(string email, string password)
+        private ClientResultViewModel CheckClientInfo(string email, string password)
         {
             var user = _context.Clients.FirstOrDefault(u => u.email == email);
             if (user == null)
             {
-                return new UserResultWithToken(false, "Login failed, wrong email or password");
+                return new ClientResultViewModel(false, "Login failed, wrong email or password");
             }
             else
             {
                 var decryptedPassword = _encryptionService.Decrypt(user.password);
                 if (decryptedPassword != password)
                 {
-                    return new UserResultWithToken(false, "Login failed, wrong email or password");
+                    return new ClientResultViewModel(false, "Login failed, wrong email or password");
                 }
                 else
                 {
@@ -81,7 +79,7 @@ namespace TaskManagementSystem.Server.Services
                     user.token = jwtToken;
                     _context.SaveChanges();
 
-                    return new UserResultWithToken(true, "Login Success", jwtToken);
+                    return new ClientResultViewModel(true, "Login Success", jwtToken);
                 }
             }
         }
@@ -89,7 +87,7 @@ namespace TaskManagementSystem.Server.Services
         {
             return _context.Clients.Any(u => u.email == email);
         }
-        private string GenerateJwtTokenForRegistration(UserRegisterViewModel client)
+        private string GenerateJwtTokenForRegistration(ClientRegisterViewModel client)
         {
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             byte[] key = Encoding.ASCII.GetBytes(Constants._jwtSecret);
@@ -129,10 +127,10 @@ namespace TaskManagementSystem.Server.Services
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        
-        public UserTokenValidationResult ValidateToken(string token)
+
+        public ClientTokenValidationResult ValidateToken(string token)
         {
-            UserTokenValidationResult result = new UserTokenValidationResult();
+            ClientTokenValidationResult result = new ClientTokenValidationResult();
 
             try
             {
@@ -140,11 +138,11 @@ namespace TaskManagementSystem.Server.Services
                 TokenValidationParameters validationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Constants._jwtSecret)), 
-                    ValidateIssuer = false, 
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Constants._jwtSecret)),
+                    ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero, 
+                    ClockSkew = TimeSpan.Zero,
                 };
 
                 SecurityToken validatedToken;
@@ -160,7 +158,7 @@ namespace TaskManagementSystem.Server.Services
             return result;
         }
 
-        public UserResultWithToken GetDataFromToken(string token)
+        public ClientResultViewModel GetDataFromToken(string token)
         {
             try
             {
@@ -175,12 +173,12 @@ namespace TaskManagementSystem.Server.Services
 
                     if (jwtToken == null)
                     {
-                        return new UserResultWithToken(false, "Invalid token format");
+                        return new ClientResultViewModel(false, "Invalid token format");
                     }
                 }
                 else
                 {
-                    return new UserResultWithToken(false, "Unable to read token");
+                    return new ClientResultViewModel(false, "Unable to read token");
                 }
 
                 Claim? companyNameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "companyName");
@@ -190,7 +188,7 @@ namespace TaskManagementSystem.Server.Services
 
                 if (companyNameClaim == null || emailClaim == null || phoneNumberClaim == null || passwordClaim == null)
                 {
-                    return new UserResultWithToken(false, "Token is missing required claims");
+                    return new ClientResultViewModel(false, "Token is missing required claims");
                 }
 
                 string companyName = companyNameClaim.Value;
@@ -210,11 +208,11 @@ namespace TaskManagementSystem.Server.Services
                 _context.Clients.Add(client);
                 _context.SaveChanges();
 
-                return new UserResultWithToken(true, $"Email: {client.email} verification successful.", token);
+                return new ClientResultViewModel(true, $"Email: {client.email} verification successful.", token);
             }
             catch
             {
-                return new UserResultWithToken(false, "Registration failed. Contact support");
+                return new ClientResultViewModel(false, "Registration failed. Contact support");
             }
         }
 

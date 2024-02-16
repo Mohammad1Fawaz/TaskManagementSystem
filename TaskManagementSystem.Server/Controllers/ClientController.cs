@@ -6,23 +6,23 @@ namespace TaskManagementSystem.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class ClientController : ControllerBase
     {
-        private readonly UserService _userService;
-        private readonly ILogger<UserController> _logger;
+        private readonly ClientService _clientService;
+        private readonly ILogger<ClientController> _logger;
 
-        public UserController(ILogger<UserController> logger, UserService userService)
+        public ClientController(ILogger<ClientController> logger, ClientService clientService)
         {
             _logger = logger;
-            _userService = userService;
+            _clientService = clientService;
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] UserRegisterViewModel model)
-        {          
+        public IActionResult Register([FromBody] ClientRegisterViewModel model)
+        {
             if (ModelState.IsValid)
             {
-                var registrationResult = _userService.RegisterUser(model);
+                var registrationResult = _clientService.RegisterClient(model);
 
                 if (registrationResult.Result.success)
                 {
@@ -51,11 +51,11 @@ namespace TaskManagementSystem.Server.Controllers
         }
 
         [HttpPost("reset-password")]
-        public IActionResult ResetPassword([FromBody] UserResetPasswordViewModel model)
+        public IActionResult ResetPassword([FromBody] ClientResetPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var resetResult = _userService.ResetPassword(model);
+                var resetResult = _clientService.ResetPassword(model);
                 if (resetResult.Result.success)
                 {
                     return Ok(new { success = true, message = resetResult.Result.message });
@@ -77,11 +77,11 @@ namespace TaskManagementSystem.Server.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLoginViewModel model)
+        public IActionResult Login([FromBody] ClientLoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var registrationResult = _userService.LoginUser(model);
+                var registrationResult = _clientService.LoginClient(model);
 
                 if (registrationResult.success)
                 {
@@ -117,11 +117,11 @@ namespace TaskManagementSystem.Server.Controllers
                 return BadRequest("Invalid token");
             }
 
-            var tokenValidationResult = _userService.ValidateToken(token);
+            var tokenValidationResult = _clientService.ValidateToken(token);
 
             if (tokenValidationResult.isValid)
             {
-                var verifyResult = _userService.GetDataFromToken(token);
+                var verifyResult = _clientService.GetDataFromToken(token);
                 if (verifyResult.success)
                 {
                     return Ok(new { success = true, message = verifyResult.message, token = verifyResult.token });

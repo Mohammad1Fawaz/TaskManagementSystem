@@ -5,6 +5,8 @@ import { notify } from "../../../utils/notifications";
 import { saveToken } from '../../../utils/user';
 import PrimaryButton from '../buttons/PrimaryButton';
 import MediumLogo from '../images/MainLogo';
+import TextInput from '../inputs/TextInput';
+import PasswordInput from '../inputs/PasswordInput';
 
 const UserLoginForm = () => {
     const initialFormData = {
@@ -58,27 +60,25 @@ const UserLoginForm = () => {
         }
     };
     return (
-        <div className="d-flex justify-content-center LoginRegisterContainer ">
-            <div className="col-md-3 shadow bg-white px-5 py-4 rounded h-auto">
-                <div className="w-100 text-middle mb-2">
+        <div className="flex-center w-full h-full bg-[url('/src/assets/TaskManagementBg.jpeg')] bg-no-repeat bg-fixed bg-cover bg-center">
+            <div className="col-sm-6 col-md-3 shadow bg-white p-4 rounded h-auto">
+                <div className="w-full flex-center mb-2">
                     <MediumLogo />
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <small className="text-danger text-10">{userEmailValidationMessage}</small>
-                    <div className="mb-3 position-relative">
-                        <input type="email" name="email" className="form-control text-15 pe-5" placeholder="Email" value={formData.email} onChange={handleInputChange} />
-                        <i className="fas fa-envelope position-absolute text-center text-middle end-5 top-5  h-95"></i>
+                    <small className="text-danger text-xs">{userEmailValidationMessage}</small>
+                    <div className="mb-3 relative">
+                        <TextInput type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
                     </div>
-                    <small className="text-danger text-10">{userPasswordValidationMessage}</small>
-                    <div className="mb-1 position-relative">
-                        <input type="password" name="password" className="form-control text-15 pe-5" placeholder="Password" value={formData.password} onChange={handleInputChange} />
-                        <i className="fas fa-key position-absolute text-center text-middle end-5 top-5  h-95"></i>
+                    <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
+                    <div className="mb-1 relative">
+                        <PasswordInput value={formData.password} onChange={handleInputChange} />
                     </div>
-                    <Link to="/ResetPassword" className="text-start d-inline-block text-14 text-main-color mb-3 mt-2 w-100">Forgot password?</Link>
+                    <Link to="/ResetPassword" className="inline-block text-sm text-main_color mb-3 mt-2 w-fit">Forgot password?</Link>
                     <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
                 </form>
-                <div className="mt-3 w-100">
-                    <span className="text-14 text-black">Don&apos;t have an account? </span><Link to="/register" className="text-end d-inline-block text-main-color text-15">Register here.</Link>
+                <div className="mt-3 w-full">
+                    <span className="text-sm text-black">Don&apos;t have an account? </span><Link to="/register" className="w-fit block text-main_color text-sm">Register here.</Link>
                 </div>
             </div>
         </div>

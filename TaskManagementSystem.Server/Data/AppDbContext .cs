@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Models;
 
 public class AppDbContext : DbContext

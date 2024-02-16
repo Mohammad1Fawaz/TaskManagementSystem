@@ -2,7 +2,7 @@
 
 namespace TaskManagementSystem.Server.ViewModels.UserViewModels
 {
-    public class UserResetPasswordViewModel
+    public class ClientResetPasswordViewModel
     {
         [Required(ErrorMessage = "Please provide your email address.")]
         [EmailAddress(ErrorMessage = "The email address format is invalid.")]

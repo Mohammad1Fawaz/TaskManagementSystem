@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TaskManagementSystem.Server;
-using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +20,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins(["https://localhost:5173","https://localhost:5174"])
+        builder.WithOrigins(["https://localhost:5173", "https://localhost:5174"])
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
