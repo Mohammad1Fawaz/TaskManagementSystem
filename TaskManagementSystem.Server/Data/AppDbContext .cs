@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Client> Clients { get; set; }
     public DbSet<Country> Countries { get; set; }
+    public DbSet<Task> Tasks { get; set; }
 
     public static void Configure(DbContextOptionsBuilder optionsBuilder, string connectionString)
     {

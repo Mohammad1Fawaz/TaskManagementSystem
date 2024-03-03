@@ -21,6 +21,7 @@ namespace TaskManagementSystem.Server
             });
             services.AddScoped<ClientService>();
             services.AddScoped<ConstantsService>();
+            services.AddScoped<TaskService>();
         }
     }
 }
