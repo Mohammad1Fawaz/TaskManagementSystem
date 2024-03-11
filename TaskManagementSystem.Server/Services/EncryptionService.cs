@@ -13,13 +13,21 @@ namespace TaskManagementSystem.Server.Services
             _protector = dataProtectionProvider.CreateProtector(purpose);
         }
 
-        public string Encrypt(string password)
+        public string Encrypt(string? password)
         {
+            if (string.IsNullOrEmpty(password))
+            {
+                return "";
+            }
             return _protector.Protect(password);
         }
 
-        public string Decrypt(string encryptedPassword)
+        public string Decrypt(string? encryptedPassword)
         {
+            if (string.IsNullOrEmpty(encryptedPassword))
+            {
+                return "";
+            }
             return _protector.Unprotect(encryptedPassword);
         }
     }

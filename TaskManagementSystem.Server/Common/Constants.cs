@@ -1,8 +1,46 @@
-﻿namespace TaskManagementSystem.Server.Common
+﻿using Microsoft.AspNetCore.Identity;
+using System.Data;
+using TaskManagementSystem.Server.Models;
+
+namespace TaskManagementSystem.Server.Common
 {
     public static class Constants
     {
         public static string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
+
+
+        public enum UserType
+        {
+            ClientAdmin,
+            User
+        }
+
+        public enum CLaimsValue
+        {
+            CreateTask,
+            ViewTask,
+            EditTask,
+            DeleteTask,
+            AssignTask,
+            ChangeTaskStatus,
+            CommentOnTask,
+            ViewTaskDetails,
+            ManageTaskAttachments,
+            SetTaskPriority,
+            SetTaskDeadline,
+            ViewTaskAnalytics,
+            ViewAssignedTasks,
+            ViewOwnTasks,
+            ViewTeamTasks,
+            ManageTaskCategories,
+            ManageTaskTags,
+            ManageTaskProjects,
+            ViewTaskHistory,
+            ViewTaskComments
+        }
+
+
+
 
         public static List<Country> allCountries = new List<Country>()
         {
@@ -35,7 +73,6 @@
             new Country() { id = 126, name = "Eswatini", phoneCode = "+748", flagSvg = "https://flagcdn.com/sz.svg", countryCode = "SZ", timeZone = "UTC+02:00" },
             new Country() { id = 127, name = "Zimbabwe", phoneCode = "+716", flagSvg = "https://flagcdn.com/zw.svg", countryCode = "ZW", timeZone = "UTC+02:00" },
             new Country() { id = 128, name = "Greece", phoneCode = "+300", flagSvg = "https://flagcdn.com/gr.svg", countryCode = "GR", timeZone = "UTC+02:00" },
-            new Country() { id = 129, name = "Israel", phoneCode = "+376", flagSvg = "https://flagcdn.com/il.svg", countryCode = "IL", timeZone = "UTC+02:00" },
             new Country() { id = 130, name = "Saint Martin", phoneCode = "+663", flagSvg = "https://flagcdn.com/mf.svg", countryCode = "MF", timeZone = "UTC-04:00" },
             new Country() { id = 131, name = "Antigua and Barbuda", phoneCode = "+028", flagSvg = "https://flagcdn.com/ag.svg", countryCode = "AG", timeZone = "UTC-04:00" },
             new Country() { id = 132, name = "Cyprus", phoneCode = "+196", flagSvg = "https://flagcdn.com/cy.svg", countryCode = "CY", timeZone = "UTC+02:00" },
@@ -209,5 +246,24 @@
             new Country() { id = 300, name = "Iceland", phoneCode = "+352", flagSvg = "https://flagcdn.com/is.svg", countryCode = "IS", timeZone = "UTC" }
         };
 
+        public static List<Permission> allPermissions = new List<Permission>()
+        {
+            new Permission { Id = 1, Key= "AddUsers", Value = "AddUser", Description = "Permission to add a user" },
+            new Permission { Id = 2, Key= "TaskModification", Value = "ModifyTask", Description = "Permission to modify a task" },
+            new Permission { Id = 3, Key= "TaskDeletion", Value = "DeleteTask", Description = "Permission to delete a task" },
+            new Permission { Id = 4, Key= "TaskAssignment", Value = "AssignTask", Description = "Permission to assign a task to a user" },
+            new Permission { Id = 5, Key= "TaskCompletion", Value = "CompleteTask", Description = "Permission to mark a task as completed" },
+            new Permission { Id = 6, Key= "TaskView", Value = "ViewTask", Description = "Permission to view task details" },
+            new Permission { Id = 7, Key= "TaskPriorityChange", Value = "ChangeTaskPriority", Description = "Permission to change task priority" },
+            new Permission { Id = 8, Key= "TaskStatusChange", Value = "ChangeTaskStatus", Description = "Permission to change task status" },
+            new Permission { Id = 9, Key= "TaskComment", Value = "AddTaskComment", Description = "Permission to add comments to a task" },
+            new Permission { Id = 10,Key = "TaskAttachment", Value = "AttachFileToTask", Description = "Permission to attach files to a task" },
+            new Permission { Id = 11,Key = "UserManagement", Value = "ManageUsers", Description = "Permission to manage users" },
+            new Permission { Id = 12,Key = "RoleManagement", Value = "ManageRoles", Description = "Permission to manage roles" },
+            new Permission { Id = 13,Key = "ProjectCreation", Value = "CreateProject", Description = "Permission to create a project" },
+            new Permission { Id = 14,Key = "ProjectDeletion", Value = "DeleteProject", Description = "Permission to delete a project" },
+            new Permission { Id = 15,Key = "ProjectModification", Value = "ModifyProject", Description = "Permission to modify a project" },
+            new Permission { Id = 16,Key = "TaskCreation", Value = "CreateTask", Description = "Permission to create a task" },
+        };
     }
 }

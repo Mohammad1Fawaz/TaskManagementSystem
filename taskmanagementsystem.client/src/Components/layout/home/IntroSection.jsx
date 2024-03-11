@@ -1,5 +1,5 @@
 // RegistrationForm.jsx
-import LoginPage from '../../../pages/Login'
+import LoginPage from '../../../pages/LoginPage'
 const Home = () => {
     
     return (

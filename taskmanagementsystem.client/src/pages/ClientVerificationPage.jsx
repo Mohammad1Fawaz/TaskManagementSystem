@@ -1,28 +1,29 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MediumLogo from '../Components/ui/images/MainLogo';
-import { verifyUser } from '../Services/userService/AuthService';
-import { notify } from "../utils/notifications";
-import { saveToken } from "../utils/user"
+import AuthService from '../Services/AuthService';
+import ClientService from '../Services/ClientService';
+import HelpersService from '../Services/HelpersService';
 
-const VerificationPage = () => {
+const ClientVerificationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const token = new URLSearchParams(location.search).get('token');
+    const email = new URLSearchParams(location.search).get('email');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const result = await verifyUser(token);
+                const result = await ClientService.verifyClient(token, email);
                 if (result.success) {
-                    notify(result.message, "success");
-                    saveToken(result.token);
+                    HelpersService.notify(result.message, "success");
+                    AuthService.saveToken(result.token);
                     navigate('/');
                 } else {
-                    notify(result.message, "success");
+                    HelpersService.notify(result.message, "success");
                 }
             } catch (error) {
-                notify('Error during registration', "error");
+                HelpersService.notify('Error during registration', "error");
             }
         };
 
@@ -40,4 +41,4 @@ const VerificationPage = () => {
         </div>
     );
 }
-export default VerificationPage;
+export default ClientVerificationPage;

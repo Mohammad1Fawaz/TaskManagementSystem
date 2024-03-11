@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import Select from 'react-select';
 
-export default function PhoneInput({ countries, handleSelectChange, handleInputChange, phoneNumberValue, phoneCodeValue }) {
+export default function PhoneInput({ countries, className, handleSelectChange, handleInputChange, phoneNumberValue, phoneCodeValue }) {
 
     const options = countries.map(country => ({
         label: (
@@ -15,7 +15,7 @@ export default function PhoneInput({ countries, handleSelectChange, handleInputC
 
     const selectedOption = options.find(option => option.value === phoneCodeValue);
 
-    return (<>
+    return (<div className={className}>
         <Select
             options={options}
             value={selectedOption}
@@ -32,23 +32,28 @@ export default function PhoneInput({ countries, handleSelectChange, handleInputC
                     borderRadius: '0.25rem 0 0 0.25rem',
                     boxShadow: 'none',
                     outline: 'none',
-                    borderColor: state.isFocused ? '#ff6813' : '#ced4da',
+                    borderColor: state.isFocused ? 'var(--input-focus-primary-color)' : '#ced4da',
                     '&:hover': {
-                        borderColor: '#ced4da'
+                        borderColor: 'var(--input-focus-primary-color)'
                     },
+                    backgroundColor: 'transparent',
+                    color : 'var(--text-primary-color)'
                 }),
                 menu: (provided) => ({
                     ...provided,
                     height: "25vh",
                     width: "10vw",
-                    overflow: "hidden"
+                    overflow: "hidden",
+
                 }),
                 option: (provided) => ({
                     ...provided,
                     '&:hover': {
-                        backgroundColor: 'var(--main-hover-color)',
-                        color: "#fff"
+                        backgroundColor: 'var(--main-hover-primary-color)',
+                        color: "#fff",
+                        cusrsor:'pointer'
                     },
+
                 }),
                 dropdownIndicator: (provided) => ({
                     ...provided,
@@ -56,7 +61,7 @@ export default function PhoneInput({ countries, handleSelectChange, handleInputC
                 })
             }}
         />
-        <input type="text" name="phoneNumber" className="form-control rounded-l-none text-sm pr-5 w-full" value={phoneNumberValue} placeholder="Phone number" onChange={handleInputChange} />
-        <i className="fas fa-phone absolute text-center flex-center right-3 top-1/2 -translate-y-1/2"></i>
-    </>);
+        <input type="text" name="phoneNumber" className="form-control rounded-l-none text-sm pr-5  w-full" value={phoneNumberValue} placeholder="Phone number" onChange={handleInputChange} />
+        <i className="fas fa-phone icon absolute text-center flex-center right-3 top-1/2 -translate-y-1/2"></i>
+    </div>);
 }

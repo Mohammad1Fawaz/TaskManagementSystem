@@ -1,13 +1,13 @@
-﻿namespace TaskManagementSystem.Server.ViewModels.UserViewModels
+﻿namespace TaskManagementSystem.Server.ViewModels
 {
-    public class ClientResultViewModel
+    public class ResultViewModel
     {
         public bool success { get; }
         public string message { get; }
 
         public string token { get; }
 
-        public ClientResultViewModel(bool success, string message, string token = null)
+        public ResultViewModel(bool success, string message, string token = null)
         {
             this.success = success;
             this.message = message;
