@@ -1,4 +1,5 @@
 ﻿using TaskManagementSystem.Server.Common;
+using TaskManagementSystem.Server.Models;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -13,6 +14,10 @@ namespace TaskManagementSystem.Server.Services
         public List<Country> GetCountries()
         {
             return Constants.allCountries;
+        }
+        public List<Permission> GetPermissions()
+        {
+            return Constants.allPermissions;
         }
     }
 }
