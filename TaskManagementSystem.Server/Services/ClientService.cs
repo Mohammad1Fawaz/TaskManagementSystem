@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.Models;
 using TaskManagementSystem.Server.ViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
@@ -58,7 +53,7 @@ namespace TaskManagementSystem.Server.Services
             }
 
             string verificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(client);
-            string verificationEndpoint = "https://localhost:5174/ClientVerificationPage";
+            string verificationEndpoint = $"{Constants.url}/ClientVerificationPage";
             string subject = "Verification Email";
             string body = _mailService.getVerificationEmailBody(verificationEndpoint, verificationToken, email);
 

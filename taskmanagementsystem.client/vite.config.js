@@ -40,22 +40,23 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [plugin()],
-    resolve: {
-        alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
-        }
-    },
+
     server: {
         proxy: {
-            '^/weatherforecast': {
-                target: 'https://localhost:7005/',
-                secure: false
+            '^/api': {
+                target: 'http://localhost:5042',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/api/, '')
             }
         },
-        port: 5173,
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
-        }
+
+        host: 'localhost',
+        port: 3000,
+
+        // HTTPS configuration (if applicable)
+        // https: {
+        //     key: fs.readFileSync('path/to/key.pem'),
+        //     cert: fs.readFileSync('path/to/cert.pem')
+        // }
     }
-})
+});

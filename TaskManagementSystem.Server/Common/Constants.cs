@@ -7,7 +7,7 @@ namespace TaskManagementSystem.Server.Common
     public static class Constants
     {
         public static string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
-
+        public static string url = "http://localhost:5173";
 
         public enum UserType
         {

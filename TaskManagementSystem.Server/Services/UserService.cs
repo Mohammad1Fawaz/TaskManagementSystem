@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.ViewModels;
@@ -75,7 +76,7 @@ namespace TaskManagementSystem.Server.Services
 
                 _validationService.StoreVerificationCode(newUser.Id, verificationCode);
 
-                string verificationEndpoint = "https://localhost:5173/VerificationPage";
+                string verificationEndpoint = $"{Constants.url}/VerificationPage";
                 string body = _mailService.getVerificationCodeEmailBody(verificationEndpoint, verificationCode, newUser.Id);
                 await _mailService.SendEmailAsync(model.email, "VerificationEmail", body);
 

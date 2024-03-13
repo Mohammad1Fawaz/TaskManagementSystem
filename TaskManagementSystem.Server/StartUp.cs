@@ -50,7 +50,7 @@ namespace TaskManagementSystem.Server
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins(["https://localhost:5173", "https://localhost:5174"])
+                    builder.WithOrigins(["http://localhost:3000"])
                            .AllowAnyMethod()
                            .AllowAnyHeader();
                 });
