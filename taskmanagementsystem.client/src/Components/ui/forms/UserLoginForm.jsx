@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import RoleService from '../../../Services/RoleService';
 import AuthService from '../../../Services/AuthService';
-import ClientService from '../../../Services/ClientService';
 import PrimaryButton from '../buttons/PrimaryButton';
 import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
@@ -45,7 +45,7 @@ const UserLoginForm = () => {
                 setIsLoading(false);
                 AuthService.saveToken(result.token);
                 reset();
-                const userRole = await AuthService.getUserRoles(result.token);
+                const userRole = await RoleService.getUserRoles(result.token);
                 if (userRole == "ClientAdmin") {
                     navigate('/ClientAdmin');
                 } else {

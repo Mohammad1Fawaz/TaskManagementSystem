@@ -10,19 +10,13 @@ namespace TaskManagementSystem.Server.Services
     public class ClientService : IClientService
     {
         private readonly AppDbContext _context;
-        private readonly IEncryptionService _encryptionService;
         private readonly IEmailSender _mailService;
-        private readonly IValidationService _validationService;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
-        public ClientService(AppDbContext context, IEncryptionService encryptionService, IEmailSender mailService, IValidationService validationService, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public ClientService(AppDbContext context,IEmailSender mailService, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             _context = context;
-            _encryptionService = encryptionService;
             _mailService = mailService;
-            _validationService = validationService;
-            _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
         }

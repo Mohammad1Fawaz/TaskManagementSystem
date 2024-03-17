@@ -11,8 +11,10 @@ import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import SignupPage from './pages/SignupPage';
 import AuthService from './Services/AuthService';
+import RoleService from './Services/RoleService';
 import ClientVerificationPage from './pages/ClientVerificationPage';
 import Developer from './pages/DeveloperPage';
+import { CircularProgress } from '@mui/material/index';
 
 
 function App() {
@@ -28,7 +30,7 @@ function App() {
                     console.log("token", token);
                     if (token) {
                         setIsAuthenticated(true);
-                        const userRole = await AuthService.getUserRoles(token);
+                        const userRole = await RoleService.getUserRoles(token);
                         const authorized = requiredRoles == userRole;
                         setIsAuthorized(authorized);
                     } else {
@@ -50,7 +52,7 @@ function App() {
         }, [requiredRoles]);
 
         if (isLoading) {
-            return <div>Loading...</div>;
+            return <div className="flex flex-center h-full"><CircularProgress /></div>;
         }
 
         return (isAuthenticated && isAuthorized) ?  element : <Navigate to="/AccessDenied" replace /> ;

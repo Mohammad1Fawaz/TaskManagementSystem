@@ -16,6 +16,7 @@ namespace TaskManagementSystem.Server.Services
         private readonly IValidationService _validationService;
         private readonly AppDbContext _dbContext;
 
+
         public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender mailService, IValidationService validationService)
         {
             this._dbContext = dbContext;
@@ -25,9 +26,9 @@ namespace TaskManagementSystem.Server.Services
             this._validationService = validationService;
         }
 
-        public async Task<ResultViewModel> RegisterUser(string token, UserRegisterViewModel model)
+        public async Task<ResultViewModel> RegisterUser(UserRegisterViewModel model)
         {
-            int clientId = _validationService.GetIdFromToken(token);
+            int clientId = _validationService.GetAuthenticatedClientId();
             bool onlyNameDuplicate = false;
             string errorMessage = "";
             if (clientId == 0)
@@ -95,9 +96,9 @@ namespace TaskManagementSystem.Server.Services
             }
         }
 
-        public async Task<List<ApplicationUser>> GetUsers(string token)
+        public async Task<List<ApplicationUser>> GetUsers()
         {
-            int clientId = _validationService.GetIdFromToken(token);
+            int clientId = _validationService.GetAuthenticatedClientId();
             if (clientId == 0)
             {
                 return [];
@@ -152,6 +153,24 @@ namespace TaskManagementSystem.Server.Services
             }
 
             return new ResultViewModel(true, "User deleted successfully");
+        }
+        public async Task<ResultViewModel> EditUser(UserRegisterViewModel userData)
+        {
+            var user = await _userManager.FindByEmailAsync(userData.email);
+            if (user == null)
+            {
+                return new ResultViewModel(false, "User not found");
+            }
+            user.UserName = userData.name;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                string errorMessage = string.Join(",", result.Errors.Select(x => x.Description));
+                return new ResultViewModel(false, errorMessage);
+            }
+
+            return new ResultViewModel(true, "User Updated successfully");
         }
 
 

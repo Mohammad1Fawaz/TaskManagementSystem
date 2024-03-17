@@ -21,7 +21,7 @@ namespace TaskManagementSystem.Server.Controllers
 
 
         [HttpPost("register")]
-        public IActionResult RegisterUser([FromHeader(Name = "Authorization")] string token, [FromBody] UserRegisterViewModel model)
+        public IActionResult RegisterUser([FromBody] UserRegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -36,7 +36,7 @@ namespace TaskManagementSystem.Server.Controllers
                    )
                 });
             }
-            var registrationResult = _userService.RegisterUser(token, model);
+            var registrationResult = _userService.RegisterUser( model);
 
             if (registrationResult.Result.success)
             {
@@ -51,12 +51,10 @@ namespace TaskManagementSystem.Server.Controllers
                 });
             }
         }
-        [Authorize]
         [HttpPost("get-users")]
-        public IActionResult GetUsers([FromHeader(Name = "Authorization")] string token)
-        {
-          
-            List<ApplicationUser>? users = _userService.GetUsers(token)?.Result;
+        public IActionResult GetUsers()
+        {          
+            List<ApplicationUser>? users = _userService.GetUsers()?.Result;
             return Ok(users);
         }
 
@@ -95,7 +93,7 @@ namespace TaskManagementSystem.Server.Controllers
         }
 
         [HttpDelete("delete-user/{userId}")]
-        public IActionResult DeleteUser([FromHeader(Name = "Authorization")] string token, string userId)
+        public IActionResult DeleteUser(string userId)
         {
             var deletionResult =  _userService.DeleteUser(userId);
 
@@ -108,6 +106,19 @@ namespace TaskManagementSystem.Server.Controllers
                 return BadRequest(new { success = false, message = deletionResult.Result.message });
             }
         }
+        [HttpPost("edit-user")]
+        public IActionResult EditUser([FromBody] UserRegisterViewModel userData)
+        {
+            var updateResult = _userService.EditUser(userData);
 
+            if (updateResult.Result.success)
+            {
+                return Ok(new { success = true, message = updateResult.Result.message });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message = updateResult.Result.message });
+            }
+        }
     }
 }

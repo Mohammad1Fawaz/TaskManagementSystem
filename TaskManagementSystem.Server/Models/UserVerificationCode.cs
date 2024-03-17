@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using TaskManagementSystem.Server.Data;
 
 namespace TaskManagementSystem.Server.Models
 {
-    public class UserVerificationCode
+    public class UserVerificationCode : BaseEntityModel
     {
         
         [ForeignKey(nameof(User))]

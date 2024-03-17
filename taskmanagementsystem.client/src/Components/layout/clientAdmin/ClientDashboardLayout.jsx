@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -22,13 +23,15 @@ import GroupIcon from '@mui/icons-material/Group';
 import WorkIcon from '@mui/icons-material/Work';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsIcon from '@mui/icons-material/Settings';
-import WbSunnyIcon from '@mui/icons-material/WbSunny'; // Sun icon for light theme
-import Brightness3Icon from '@mui/icons-material/Brightness3'; // Moon icon for dark theme
-import Button from 'react-bootstrap/Button';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import Brightness3Icon from '@mui/icons-material/Brightness3';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import MainLogo from '../../ui/images/MainLogo';
 import Roles from './Roles';
 import Users from './Users';
+import HelpersService from '../../../Services/HelpersService';
+import Swal from 'sweetalert2';
+import AuthService from '../../../Services/AuthService';
 
 const drawerWidth = 240;
 
@@ -102,7 +105,7 @@ const ClientDashboardLayout = ({ children }) => {
     const [darkTheme, setDarkTheme] = useState(false);
     const [customThemeColors, setCustomThemeColors] = useState(getSavedColors());
     const theme = useTheme();
-
+    const navigate = useNavigate();
     useEffect(() => {
         applyCustomTheme();
         saveColors();
@@ -115,22 +118,22 @@ const ClientDashboardLayout = ({ children }) => {
 
     function getDefaultColors() {
         return {
-            '--main-hover-primary-color': '#e1f5ed',
-            '--main-hover-secondary-color': '#9EC8B9',
+            '--main-hover-primary-color': '#a4d1ff',
+            '--main-hover-secondary-color': '#eff7ff',
             '--main-focus-primary-color': '#44e6a2',
             '--main-focus-secondary-color': '#44e6a2',
             '--main-background-primary-color': '#fff',
             '--main-background-secondary-color': '#fff',
             '--text-primary-color': '#626262',
             '--text-secondary-color': '#626262',
-            '--button-primary-color': '#5EBD96',
+            '--button-primary-color': '#66b2ff',
             '--button-secondary-color': '#5EBD96',
-            '--button-hover-primary-color': '#4aac83',
+            '--button-hover-primary-color': '#90c8ff',
             '--button-hover-secondary-color': '#5EBD96',
-            '--input-hover-primary-color': '#5EBD96',
-            '--input-hover-secondary-color': '#5EBD96',
-            '--input-focus-primary-color': '#44e6a2',
-            '--input-focus-secondary-color': '#44e6a2',
+            '--input-hover-primary-color': '#eff7ff',
+            '--input-hover-secondary-color': '#a4d1ff',
+            '--input-focus-primary-color': '#a4d1ff',
+            '--input-focus-secondary-color': '#eff7ff',
         };
     }
 
@@ -141,6 +144,35 @@ const ClientDashboardLayout = ({ children }) => {
     const handleCloseSettings = () => setShow(false);
     const handleSettings = () => setShow(true);
 
+    const handleLogout = async () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: 'var(--button-primary-color)',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, continue!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const result = await AuthService.logout();
+                    if (result.success) {
+                        AuthService.clearToken();
+                        HelpersService.notify(result.message, "success");
+                        navigate('/login');
+                    } else {
+                        if (result.message) {
+                            HelpersService.notify(result.message, "error");
+                        }
+                    }
+                } catch (error) {
+                    HelpersService.notify('Error during registration', "error");
+                    console.error(error, "error");
+                }
+            }
+        });
+    };
     const handleDrawerOpen = () => {
         setOpen(true);
         setShowLogo(false);
@@ -166,21 +198,21 @@ const ClientDashboardLayout = ({ children }) => {
     const handleThemeToggle = () => {
         setDarkTheme(!darkTheme);
         setCustomThemeColors(darkTheme ? getDefaultColors() : {
-            '--main-hover-primary-color': '#0e3827',
-            '--main-hover-secondary-color': '#21513c',
+            '--main-hover-primary-color': '#002445',
+            '--main-hover-secondary-color': '#0c1c2c',
             '--main-focus-primary-color': '#44e6a2',
             '--main-focus-secondary-color': '#44e6a2',
-            '--main-background-primary-color': '#092635',
+            '--main-background-primary-color': '#101418',
             '--main-background-secondary-color': '#fff',
             '--text-primary-color': '#fff',
             '--text-secondary-color': '#626262',
-            '--button-primary-color': '#5EBD96',
-            '--button-secondary-color': '#5EBD96',
-            '--button-hover-primary-color': '#4aac83',
-            '--button-hover-secondary-color': '#5EBD96',
-            '--input-hover-primary-color': '#5EBD96',
-            '--input-hover-secondary-color': '#5EBD96',
-            '--input-focus-primary-color': '#44e6a2',
+            '--button-primary-color': '#66b2ff',
+            '--button-secondary-color': '#66b2ff',
+            '--button-hover-primary-color': '#014588',
+            '--button-hover-secondary-color': '#014588',
+            '--input-hover-primary-color': '#014588',
+            '--input-hover-secondary-color': '#014588',
+            '--input-focus-primary-color': '#014588',
             '--input-focus-secondary-color': '#44e6a2',
         });
     };
@@ -228,7 +260,7 @@ const ClientDashboardLayout = ({ children }) => {
                             <IconButton onClick={handleSettings}>
                                 <SettingsIcon sx={{ color: 'var(--button-primary-color)' }} />
                             </IconButton>
-                            <IconButton>
+                            <IconButton onClick={handleLogout}>
                                 <AccountBoxIcon sx={{ color: 'var(--button-primary-color)' }} />
                             </IconButton>
                         </Typography>
@@ -304,7 +336,7 @@ const ClientDashboardLayout = ({ children }) => {
                     )}
                 </Box>
             </Box>
-            <Offcanvas show={show} onHide={handleCloseSettings} placement='end' name='end' className="z-100">
+            <Offcanvas show={show} onHide={handleCloseSettings} placement='end' name='end' className="z-100 bg-[var(--main-background-primary-color)]">
                 <Typography variant="h6">Customize Theme</Typography>
                 <div className="color-picker-container h-full overflow-y-auto py-[50px] pl-[50px]">
                     <div className="color-picker-scroll">

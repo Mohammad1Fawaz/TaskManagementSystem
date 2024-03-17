@@ -7,7 +7,7 @@ namespace TaskManagementSystem.Server.Common
     public static class Constants
     {
         public static string _jwtSecret = "$#HJ#@KJ4z32&*#JKHSJKHSJKHJK#*(#JKsad";
-        public static string url = "http://localhost:5173";
+        public static string url = "http://localhost:3000";
 
         public enum UserType
         {
@@ -248,22 +248,22 @@ namespace TaskManagementSystem.Server.Common
 
         public static List<Permission> allPermissions = new List<Permission>()
         {
-            new Permission { Id = 1, Key= "AddUsers", Value = "AddUser", Description = "Permission to add a user" },
-            new Permission { Id = 2, Key= "TaskModification", Value = "ModifyTask", Description = "Permission to modify a task" },
-            new Permission { Id = 3, Key= "TaskDeletion", Value = "DeleteTask", Description = "Permission to delete a task" },
-            new Permission { Id = 4, Key= "TaskAssignment", Value = "AssignTask", Description = "Permission to assign a task to a user" },
-            new Permission { Id = 5, Key= "TaskCompletion", Value = "CompleteTask", Description = "Permission to mark a task as completed" },
-            new Permission { Id = 6, Key= "TaskView", Value = "ViewTask", Description = "Permission to view task details" },
-            new Permission { Id = 7, Key= "TaskPriorityChange", Value = "ChangeTaskPriority", Description = "Permission to change task priority" },
-            new Permission { Id = 8, Key= "TaskStatusChange", Value = "ChangeTaskStatus", Description = "Permission to change task status" },
-            new Permission { Id = 9, Key= "TaskComment", Value = "AddTaskComment", Description = "Permission to add comments to a task" },
-            new Permission { Id = 10,Key = "TaskAttachment", Value = "AttachFileToTask", Description = "Permission to attach files to a task" },
-            new Permission { Id = 11,Key = "UserManagement", Value = "ManageUsers", Description = "Permission to manage users" },
-            new Permission { Id = 12,Key = "RoleManagement", Value = "ManageRoles", Description = "Permission to manage roles" },
-            new Permission { Id = 13,Key = "ProjectCreation", Value = "CreateProject", Description = "Permission to create a project" },
-            new Permission { Id = 14,Key = "ProjectDeletion", Value = "DeleteProject", Description = "Permission to delete a project" },
-            new Permission { Id = 15,Key = "ProjectModification", Value = "ModifyProject", Description = "Permission to modify a project" },
-            new Permission { Id = 16,Key = "TaskCreation", Value = "CreateTask", Description = "Permission to create a task" },
+            new Permission { id = 1, Key= "AddUsers", Value = "AddUser", Description = "Permission to add a user" },
+            new Permission { id = 2, Key= "TaskModification", Value = "ModifyTask", Description = "Permission to modify a task" },
+            new Permission { id = 3, Key= "TaskDeletion", Value = "DeleteTask", Description = "Permission to delete a task" },
+            new Permission { id = 4, Key= "TaskAssignment", Value = "AssignTask", Description = "Permission to assign a task to a user" },
+            new Permission { id = 5, Key= "TaskCompletion", Value = "CompleteTask", Description = "Permission to mark a task as completed" },
+            new Permission { id = 6, Key= "TaskView", Value = "ViewTask", Description = "Permission to view task details" },
+            new Permission { id = 7, Key= "TaskPriorityChange", Value = "ChangeTaskPriority", Description = "Permission to change task priority" },
+            new Permission { id = 8, Key= "TaskStatusChange", Value = "ChangeTaskStatus", Description = "Permission to change task status" },
+            new Permission { id = 9, Key= "TaskComment", Value = "AddTaskComment", Description = "Permission to add comments to a task" },
+            new Permission { id = 10,Key = "TaskAttachment", Value = "AttachFileToTask", Description = "Permission to attach files to a task" },
+            new Permission { id = 11,Key = "UserManagement", Value = "ManageUsers", Description = "Permission to manage users" },
+            new Permission { id = 12,Key = "RoleManagement", Value = "ManageRoles", Description = "Permission to manage roles" },
+            new Permission { id = 13,Key = "ProjectCreation", Value = "CreateProject", Description = "Permission to create a project" },
+            new Permission { id = 14,Key = "ProjectDeletion", Value = "DeleteProject", Description = "Permission to delete a project" },
+            new Permission { id = 15,Key = "ProjectModification", Value = "ModifyProject", Description = "Permission to modify a project" },
+            new Permission { id = 16,Key = "TaskCreation", Value = "CreateTask", Description = "Permission to create a task" },
         };
     }
 }

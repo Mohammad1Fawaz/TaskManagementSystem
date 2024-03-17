@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,26 +13,15 @@ namespace TaskManagementSystem.Server.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly AppDbContext _dbContext;
-        private readonly IEncryptionService _encryptionService;
-        private readonly IValidationService _validationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IValidationService _validationService;
 
-        public AuthService(AppDbContext dbContext, IEncryptionService encryptionService, IValidationService validationService,UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IValidationService validationService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
-            _dbContext = dbContext;
-            _encryptionService = encryptionService;
             _validationService = validationService;
-            _httpContextAccessor = httpContextAccessor;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ResultViewModel> Login(ClientLoginViewModel model)
@@ -93,180 +81,13 @@ namespace TaskManagementSystem.Server.Services
             return "";
         }
 
-
-        public async Task<ResultViewModel> AddRole(string token, string roleName, List<string> permissions)
+        public async Task<ResultViewModel> Logout()
         {
-            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
-            {
-                return new ResultViewModel(false, "You don't have permission to Add roles");
-            }
+            await _signInManager.SignOutAsync();
 
-            string jwtToken = token.Substring("Bearer ".Length).Trim();
+            _validationService.ClearSession();
 
-            var handler = new JwtSecurityTokenHandler();
-            var claims = handler.ReadJwtToken(jwtToken).Claims;
-            string? roleValue = claims?.FirstOrDefault(c => c.Type == "role")?.Value;
-            if (string.IsNullOrEmpty(roleValue) || roleValue != "ClientAdmin")
-            {
-                return new ResultViewModel(false, "You don't have permission to Add roles");
-            }
-            ApplicationRole? role = await _roleManager.FindByNameAsync(roleName);
-            int clientId =Convert.ToInt32(_httpContextAccessor.HttpContext?.Session.GetString("ClientId"));
-
-            if (role == null)
-            {
-                if (clientId != 0)
-                {
-                    ApplicationRole newRole = new ApplicationRole()
-                    {
-                        Name = roleName,
-                        ConcurrencyStamp = roleName,
-                        UserId = clientId
-                    };
-                    await _roleManager.CreateAsync(newRole);
-
-                    await AddClaimsToRole(roleName, permissions);
-
-                    return new ResultViewModel(true, "Role added successfully");
-                }
-            }
-
-            return new ResultViewModel(false, "You don't have permission to Delete roles");
-        }
-
-
-
-        public async Task<ResultViewModel> DeleteRole(string token, string roleId)
-        {
-            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
-            {
-                return new ResultViewModel(false, "You don't have permission to Delete roles");
-            }
-
-            string jwtToken = token.Substring("Bearer ".Length).Trim();
-
-            var handler = new JwtSecurityTokenHandler();
-            var claims = handler.ReadJwtToken(jwtToken).Claims;
-            string? roleValue = claims?.FirstOrDefault(c => c.Type == "role")?.Value;
-            if (string.IsNullOrEmpty(roleValue) || roleValue != "ClientAdmin")
-            {
-                return new ResultViewModel(false, "You don't have permission to Delete roles");
-            }
-            ApplicationRole? role = await _roleManager.FindByIdAsync(roleId);
-            int clientId = _validationService.GetIdFromToken(token);
-
-            if (role != null)
-            {
-                if (clientId != 0 && role.UserId == clientId)
-                {
-                    await _roleManager.DeleteAsync(role);
-
-                    return new ResultViewModel(true, "Role Deleted successfully");
-                }
-            }
-
-            return new ResultViewModel(false, "You don't have permission to Delete roles");
-        }
-
-
-
-
-        public Task<List<ApplicationRole>>? GetRoles(string token)
-        {
-            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
-            {
-                return null;
-            }
-
-            string jwtToken = token.Substring("Bearer ".Length).Trim();
-
-            var handler = new JwtSecurityTokenHandler();
-            var claims = handler.ReadJwtToken(jwtToken).Claims;
-
-            string? roleValue = claims?.FirstOrDefault(c => c.Type == "role")?.Value;
-
-            if (string.IsNullOrEmpty(roleValue))
-            {
-                return null;
-            }
-
-            int clientId = _validationService.GetIdFromToken(token);
-
-            if (clientId != 0)
-            {
-                List<ApplicationRole> roles = _roleManager.Roles.Where(x => x.UserId == clientId && x.Name != "ClientAdmin").ToList();
-                return Task.FromResult(roles);
-            }
-
-            return null;
-        }
-
-
-
-        public Task<List<IdentityRoleClaim<int>>>? GetRolesPermission(string token)
-        {
-            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
-            {
-                return null;
-            }
-
-            string jwtToken = token.Substring("Bearer ".Length).Trim();
-
-            var handler = new JwtSecurityTokenHandler();
-            var claims = handler.ReadJwtToken(jwtToken).Claims;
-
-            string? roleValue = claims?.FirstOrDefault(c => c.Type == "role")?.Value;
-
-            if (string.IsNullOrEmpty(roleValue) || roleValue != "ClientAdmin")
-            {
-                return null;
-            }
-
-            int clientId = _validationService.GetIdFromToken(token);
-
-            if (clientId == 0)
-            {
-                return null;
-
-            }
-
-            List<IdentityRoleClaim<int>> allClaims = _dbContext.RoleClaims.ToList();
-            return Task.FromResult(allClaims);
-        }
-
-
-
-        private async Task AddClaimToRole(string roleName, string claimValue)
-        {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            if (role != null)
-            {
-                var existingClaim = await _roleManager.GetClaimsAsync(role);
-                if (!existingClaim.Any(c => c.Value == claimValue))
-                {
-                    var claim = new Claim("Permission", claimValue);
-                    await _roleManager.AddClaimAsync(role, claim);
-                }
-            }
-        }
-
-
-
-        public async Task AddClaimsToRole(string roleName, IList<string> claimValues)
-        {
-            ApplicationRole? role = await _roleManager.FindByNameAsync(roleName);
-            if (role != null)
-            {
-                foreach (var claimValue in claimValues)
-                {
-                    var existingClaims = await _roleManager.GetClaimsAsync(role);
-                    if (!existingClaims.Any(c => c.Value == claimValue))
-                    {
-                        var claim = new Claim("Permission", claimValue);
-                        await AddClaimToRole(roleName, claim.Value);
-                    }
-                }
-            }
+            return new ResultViewModel(true, "Logout successful");
         }
 
     }
