@@ -35,7 +35,7 @@ namespace TaskManagementSystem.Server.Services
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 587, false);
-                client.Authenticate("mohammadfawaz261@gmail.com", "zkrqwadesrukuual");
+                client.Authenticate("mohammadfawaz261@gmail.com", "xprsrnwgimwxfmoj");
                 await client.SendAsync(message);
                 client.Disconnect(true);
             }
