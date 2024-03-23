@@ -1,16 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.Models;
-using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -18,11 +12,13 @@ namespace TaskManagementSystem.Server.Services
     {
         private readonly AppDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ValidationService(AppDbContext dbContext, UserManager<ApplicationUser> userManager)
+        public ValidationService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IdentityResult> ValidateAsync(ApplicationUser user)
@@ -45,24 +41,13 @@ namespace TaskManagementSystem.Server.Services
             return errors.Count == 0 ? IdentityResult.Success : IdentityResult.Failed(errors.ToArray());
         }
 
-        public int GetIdFromToken(string token)
+        public int GetAuthenticatedClientId()
         {
-            if (string.IsNullOrEmpty(token) || !token.StartsWith("Bearer "))
-            {
-                return 0;
-            }
-
-            string jwtToken = token.Substring("Bearer ".Length).Trim();
-
-            var handler = new JwtSecurityTokenHandler();
-            var claims = handler.ReadJwtToken(jwtToken).Claims;
-
-            string? clientId = claims?.FirstOrDefault(c => c.Type == "nameid")?.Value;
-            if (string.IsNullOrEmpty(clientId))
-            {
-                return 0;
-            }
-            return Convert.ToInt32(clientId);
+            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.Session.GetString("ClientId"));
+        }     
+        public int GetAuthenticatedUserId()
+        {
+            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.Session.GetString("UserId"));
         }
 
         public bool IsEmailTaken(string email)
@@ -91,6 +76,15 @@ namespace TaskManagementSystem.Server.Services
             string hash = sb.ToString().Substring(0, length);
 
             return hash;
+        }
+
+        public string GetUserRole()
+        {
+           return  _httpContextAccessor.HttpContext?.Session?.GetString("Role") ?? "";
+        }
+        public void ClearSession()
+        {
+            _httpContextAccessor.HttpContext?.Session?.Clear();
         }
 
         public void StoreVerificationCode(int userId, string verificationCode)

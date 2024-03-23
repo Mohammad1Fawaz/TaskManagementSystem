@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TaskManagementSystem.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240308211209_AddIdentityTables")]
-    partial class AddIdentityTables
+    [Migration("20240317142917_RefreshTables")]
+    partial class RefreshTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -311,15 +311,6 @@ namespace TaskManagementSystem.Server.Migrations
                             flagSvg = "https://flagcdn.com/gr.svg",
                             name = "Greece",
                             phoneCode = "+300",
-                            timeZone = "UTC+02:00"
-                        },
-                        new
-                        {
-                            id = 129,
-                            countryCode = "IL",
-                            flagSvg = "https://flagcdn.com/il.svg",
-                            name = "Israel",
-                            phoneCode = "+376",
                             timeZone = "UTC+02:00"
                         },
                         new
@@ -1983,6 +1974,12 @@ namespace TaskManagementSystem.Server.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
@@ -2049,6 +2046,12 @@ namespace TaskManagementSystem.Server.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -2064,7 +2067,7 @@ namespace TaskManagementSystem.Server.Migrations
 
             modelBuilder.Entity("TaskManagementSystem.Server.Models.Permission", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -2080,7 +2083,13 @@ namespace TaskManagementSystem.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("id");
 
                     b.ToTable("Permissions");
                 });
@@ -2092,6 +2101,15 @@ namespace TaskManagementSystem.Server.Migrations
 
                     b.Property<string>("VerificationCode")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("UserId", "VerificationCode");
 

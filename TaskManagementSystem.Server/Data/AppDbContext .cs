@@ -68,5 +68,30 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
         }
         optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0)));
     }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        UpdateTimestamps();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void UpdateTimestamps()
+    {
+        var entities = ChangeTracker.Entries()
+            .Where(x => x.Entity is BaseEntityModel && (x.State == EntityState.Added || x.State == EntityState.Modified));
+
+        foreach (var entityEntry in entities)
+        {
+            var entity = (BaseEntityModel)entityEntry.Entity;
+            if (entityEntry.State == EntityState.Added)
+            {
+                entity.createdAt = DateTime.UtcNow;
+            }
+            entity.UpdateTimestamps();
+        }
+    }
+
+
+
 }
 

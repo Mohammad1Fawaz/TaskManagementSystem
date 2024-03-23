@@ -6,13 +6,11 @@ namespace TaskManagementSystem.Server.Interfaces
 {
     public interface IUserService
     {
-        Task<ResultViewModel> RegisterUser(string token, UserRegisterViewModel model);
-
-        Task<List<ApplicationUser>> GetUsers(string token);
-
+        Task<ResultViewModel> RegisterUser(UserRegisterViewModel model);
+        Task<List<ApplicationUser>> GetUsers();
         Task<ResultViewModel> VerifyUser(UserVerificationViewModel model);
-
         Task<ResultViewModel> DeleteUser(string userId);
+        Task<ResultViewModel> EditUser(UserRegisterViewModel userData);
 
     }
 }

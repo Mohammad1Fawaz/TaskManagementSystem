@@ -71,6 +71,26 @@ const UserService = {
             throw error;
         }
     },
+    editUser: async (userId, userData) => {
+        try {
+            const token = AuthService.getToken();
+            console.log(userData);
+            const response = await fetch(`${apiBaseUrl}/User/edit-user`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(userData),
+            });
+            console.log("response", response);
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error registering user:', error);
+            throw error;
+        }
+    },
 };
 
 export default UserService;

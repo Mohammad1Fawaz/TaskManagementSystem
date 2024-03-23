@@ -104,6 +104,7 @@ namespace TaskManagementSystem.Server
             services.AddScoped<IValidationService,ValidationService>();
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IAuthService,AuthService>();
+            services.AddScoped<IRoleService, RoleService>();
         }
     }
 }

@@ -16,96 +16,25 @@ const AuthService = {
         const responseData = await response.json();
         return await responseData;
     },
-    AddRole: async (roleData) => {
-        console.log(roleData);
-        const token = AuthService.getToken();
-        const response = await fetch(`${apiBaseUrl}/Auth/add-role`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(roleData),
-        });
-
-        const responseData = await response.json();
-        return await responseData;
-    },
-    getRoles: async (roleData) => {
-        console.log(roleData);
-        const token = AuthService.getToken();
-        const response = await fetch(`${apiBaseUrl}/Auth/get-roles`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(roleData),
-        });
-
-        const responseData = await response.json();
-        return await responseData;
-    },
-    getUserRoles: async (token) => {
+    logout: async () => {
         try {
-            console.log(`${apiBaseUrl}/Auth/get-roles`);
-            const response = await fetch(`${apiBaseUrl}/Auth/get-role`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const rolesData = await response.json();
-                return rolesData.role;
-            } else {
-                return [];
-            }
-        } catch (error) {
-            console.error('Error fetching user roles:', error);
-            return [];
-        }
-    },
-    getRolesPermissions: async (token) => {
-        try {
-            
-            const response = await fetch(`${apiBaseUrl}/Auth/get-role-permissions`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${Cookies.get("token") }`
-                }
-            });
-
-            if (response.ok) {
-                const responseData = await response.json();
-                return await responseData;
-            } else {
-                return [];
-            }
-        } catch (error) {
-            console.error('Error fetching user roles:', error);
-            return [];
-        }
-    },
-    DeleteRole: async (roleId) => {
-        try {
-            console.log("roleId", roleId);
             const token = AuthService.getToken();
-            const response = await fetch(`${apiBaseUrl}/Auth/delete-role/${roleId}`, {
-                method: 'DELETE',
+            const response = await fetch(`${apiBaseUrl}/Auth/logout`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
             });
 
-            const responseData = await response.json();
-            return await responseData;
+            return await response.json();
         } catch (error) {
-            console.error('Error fetching user roles:', error);
-            return [];
-        }      
+            console.error('Error registering user:', error);
+            throw error;
+        }
+    },
+    clearToken: (token) => {
+        Cookies.remove("token");
     },
     saveToken: (token) => {
         Cookies.set("token", token);

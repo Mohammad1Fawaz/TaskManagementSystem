@@ -13,5 +13,8 @@ namespace TaskManagementSystem.Server.Data
         public int UserId { get; set; }
 
         public ApplicationUser ApplicationUser { get; set; }
+
+        public DateTime createdAt { get; set; } = DateTime.UtcNow;
+        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
     }
 }

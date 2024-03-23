@@ -5,7 +5,7 @@ import DangerButton from '../../ui/buttons/DangerButton';
 import TextInput from '../../ui/inputs/TextInput';
 import PermisionInput from '../../ui/inputs/PermissionInput';
 import ConstantsService from '../../../Services/ConstantsService';
-import ClientService from '../../../Services/ClientService';
+import RoleService from '../../../Services/RoleService';
 import AuthService from '../../../Services/AuthService';
 import HelpersService from '../../../Services/HelpersService';
 import Checkbox from '@mui/material/Checkbox';
@@ -33,8 +33,8 @@ const Roles = () => {
             try {
                 const [permissionsData, rolesData, claimsData] = await Promise.all([
                     ConstantsService.getPermissions(),
-                    AuthService.getRoles(),
-                    AuthService.getRolesPermissions()
+                    RoleService.getRoles(),
+                    RoleService.getRolesPermissions()
                 ]);
                 setPermissions(permissionsData);
                 setRoles(rolesData);
@@ -65,7 +65,7 @@ const Roles = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const result = await AuthService.AddRole(formData);
+            const result = await RoleService.AddRole(formData);
             if (result.success) {
                 HelpersService.notify(result.message, "success");
                 setIsLoading(false);
@@ -92,7 +92,6 @@ const Roles = () => {
     };
 
     const handleDeleteRole = async (roleId) => {
-        console.log("role", roleId);
         Swal.fire({
             title: 'Are you sure?',
             text: 'You won\'t be able to revert this!',
@@ -104,7 +103,7 @@ const Roles = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await AuthService.DeleteRole(roleId);
+                    const result = await RoleService.DeleteRole(roleId);
                     if (result.success) {
                         HelpersService.notify(result.message, "success");
                         reset();
@@ -144,7 +143,7 @@ const Roles = () => {
                     <PrimaryButton isLoading={isLoading} type="submit" text="Add Role" width="w-[100px] text-[15px] " />
                 </div>
             </form>
-            <div className="mt-5 flex gap-1 flex-wrap shadow rounded-2 p-2">           
+            <div className="mt-5 flex gap-1 flex-wrap rounded-2 p-1">           
                 {roles && roles.map((role) => (
                     <div key={role.id} className="border p-1  w-[33%] shadow rounded-3">
                         {claims &&

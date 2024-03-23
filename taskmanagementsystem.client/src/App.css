@@ -7,97 +7,31 @@
 :root {
     /* Light theme */
     /* main */
-
-    --main-hover-primary-color: #e1f5ed;
-    --main-hover-secondary-color: #9EC8B9;
+    --main-hover-primary-color: #a4d1ff;
+    --main-hover-secondary-color: #eff7ff;
     --main-focus-primary-color: #44e6a2;
     --main-focus-secondary-color: #44e6a2;
     --main-background-primary-color: #fff;
     --main-background-secondary-color: #fff;
     /* main */
     /* text */
-
     --text-primary-color: #626262;
     --text-secondary-color: #626262;
     /* text */
     /* button */
-
-    --button-primary-color: #5EBD96;
+    --button-primary-color: #66b2ff;
     --button-secondary-color: #5EBD96;
-    --button-hover-primary-color: #4aac83;
+    --button-hover-primary-color: #90c8ff;
     --button-hover-secondary-color: #5EBD96;
     /* button */
     /* input */
-
-    --input-hover-primary-color: #5EBD96;
-    --input-hover-secondary-color: #5EBD96;
-    --input-focus-primary-color: #44e6a2;
-    --input-focus-secondary-color: #44e6a2;
+    --input-hover-primary-color: #eff7ff;
+    --input-hover-secondary-color: #a4d1ff;
+    --input-focus-primary-color: #a4d1ff;
+    --input-focus-secondary-color: #eff7ff;
     /* input */
 }
 
-/*.dark-theme {*/
-    /* Dark theme */
-    /* main */
-
-    /*--main-hover-primary-color: #0e3827;
-    --main-hover-secondary-color: #21513c;
-    --main-focus-primary-color: #44e6a2;
-    --main-focus-secondary-color: #44e6a2;
-    --main-background-primary-color: #092635;
-    --main-background-secondary-color: #fff;*/
-    /* main */
-    /* text */
-
-    /*--text-primary-color: #fff;
-    --text-secondary-color: #626262;*/
-    /* text */
-    /* button */
-
-    /*--button-primary-color: #5EBD96;
-    --button-secondary-color: #5EBD96;
-    --button-hover-primary-color: #4aac83;
-    --button-hover-secondary-color: #5EBD96;*/
-    /* button */
-    /* input */
-
-    /*--input-hover-primary-color: #5EBD96;
-    --input-hover-secondary-color: #5EBD96;
-    --input-focus-primary-color: #44e6a2;
-    --input-focus-secondary-color: #44e6a2;*/
-    /* input */
-/*}
-.custom-theme {*/
-    /* Light theme */
-    /* main */
-
-    /*--main-hover-primary-color: #e1f5ed;
-    --main-hover-secondary-color: #9EC8B9;
-    --main-focus-primary-color: #44e6a2;
-    --main-focus-secondary-color: #44e6a2;
-    --main-background-primary-color: #fff;
-    --main-background-secondary-color: #fff;*/
-    /* main */
-    /* text */
-
-    /*--text-primary-color: #626262;
-    --text-secondary-color: #626262;*/
-    /* text */
-    /* button */
-
-    /*--button-primary-color: #5EBD96;
-    --button-secondary-color: #5EBD96;
-    --button-hover-primary-color: #4aac83;
-    --button-hover-secondary-color: #5EBD96;*/
-    /* button */
-    /* input */
-
-    /*--input-hover-primary-color: #5EBD96;
-    --input-hover-secondary-color: #5EBD96;
-    --input-focus-primary-color: #44e6a2;
-    --input-focus-secondary-color: #44e6a2;*/
-    /* input */
-/*}*/
 #root {
     font-family: 'Rubik', sans-serif;
     width: 100% !important;
@@ -109,8 +43,8 @@ a {
     text-decoration: none;
 }
 
-p,a,h1,h2,h3,h4,h5,h6,input,button{
-    color:var(--text-primary-color);
+p,a,h1,h2,h3,h4,h5,h6,input,button,td,tr,div{
+    color:var(--text-primary-color) !important;
 }
 
 
@@ -129,4 +63,23 @@ input[type="number"] {
 
 .MuiDrawer-paperAnchorDockedLeft.css-12i7wg6-MuiPaper-root-MuiDrawer-paper{
     background-color:var(--main-background-primary-color);
+}
+
+
+.even-row {
+    background-color: var(--main-hover-secondary-color) !important;
+}
+
+.odd-row {
+    background-color: transparent !important;
+}
+
+.header-class {
+    background-color: var(--main-hover-primary-color) !important;
+}
+.data-grid-cell {
+    color: blue !important;
+}
+.MuiDataGrid-columnHeaders {
+    background-color: var(--main-hover-primary-color);
 }
