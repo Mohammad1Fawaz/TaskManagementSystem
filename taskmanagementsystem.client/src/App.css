@@ -1,26 +1,52 @@
 ﻿/* App.css */
 @import 'bootstrap/dist/css/bootstrap.min.css';
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 @import url(assets/Css/BootstrapAdditionalStyles.css);
-@import url(assets/Css/forms.css);
+
 :root {
-    --main-text-color: #ff6813;
-    --main-background-color: #ff6813;
-    --main-hover-color: #000000;
-    --main-focus-color: #ff6813;
+    /* Light theme */
+    /* main */
+    --main-hover-primary-color: #a4d1ff;
+    --main-hover-secondary-color: #eff7ff;
+    --main-focus-primary-color: #44e6a2;
+    --main-focus-secondary-color: #44e6a2;
+    --main-background-primary-color: #fff;
+    --main-background-secondary-color: #fff;
+    /* main */
+    /* text */
+    --text-primary-color: #626262;
+    --text-secondary-color: #626262;
+    /* text */
+    /* button */
+    --button-primary-color: #66b2ff;
+    --button-secondary-color: #5EBD96;
+    --button-hover-primary-color: #90c8ff;
+    --button-hover-secondary-color: #5EBD96;
+    /* button */
+    /* input */
+    --input-hover-primary-color: #eff7ff;
+    --input-hover-secondary-color: #a4d1ff;
+    --input-focus-primary-color: #a4d1ff;
+    --input-focus-secondary-color: #eff7ff;
+    /* input */
 }
 
-#root{
-    font-family: 'Poppins', sans-serif;
-    width:100% !important;
-    height:100vh !important;
+#root {
+    font-family: 'Rubik', sans-serif;
+    width: 100% !important;
+    height: 100vh !important;
 }
 
 
 a {
     text-decoration: none;
 }
+
+p,a,h1,h2,h3,h4,h5,h6,input,button,td,tr,div{
+    color:var(--text-primary-color) !important;
+}
+
 
 /* For Chrome, Safari, Edge, Opera */
 input[type="number"]::-webkit-inner-spin-button,
@@ -32,4 +58,28 @@ input[type="number"]::-webkit-outer-spin-button {
 /* For Firefox */
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+
+.MuiDrawer-paperAnchorDockedLeft.css-12i7wg6-MuiPaper-root-MuiDrawer-paper{
+    background-color:var(--main-background-primary-color);
+}
+
+
+.even-row {
+    background-color: var(--main-hover-secondary-color) !important;
+}
+
+.odd-row {
+    background-color: transparent !important;
+}
+
+.header-class {
+    background-color: var(--main-hover-primary-color) !important;
+}
+.data-grid-cell {
+    color: blue !important;
+}
+.MuiDataGrid-columnHeaders {
+    background-color: var(--main-hover-primary-color);
 }

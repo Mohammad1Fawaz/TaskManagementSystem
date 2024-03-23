@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskManagementSystem.Server.Services;
+using TaskManagementSystem.Server.Interfaces;
+using TaskManagementSystem.Server.ViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Controllers
@@ -8,10 +9,10 @@ namespace TaskManagementSystem.Server.Controllers
     [Route("[controller]")]
     public class ClientController : ControllerBase
     {
-        private readonly ClientService _clientService;
+        private readonly IClientService _clientService;
         private readonly ILogger<ClientController> _logger;
 
-        public ClientController(ILogger<ClientController> logger, ClientService clientService)
+        public ClientController(ILogger<ClientController> logger, IClientService clientService)
         {
             _logger = logger;
             _clientService = clientService;
@@ -76,73 +77,21 @@ namespace TaskManagementSystem.Server.Controllers
             }
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] ClientLoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var registrationResult = _clientService.LoginClient(model);
-
-                if (registrationResult.success)
-                {
-                    return Ok(new { success = registrationResult.success, message = registrationResult.message, token = registrationResult.token });
-                }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        success = registrationResult.success,
-                        error = registrationResult.message
-                    });
-                }
-            }
-
-            return BadRequest(new
-            {
-                message = "Login failed. Invalid Data.",
-                errors = ModelState.Values
-                    .Where(v => v.Errors.Count > 0)
-                    .ToDictionary(
-                        k => k.Errors,
-                        v => v.Errors.Select(e => e.ErrorMessage).ToList()
-                    )
-            });
-        }
 
         [HttpPost("verify-email")]
-        public IActionResult VerifyEmail([FromBody] string token)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return BadRequest("Invalid token");
-            }
+        public IActionResult VerifyEmail([FromBody] VerificationEmailViewModel model)
+        {           
+            var verifyResult = _clientService.VerifyEmail(model.token , model.email);
 
-            var tokenValidationResult = _clientService.ValidateToken(token);
-
-            if (tokenValidationResult.isValid)
-            {
-                var verifyResult = _clientService.GetDataFromToken(token);
-                if (verifyResult.success)
-                {
-                    return Ok(new { success = true, message = verifyResult.message, token = verifyResult.token });
-                }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = verifyResult.message,
-                    });
-                }
-            }
-            else
+            if (!verifyResult.Result.success)
             {
                 return BadRequest(new
                 {
                     success = false,
-                    message = "Invalid Token",
+                    message = verifyResult.Result.message,
                 });
             }
+            return Ok(new { success = true, message = verifyResult.Result.message, token = verifyResult.Result.token });
         }
     }
 }

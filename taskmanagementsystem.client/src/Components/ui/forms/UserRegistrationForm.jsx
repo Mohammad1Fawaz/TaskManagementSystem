@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { registerUser } from '../../../Services/userService/AuthService';
-import { getCountries } from '../../../Services/ConstantsService/ConstantsService';
-import { notify } from "../../../utils/notifications";
-import { saveToken } from "../../../utils/user"
+import ClientService from '../../../Services/ClientService';
+import ConstantsService from '../../../Services/ConstantsService';
+import HelpersService from '../../../Services/HelpersService';
+import AuthService from "../../../Services/AuthService"
 import PrimaryButton from '../buttons/PrimaryButton';
-import MediumLogo from '../images/MainLogo';
+import MainLogo from '../images/MainLogo';
 import PhoneInput from '../inputs/PhoneInput';
 import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
@@ -30,7 +30,7 @@ const UserRegistrationForm = () => {
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await getCountries();
+                const response = await ConstantsService.getCountries();
                 setCountries(response);
             } catch (error) {
                 console.error('Error fetching countries:', error);
@@ -63,12 +63,12 @@ const UserRegistrationForm = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const result = await registerUser(formData);
+            const result = await ClientService.registerClient(formData);
             if (result.success) {
-                notify(result.message, "success");
+                HelpersService.notify(result.message, "success");
                 setIsLoading(false);
                 const token = result.token;
-                saveToken(token);
+                AuthService.saveToken(token);
                 reset();
                 //navigate to page ...
             } else {
@@ -79,49 +79,42 @@ const UserRegistrationForm = () => {
                     setPhoneNumberNameValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
                 }
                 if (result.existUser) {
-                    notify(result.message, "error");
+                    HelpersService.notify(result.message, "error");
                 }
                 setIsLoading(false);
             }
         } catch (error) {
-            notify('Error during registration', "error");
+            HelpersService.notify('Error during registration', "error");
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="flex-center w-full h-full bg-[url('/src/assets/TaskManagementBg.jpeg')] bg-no-repeat bg-fixed bg-cover bg-center">
-            <div className="col-sm-6 col-md-3 shadow bg-white p-4 rounded h-auto">
+        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-fixed bg-cover bg-center">
+            <div className="col-sm-6 col-md-4 ml-[150px] shadow bg-white p-4 rounded h-auto">
                 <div className="w-full flex-center mb-2">
-                    <MediumLogo />
+                    <MainLogo className="w-[40%]" />
                 </div>
                 <form onSubmit={handleSubmit}>
                     <small className="text-danger text-xs">{userEmailValidationMessage}</small>
-                    <div className="mb-3 relative">
-                        <TextInput type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
-                    </div>
+                    <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
                     <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
-                    <div className="mb-3 relative">
-                        <PasswordInput value={formData.password} onChange={handleInputChange} />
-                    </div>
+                    <PasswordInput value={formData.password} className="mb-3 relative" onChange={handleInputChange} />
                     <small className="text-danger text-xs">{companyNameValidationMessage}</small>
-                    <div className="mb-3 relative">
-                        <TextInput type="text" name="companyName" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} icon="fa-building" />
-                    </div>
+                    <TextInput type="text" name="companyName" className="mb-3 relative" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} icon="fa-building" />
                     <small className="text-danger text-xs">{userPhoneNumberValidationMessage}</small>
-                    <div className="mb-3 relative flex w-full">
-                        <PhoneInput
-                            countries={countries}
-                            handleInputChange={handleInputChange}
-                            handleSelectChange={handleSelectChange}
-                            phoneNumberValue={formData.phoneNumber}
-                            phoneCodeValue={formData.phoneCode}
-                        />
-                    </div>
+                    <PhoneInput
+                        countries={countries}
+                        handleInputChange={handleInputChange}
+                        handleSelectChange={handleSelectChange}
+                        phoneNumberValue={formData.phoneNumber}
+                        phoneCodeValue={formData.phoneCode}
+                        className="mb-3 relative flex w-full"
+                    />
                     <PrimaryButton isLoading={isLoading} text="Register" type="submit" />
                 </form>
-                <div className="mt-3 w-full">
-                    <span className="text-sm text-black">Already have an account? </span><Link to="/login" className="w-fit text-main_color text-sm">Login here.</Link>
+                <div className="mt-3 flex justify-between w-full">
+                    <div className="text-sm text-black">Already have an account? </div><Link to="/login" className="w-fit text-main_color text-sm">Login here.</Link>
                 </div>
             </div>
         </div>

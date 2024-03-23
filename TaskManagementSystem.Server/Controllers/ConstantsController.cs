@@ -24,5 +24,12 @@ namespace TaskManagementSystem.Server.Controllers
             var countries = _constantsService.GetCountries();
             return Ok(countries); 
         }
+
+        [HttpGet("permissions")]
+        public IActionResult GetPermissions()
+        {
+            var permissions = _constantsService.GetPermissions();
+            return Ok(permissions);
+        }
     }
 }
