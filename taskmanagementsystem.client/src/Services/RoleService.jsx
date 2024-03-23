@@ -54,7 +54,6 @@ const RoleService = {
     },
     getRolesPermissions: async (token) => {
         try {
-
             const response = await fetch(`${apiBaseUrl}/Role/get-role-permissions`, {
                 method: 'POST',
                 headers: {
@@ -91,5 +90,24 @@ const RoleService = {
             return [];
         }
     }, 
+    editRole: async (roleId, roleData) => {
+        try {
+            const token = AuthService.getToken();
+            const response = await fetch(`${apiBaseUrl}/Role/edit-role/${roleId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(roleData),
+            });
+
+            const responseData = await response.json();
+            return await responseData;
+        } catch (error) {
+            console.error('Error fetching user roles:', error);
+            return [];
+        }
+    },
 };
 export default RoleService;

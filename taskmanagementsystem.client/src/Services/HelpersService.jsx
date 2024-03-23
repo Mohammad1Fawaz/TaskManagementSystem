@@ -1,20 +1,21 @@
 import { toast } from 'react-toastify';
 
 const HelpersService = {
+	notify: (message, type) => {
+		let toastStyle = { backgroundColor: 'var(--main-background-primary-color)' };
 
-	notify : (message, type) => {
 		switch (type) {
 			case 'success':
-				toast.success(message);
+				toast.success(message, { style: toastStyle });
 				break;
 			case 'error':
-				toast.error(message);
+				toast.error(message, { style: toastStyle }); 
 				break;
 			case 'warning':
-				toast.warning(message);
+				toast.warning(message, { style: toastStyle });
 				break;
 			default:
-				toast(message);
+				toast(message, { style: toastStyle });
 		}
 	}
 }
