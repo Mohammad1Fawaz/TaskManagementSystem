@@ -71,7 +71,7 @@ const useFetch = (method, endPoint, requestData = {}, fetchDirectly = false, que
             };
         } finally {
         }
-    };
+            };
 
     useEffect(() => {
         if (fetchDirectly) {
@@ -96,6 +96,7 @@ const useFetch = (method, endPoint, requestData = {}, fetchDirectly = false, que
         },
     });
 
+            setData(responseData);
 
     const handleRequest = async () => {
         try {

@@ -1,11 +1,10 @@
-// NestedCheckboxGroup.js
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Checkbox from '@mui/material/Checkbox';
 
-const NestedCheckboxGroup = ({ parent, children, actionButton, handleDeleteRole }) => {
+const NestedCheckboxGroup = ({ parentName,parentId, children, onRoleUpdate, handleDeleteRole }) => {
     const [parentChecked, setParentChecked] = useState(true);
     const [checked, setChecked] = useState({});
 
@@ -38,16 +37,20 @@ const NestedCheckboxGroup = ({ parent, children, actionButton, handleDeleteRole 
         setChecked(newChecked);
     };
 
+    const handleUpdateRole = () => {
+        const checkedClaims = children.filter(child => checked[child.id]).map(child => child.claimValue);
+        onRoleUpdate(parentId, checkedClaims);
+    };
+
     return (
         <div className="px-3">
             <div className="flex justify-between align-items-center">
                 <FormControlLabel
-                    label={parent}
+                    label={parentName}
                     control={
                         <Checkbox
                             checked={parentChecked}
                             onChange={handleParentChange}
-
                             sx={{
                                 color: "var(--text-primary-color)",
                                 '&.Mui-checked': {
@@ -60,7 +63,15 @@ const NestedCheckboxGroup = ({ parent, children, actionButton, handleDeleteRole 
                         color: "var(--button-primary-color)",
                     }}
                 />
-                {actionButton}
+                <div className="flex w-[10%]">
+                    <button className="w-[5%] mr-auto" onClick={() => handleDeleteRole(parentId)}>
+                        <i className="fas fa-trash-alt text-danger"></i>
+                    </button>
+                    <button className="w-[5%]" onClick={handleUpdateRole}>
+                        <i className="fas fa-pencil-alt  text-[var(--text-primary-color)]"></i>
+                    </button>
+                </div>
+
             </div>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, ml: 1 }}>
                 <div className="row">
@@ -88,7 +99,7 @@ const NestedCheckboxGroup = ({ parent, children, actionButton, handleDeleteRole 
                             />
                         </div>
                     ))}
-                </div>               
+                </div>
             </Box>
         </div>
     );

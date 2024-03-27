@@ -16,7 +16,7 @@
     /* main */
     /* text */
     --text-primary-color: #626262;
-    --text-secondary-color: #626262;
+    --text-secondary-color: #66b2ff;
     /* text */
     /* button */
     --button-primary-color: #66b2ff;
@@ -82,4 +82,16 @@ input[type="number"] {
 }
 .MuiDataGrid-columnHeaders {
     background-color: var(--main-hover-primary-color);
+}
+/* Custom styles for SweetAlert modal */
+.swal2-popup {
+    background-color: var(--main-background-primary-color);
+}
+
+.swal2-title {
+    color: var(--text-primary-color);
+}
+
+.swal2-content {
+    color: var(--text-primary-color);
 }

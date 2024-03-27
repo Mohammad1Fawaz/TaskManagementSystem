@@ -70,7 +70,7 @@ const UserLoginForm = () => {
     };
   
     return (
-        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-fixed bg-cover bg-center">
+        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat  bg-right">
             <div className="col-sm-6 ml-[150px] col-md-4 shadow bg-white p-4 rounded h-auto">
                 <div className="w-full flex-center mb-2">
                     <MainLogo className="w-[40%]" />

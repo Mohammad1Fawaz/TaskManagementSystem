@@ -30,19 +30,22 @@ export default function PermisionInput({ permissions,className, handleSelectChan
                     '&:hover': {
                         borderColor: 'var(--main-hover-secondary-color)'
                     },
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'transparent',
+                    color: 'var(--text-secondary-color) !important'
                 }),
                 menu: (provided) => ({
                     ...provided,
                     minHeight: "25vh",
                     width: "100%",
                 }),
-                option: (provided) => ({
+                option: (provided, state) => ({
                     ...provided,
+                    backgroundColor: state.isSelected ? 'var(--main-hover-primary-color)' : state.isFocused ? 'var(--input-hover-primary-color)' : 'transparent',
                     '&:hover': {
-                        backgroundColor: 'var(--main-hover-secondary-color)',
+                        backgroundColor: 'var(--main-hover-primary-color)',
                         color: "#fff"
                     },
+                    color: state.isSelected ? "var(--text-primary-color) !important" : "var(--text-secondary-color) !important"
                 }),
                 dropdownIndicator: (provided) => ({
                     ...provided,

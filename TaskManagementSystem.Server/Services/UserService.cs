@@ -14,16 +14,18 @@ namespace TaskManagementSystem.Server.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _mailService;
         private readonly IValidationService _validationService;
+        private readonly IRoleService _roleService;
         private readonly AppDbContext _dbContext;
 
 
-        public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender mailService, IValidationService validationService)
+        public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender mailService, IValidationService validationService, IRoleService roleService)
         {
             this._dbContext = dbContext;
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._mailService = mailService;
             this._validationService = validationService;
+            this._roleService = roleService;
         }
 
         public async Task<ResultViewModel> RegisterUser(UserRegisterViewModel model)
@@ -96,14 +98,43 @@ namespace TaskManagementSystem.Server.Services
             }
         }
 
-        public async Task<List<ApplicationUser>> GetUsers()
+        public class UserWithRoles
         {
+            public int? id { get; set; }
+            public string? userName { get; set; }
+            public string? email { get; set; }
+            public bool emailConfirmed { get; set; }
+            public string? phoneNumber { get; set; }
+            public DateTime createdAt { get; set; }
+            public List<string?> roles { get; set; }   
+        }
+
+        public async Task<List<UserWithRoles>> GetUsers()
+        {
+            List<UserWithRoles> users = new List<UserWithRoles>();
             int clientId = _validationService.GetAuthenticatedClientId();
             if (clientId == 0)
             {
                 return [];
             }
-            List<ApplicationUser> users = await _dbContext.Users.Where(x => x.ClientId == clientId).ToListAsync();
+            List<ApplicationUser> allUsers = await _dbContext.Users.Where(x => x.ClientId == clientId).ToListAsync();
+            foreach (var user in allUsers)
+            {
+               List<ApplicationRole> userRoles = await  _roleService.GetUserRoles(user.Id);
+                users.Add(new UserWithRoles
+                {
+                    id = user.Id,
+                    userName = user.UserName,
+                    email = user.Email,
+                    emailConfirmed = user.EmailConfirmed,
+                    phoneNumber = user.PhoneNumber,
+                    createdAt = user.createdAt,
+                    roles = userRoles.Select(x => x.Name).ToList()
+                });
+            }
+
+
+
             return users;
         }
 
