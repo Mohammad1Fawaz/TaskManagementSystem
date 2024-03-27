@@ -142,7 +142,7 @@ const Users = ({ setSelectedItem }) => {
                     const userDataToUpdate = { ...updatedUserData };
                     const updateFormData = {
                         email: userDataToUpdate.email,
-                        password: userDataToUpdate.passwordHash,
+                        password: "---------------",
                         name: userDataToUpdate.userName,
                         phoneNumber: userDataToUpdate.phoneNumber,
                         phoneCode: '+961',
