@@ -11,7 +11,7 @@
     --main-hover-secondary-color: #eff7ff;
     --main-focus-primary-color: #44e6a2;
     --main-focus-secondary-color: #44e6a2;
-    --main-background-primary-color: #fff;
+    --main-background-primary-color: #f7f8f9;
     --main-background-secondary-color: #fff;
     /* main */
     /* text */
@@ -73,6 +73,7 @@ input[type="number"] {
 .odd-row {
     background-color: transparent !important;
 }
+
 
 .header-class {
     background-color: var(--main-hover-primary-color) !important;

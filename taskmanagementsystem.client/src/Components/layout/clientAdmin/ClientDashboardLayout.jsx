@@ -122,7 +122,7 @@ const ClientDashboardLayout = ({ children }) => {
             '--main-hover-secondary-color': '#eff7ff',
             '--main-focus-primary-color': '#44e6a2',
             '--main-focus-secondary-color': '#44e6a2',
-            '--main-background-primary-color': '#fff',
+            '--main-background-primary-color': '#f7f8f9',
             '--main-background-secondary-color': '#fff',
             '--text-primary-color': '#626262',
             '--text-secondary-color': '#626262',
@@ -198,13 +198,13 @@ const ClientDashboardLayout = ({ children }) => {
     const handleThemeToggle = () => {
         setDarkTheme(!darkTheme);
         setCustomThemeColors(darkTheme ? getDefaultColors() : {
-            '--main-hover-primary-color': '#002445',
-            '--main-hover-secondary-color': '#0c1c2c',
+            '--main-hover-primary-color': '#2c5274',
+            '--main-hover-secondary-color': '#293e51',
             '--main-focus-primary-color': '#44e6a2',
             '--main-focus-secondary-color': '#44e6a2',
-            '--main-background-primary-color': '#101418',
+            '--main-background-primary-color': '#2c2f3e',
             '--main-background-secondary-color': '#fff',
-            '--text-primary-color': '#fff',
+            '--text-primary-color': '#ffffffcc',
             '--text-secondary-color': '#626262',
             '--button-primary-color': '#66b2ff',
             '--button-secondary-color': '#66b2ff',

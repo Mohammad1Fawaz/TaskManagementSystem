@@ -96,7 +96,6 @@ const useFetch = (method, endPoint, requestData = {}, fetchDirectly = false, que
         },
     });
 
-            setData(responseData);
 
     const handleRequest = async () => {
         try {

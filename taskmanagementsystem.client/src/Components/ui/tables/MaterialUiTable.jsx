@@ -54,7 +54,7 @@ export default function MaterialUiTable({ columns, rows, isLoadingForData, dateT
     };
 
     return (
-        <div style={{ height: 400, width: '100%'}}>
+        <div style={{ width: '100%' }}>
             <DataGrid
                 rows={rows ?? rows.map((user) => ({ ...user, id: user.id }))}
                 columns={columns.map((column, index) => ({
