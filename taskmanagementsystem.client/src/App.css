@@ -96,3 +96,6 @@ input[type="number"] {
 .swal2-content {
     color: var(--text-primary-color);
 }
+.css-1l8j5k8 {
+    background-color: var(--main-background-primary-color) !important;
+}
