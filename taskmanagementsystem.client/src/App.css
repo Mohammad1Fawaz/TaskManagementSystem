@@ -11,12 +11,12 @@
     --main-hover-secondary-color: #eff7ff;
     --main-focus-primary-color: #44e6a2;
     --main-focus-secondary-color: #44e6a2;
-    --main-background-primary-color: #fff;
+    --main-background-primary-color: #f7f8f9;
     --main-background-secondary-color: #fff;
     /* main */
     /* text */
     --text-primary-color: #626262;
-    --text-secondary-color: #626262;
+    --text-secondary-color: #66b2ff;
     /* text */
     /* button */
     --button-primary-color: #66b2ff;
@@ -74,6 +74,7 @@ input[type="number"] {
     background-color: transparent !important;
 }
 
+
 .header-class {
     background-color: var(--main-hover-primary-color) !important;
 }
@@ -82,4 +83,19 @@ input[type="number"] {
 }
 .MuiDataGrid-columnHeaders {
     background-color: var(--main-hover-primary-color);
+}
+/* Custom styles for SweetAlert modal */
+.swal2-popup {
+    background-color: var(--main-background-primary-color);
+}
+
+.swal2-title {
+    color: var(--text-primary-color);
+}
+
+.swal2-content {
+    color: var(--text-primary-color);
+}
+.css-1l8j5k8 {
+    background-color: var(--main-background-primary-color) !important;
 }

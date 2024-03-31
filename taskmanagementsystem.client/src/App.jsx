@@ -15,7 +15,9 @@ import RoleService from './Services/RoleService';
 import ClientVerificationPage from './pages/ClientVerificationPage';
 import Developer from './pages/DeveloperPage';
 import { CircularProgress } from '@mui/material/index';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
+const queryClient = new QueryClient();
 
 function App() {
     const PrivateRoute = ({ element, requiredRoles }) => {
@@ -59,22 +61,24 @@ function App() {
     };
 
     return (
-        <Router>
-            <ToastContainer autoClose={false} />
-            <main className="w-full h-full overflow-x-hidden">
-                <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<SignupPage />} />
-                    <Route path="/VerificationPage" element={<VerificationPage />} />
-                    <Route path="/ClientVerificationPage" element={<ClientVerificationPage />} />
-                    <Route path="/AccessDenied" element={<AccessDeniedPage />} />
-                    <Route path="/ResetPassword" element={<ResetPasswordPage />} />
-                    <Route path="/ClientAdmin" element={<PrivateRoute element={<ClientAdminPage />} requiredRoles={['ClientAdmin']} />} />
-                    <Route path="/Developer" element={<PrivateRoute element={<Developer />} requiredRoles={['User']} />} />
-                </Routes>
-            </main>
-        </Router>
+        <QueryClientProvider client={queryClient}>
+            <Router>
+                <ToastContainer autoClose={false} />
+                <main className="w-full h-full overflow-x-hidden">
+                    <Routes>
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<SignupPage />} />
+                        <Route path="/VerificationPage" element={<VerificationPage />} />
+                        <Route path="/ClientVerificationPage" element={<ClientVerificationPage />} />
+                        <Route path="/AccessDenied" element={<AccessDeniedPage />} />
+                        <Route path="/ResetPassword" element={<ResetPasswordPage />} />
+                        <Route path="/ClientAdmin" element={<PrivateRoute element={<ClientAdminPage />} requiredRoles={['ClientAdmin']} />} />
+                        <Route path="/Developer" element={<PrivateRoute element={<Developer />} requiredRoles={['User']} />} />
+                    </Routes>
+                </main>
+            </Router>
+        </QueryClientProvider>
     );
 }
 

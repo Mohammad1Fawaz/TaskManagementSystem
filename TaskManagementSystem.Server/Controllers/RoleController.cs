@@ -30,7 +30,7 @@ namespace TaskManagementSystem.Server.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Registration failed. Invalid data.",
+                        message = "Addition failed. Invalid data.",
                         errors = ModelState.Values
                            .Where(v => v.Errors.Count > 0)
                            .ToDictionary(
@@ -66,7 +66,7 @@ namespace TaskManagementSystem.Server.Controllers
         {
             try
             {
-                List<ApplicationRole>? roles = _roleService.GetRoles()?.Result;
+                List<ApplicationRole>? roles = _roleService.GetAllCreatedRoles()?.Result;
                 return Ok(roles);
 
             }
@@ -83,6 +83,33 @@ namespace TaskManagementSystem.Server.Controllers
             try
             {
                 var registrationResult = _roleService.DeleteRole(roleId);
+
+                if (registrationResult.Result.success)
+                {
+                    return Ok(new { success = registrationResult.Result.success, message = registrationResult.Result.message });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        success = registrationResult.Result.success,
+                        message = registrationResult.Result.message
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("edit-role/{roleId}")]
+        public IActionResult EditRole(string roleId , List<string> claims)
+        {
+            try
+            {
+                var registrationResult = _roleService.EditRole(roleId, claims);
 
                 if (registrationResult.Result.success)
                 {

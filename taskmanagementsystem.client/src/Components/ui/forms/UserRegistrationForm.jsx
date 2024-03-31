@@ -90,8 +90,8 @@ const UserRegistrationForm = () => {
     };
 
     return (
-        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-fixed bg-cover bg-center">
-            <div className="col-sm-6 col-md-4 ml-[150px] shadow bg-white p-4 rounded h-auto">
+        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-contain bg-right">
+            <div className="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4  mx-[5%] shadow bg-white p-4 rounded h-auto">
                 <div className="w-full flex-center mb-2">
                     <MainLogo className="w-[40%]" />
                 </div>

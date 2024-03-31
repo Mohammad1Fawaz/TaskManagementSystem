@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
@@ -26,6 +28,10 @@ namespace TaskManagementSystem.Server.Services
             if (string.IsNullOrEmpty(roleValue) || roleValue != "ClientAdmin")
             {
                 return new ResultViewModel(false, "You don't have permission to Add roles");
+            }
+            if (string.IsNullOrEmpty(roleName))
+            {
+                return new ResultViewModel(false, "Role name is required");
             }
             ApplicationRole? role = await _roleManager.FindByNameAsync(roleName);
             int clientId = _validationService.GetAuthenticatedClientId();
@@ -75,20 +81,84 @@ namespace TaskManagementSystem.Server.Services
 
             return new ResultViewModel(false, "You don't have permission to Delete roles");
         }
+        public async Task<ResultViewModel> EditRole(string roleId, List<string> claims)
+        {
+            string? roleValue = _validationService.GetUserRole();
+            if (string.IsNullOrEmpty(roleValue) || roleValue != "ClientAdmin")
+            {
+                return new ResultViewModel(false, "You don't have permission to edit roles");
+            }
+
+            ApplicationRole? role = await _roleManager.FindByIdAsync(roleId);
+            if (role == null)
+            {
+                return new ResultViewModel(false, "Role not found");
+            }
+
+            var existingClaims = await _roleManager.GetClaimsAsync(role);
+            var newClaims = claims.Select(claim => new Claim("your_claim_type", claim)).ToList();
+
+            var claimsToRemove = existingClaims.Where(ec => !newClaims.Any(nc => ec.Value == nc.Value)).ToList();
+            foreach (var claimToRemove in claimsToRemove)
+            {
+                await _roleManager.RemoveClaimAsync(role, claimToRemove);
+            }
+
+            var claimsToAdd = newClaims.Where(nc => !existingClaims.Any(ec => ec.Value == nc.Value)).ToList();
+            foreach (var claimToAdd in claimsToAdd)
+            {
+                await _roleManager.AddClaimAsync(role, claimToAdd);
+            }
+
+            return new ResultViewModel(true, "Role updated successfully");
+        }
 
 
-        public Task<List<ApplicationRole>>? GetRoles()
+
+        public async Task<List<ApplicationRole>> GetAllCreatedRoles()
         {
             int clientId = _validationService.GetAuthenticatedClientId();
 
             if (clientId != 0)
             {
-                List<ApplicationRole> roles = _roleManager.Roles.Where(x => x.UserId == clientId && x.Name != "ClientAdmin").ToList();
-                return Task.FromResult(roles);
+                List<ApplicationRole> roles = await  _roleManager.Roles.Where(x => x.UserId == clientId && x.Name != "ClientAdmin").ToListAsync();
+                return roles;
             }
 
-            return null;
+            return new List<ApplicationRole>();
         }
+        public async Task<List<ApplicationRole>> GetUserRoles(int userId)
+        {
+            int clientId = _validationService.GetAuthenticatedClientId();
+
+            if (clientId != 0)
+            {
+                ApplicationUser? user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.ClientId == clientId);
+
+                if (user != null)
+                {
+                    List<ApplicationRole> roles = new List<ApplicationRole>();
+
+                    List<int> roleIds = await _dbContext.UserRoles
+                        .Where(x => x.UserId == userId)
+                        .Select(r => r.RoleId)
+                        .ToListAsync();
+
+                    foreach (int roleId in roleIds)
+                    {
+                        ApplicationRole? role = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Id == roleId);
+                        if (role != null)
+                        {
+                            roles.Add(role);
+                        }
+                    }
+
+                    return roles;
+                }
+            }
+            return new List<ApplicationRole>();
+        }
+
 
         public string GetUserRole()
         {
@@ -96,25 +166,25 @@ namespace TaskManagementSystem.Server.Services
             return !string.IsNullOrEmpty(role) ? role : "";
         }
 
-        public Task<List<IdentityRoleClaim<int>>>? GetRolesPermission()
+        public async Task<List<IdentityRoleClaim<int>>> GetRolesPermission()
         {
             string? roleValue = _validationService.GetUserRole();
 
             if (string.IsNullOrEmpty(roleValue) || roleValue != "ClientAdmin")
             {
-                return null;
+                return new List<IdentityRoleClaim<int>>();
             }
 
             int clientId = _validationService.GetAuthenticatedClientId();
 
             if (clientId == 0)
             {
-                return null;
+                return new List<IdentityRoleClaim<int>>();
 
             }
 
-            List<IdentityRoleClaim<int>> allClaims = _dbContext.RoleClaims.ToList();
-            return Task.FromResult(allClaims);
+            List<IdentityRoleClaim<int>> allClaims = await _dbContext.RoleClaims.ToListAsync();
+            return allClaims;
         }
 
 

@@ -37,12 +37,24 @@ export default function MaterialUiTable({ columns, rows, isLoadingForData, dateT
                 minute: '2-digit',
                 second: '2-digit',
             });
+        } else if (Array.isArray(params.value)) {
+            return (
+                <div>
+                    {params.value.map((item, index) => (
+                        <React.Fragment key={index}>
+                            {item + (index % 2 == 0 ? "|" : "")} 
+                            <br />
+                        </React.Fragment>
+                    ))}
+                </div>
+            );
         }
+
         return params.value;
     };
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ width: '100%' }}>
             <DataGrid
                 rows={rows ?? rows.map((user) => ({ ...user, id: user.id }))}
                 columns={columns.map((column, index) => ({

@@ -142,7 +142,7 @@ const Users = ({ setSelectedItem }) => {
                     const userDataToUpdate = { ...updatedUserData };
                     const updateFormData = {
                         email: userDataToUpdate.email,
-                        password: userDataToUpdate.passwordHash,
+                        password: "---------------",
                         name: userDataToUpdate.userName,
                         phoneNumber: userDataToUpdate.phoneNumber,
                         phoneCode: '+961',
@@ -244,7 +244,7 @@ const Users = ({ setSelectedItem }) => {
             headerName: 'Phone Number',
             description: '',
             sortable: false,
-            width: 200,
+            width: 150,
         },
         {
             field: 'createdAt',
@@ -252,6 +252,13 @@ const Users = ({ setSelectedItem }) => {
             description: '',
             sortable: true,
             width: 200,
+        },
+        {
+            field: 'roles',
+            headerName: 'Roles',
+            description: '',
+            sortable: true,
+            width: 100,
         },
         {
             field: 'Action',

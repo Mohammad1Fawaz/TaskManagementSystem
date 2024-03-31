@@ -74,7 +74,6 @@ const UserService = {
     editUser: async (userId, userData) => {
         try {
             const token = AuthService.getToken();
-            console.log(userData);
             const response = await fetch(`${apiBaseUrl}/User/edit-user`, {
                 method: 'POST',
                 headers: {
@@ -83,7 +82,6 @@ const UserService = {
                 },
                 body: JSON.stringify(userData),
             });
-            console.log("response", response);
 
             return await response.json();
         } catch (error) {

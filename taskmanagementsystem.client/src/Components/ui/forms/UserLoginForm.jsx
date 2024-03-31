@@ -7,7 +7,7 @@ import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
 import HelpersService from '../../../Services/HelpersService';
 import MainLogo from '../images/MainLogo';
-
+import useFetch from '../../../hooks/useFetch';
 const UserLoginForm = () => {
     let navigate = useNavigate();
 
@@ -17,11 +17,11 @@ const UserLoginForm = () => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
+    const { fetchQuery, handleRequest } = useFetch("POST", "Auth/login", formData, false, "login-query", {}, false);
 
     const reset = () => {
         setFormData(initialFormData);
@@ -36,40 +36,42 @@ const UserLoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
+        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
+        console.log("fetchQuery",fetchQuery);
+        setIsLoading(isLoading);
         try {
-            const result = await AuthService.login(formData);
-
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
-                AuthService.saveToken(result.token);
+            if (isSuccess) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(isLoading);
+                AuthService.saveToken(data.token);
                 reset();
-                const userRole = await RoleService.getUserRoles(result.token);
+                const userRole = await RoleService.getUserRoles(data.token);
                 if (userRole == "ClientAdmin") {
                     navigate('/ClientAdmin');
                 } else {
                     navigate('/Developer');
                 }
             } else {
-                if (result.errors) {
-                    setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPasswordNameValidationMessage(result.errors.password && result.errors.password[0]);
+                if (errors) {
+                    setEmailNameValidationMessage(errors.email && errors.email[0]);
+                    setPasswordNameValidationMessage(errors.password && errors.password[0]);
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
+                if (isError && error) {
+                    HelpersService.notify(error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(isLoading);
             }
+
         } catch (error) {
             HelpersService.notify('Error during Login', "error");
             console.log(error);
-            setIsLoading(false);
+            setIsLoading(isLoading);
         }
     };
+  
     return (
-        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-fixed bg-cover bg-center">
-            <div className="col-sm-6 ml-[150px] col-md-4 shadow bg-white p-4 rounded h-auto">
+        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-contain bg-right">
+            <div className="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4  mx-[5%] shadow bg-white p-4 rounded h-auto">
                 <div className="w-full flex-center mb-2">
                     <MainLogo className="w-[40%]" />
                 </div>
