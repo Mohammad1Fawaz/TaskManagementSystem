@@ -8,6 +8,7 @@ import MediumLogo from "../images/MainLogo";
 import DangerButton from '../buttons/DangerButton';
 import PhoneInput from "../inputs/PhoneInput";
 import TextInput from '../inputs/TextInput';
+import useFetch from '../../../hooks/useFetch';
 
 export default function UserResetPasswordForm() {
     let navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function UserResetPasswordForm() {
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
     const [countries, setCountries] = useState([]);
-
+    const { fetchQuery, handleRequest } = useFetch("POST", "Client/reset-password", formData, false, "register-query", {}, false);
     useEffect(() => {
         const fetchCountries = async () => {
             try {
@@ -55,28 +56,30 @@ export default function UserResetPasswordForm() {
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
+        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
+        console.log("fetchQuery",fetchQuery);
+        setIsLoading(isLoading);
         try {
-            const result = await ClientService.resetPasswordClient(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            if (isSuccess) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(isLoading);
                 reset(initialFormData);
 
                 navigate('/login');
             } else {
-                if (result.errors) {
-                    setEmailValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPhoneNumberValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+                if (errors) {
+                    setEmailValidationMessage(errors.email && errors.email[0]);
+                    setPhoneNumberValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
 
                 }
-                if (result.error) {
-                    HelpersService.notify(result.error, "error");
+                if (isError && error) {
+                    HelpersService.notify(error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(isLoading);
             }
         } catch (err) {
             HelpersService.notify('Error during resseting the password', "error");
-            setIsLoading(false);
+            setIsLoading(isLoading);
         }
     }
 

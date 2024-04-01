@@ -9,7 +9,7 @@ import MainLogo from '../images/MainLogo';
 import PhoneInput from '../inputs/PhoneInput';
 import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
-
+import useFetch from '../../../hooks/useFetch';
 const UserRegistrationForm = () => {
     const initialFormData = {
         companyName: '',
@@ -26,6 +26,7 @@ const UserRegistrationForm = () => {
     const [userPhoneNumberValidationMessage, setPhoneNumberNameValidationMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [countries, setCountries] = useState([]);
+    const { fetchQuery, handleRequest } = useFetch("POST", "Client/register", formData, false, "register-query", {}, false);
 
     useEffect(() => {
         const fetchCountries = async () => {
@@ -62,30 +63,32 @@ const UserRegistrationForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
+        console.log("fetchQuery",fetchQuery);
+        setIsLoading(isLoading);
         try {
-            const result = await ClientService.registerClient(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
-                const token = result.token;
+            if (isSuccess) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(isLoading);
+                const token = data.token;
                 AuthService.saveToken(token);
                 reset();
                 //navigate to page ...
             } else {
-                if (result.errors) {
-                    setCompanyNameValidationMessage(result.errors.companyName && result.errors.companyName[0]);
-                    setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPasswordNameValidationMessage(result.errors.password && result.errors.password[0]);
-                    setPhoneNumberNameValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+                if (errors) {
+                    setCompanyNameValidationMessage(errors.companyName && errors.companyName[0]);
+                    setEmailNameValidationMessage(errors.email && errors.email[0]);
+                    setPasswordNameValidationMessage(errors.password && errors.password[0]);
+                    setPhoneNumberNameValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
                 }
-                if (result.existUser) {
-                    HelpersService.notify(result.message, "error");
+                if (isError && error) {
+                    HelpersService.notify(error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(isLoading);
             }
         } catch (error) {
             HelpersService.notify('Error during registration', "error");
-            setIsLoading(false);
+            setIsLoading(isLoading);
         }
     };
 

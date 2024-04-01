@@ -6,6 +6,7 @@ import UserService from '../../../Services/UserService';
 import TextInput from '../inputs/TextInput';
 import PrimaryButton from '../buttons/PrimaryButton';
 import MainLogo from '../images/MainLogo';
+import useFetch from '../../../hooks/useFetch';
 
 const VerificationForm = ({ onSubmit }) => {
 
@@ -21,7 +22,7 @@ const VerificationForm = ({ onSubmit }) => {
     const [formData, setFormData] = useState(initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
     const [userVerificationPageValidationMessage, setUserVerificationPageValidationMessage] = useState('');
-
+    const { fetchQuery, handleRequest } = useFetch("POST", "User/verify-user", formData, false, "register-query", {}, false);
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -29,26 +30,26 @@ const VerificationForm = ({ onSubmit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
+        console.log("fetchQuery",fetchQuery);
+        setIsLoading(isLoading);
         try {
-            const result =await UserService.verifyUser(formData);
-            console.log(result);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            if (isSuccess) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(isLoading);
                 navigate('/login');
             } else {
-                if (result.errors) {
-                    console.log(result.errors);
-                    setUserEmailValidationMessage(result.errors.Email && result.errors.Email[0]);
-                    setUserVerificationPageValidationMessage(result.errors.VerificationCode && result.errors.VerificationCode[0]);
+                if (errors) {
+                    setUserEmailValidationMessage(errors.Email && errors.Email[0]);
+                    setUserVerificationPageValidationMessage(errors.VerificationCode && errors.VerificationCode[0]);
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
+                if (isError && error) {
+                    HelpersService.notify(error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(isLoading);
             }
         } catch (error) {
-            setIsLoading(false);
+            setIsLoading(isLoading);
             console.error('Error fetching verification code:', error.message);
         }
     };
