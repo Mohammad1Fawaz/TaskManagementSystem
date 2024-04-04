@@ -24,7 +24,7 @@ export default function UserResetPasswordForm() {
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
     const [countries, setCountries] = useState([]);
-    const { fetchQuery, handleRequest } = useFetch("POST", "Client/reset-password", formData, false, "register-query", {}, false);
+    const { fetchQuery, handleRequest } = useFetch("POST", "Client/reset-password", formData, false, "reset-query", {}, false);
     useEffect(() => {
         const fetchCountries = async () => {
             try {

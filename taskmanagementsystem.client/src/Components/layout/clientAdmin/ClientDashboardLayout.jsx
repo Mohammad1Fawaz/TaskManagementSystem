@@ -32,7 +32,7 @@ import Users from './Users';
 import HelpersService from '../../../Services/HelpersService';
 import Swal from 'sweetalert2';
 import AuthService from '../../../Services/AuthService';
-
+import useFetch from '../../../hooks/useFetch';
 const drawerWidth = 240;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -106,6 +106,7 @@ const ClientDashboardLayout = ({ children }) => {
     const [customThemeColors, setCustomThemeColors] = useState(getSavedColors());
     const theme = useTheme();
     const navigate = useNavigate();
+    const { fetchQuery, handleRequest } = useFetch("POST", "Auth/logout",{}, false, "logout-query", {}, true);
     useEffect(() => {
         applyCustomTheme();
         saveColors();
@@ -156,14 +157,14 @@ const ClientDashboardLayout = ({ children }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await AuthService.logout();
-                    if (result.success) {
+                    const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
+                    if (isSuccess) {
                         AuthService.clearToken();
-                        HelpersService.notify(result.message, "success");
+                        HelpersService.notify(data.message, "success");
                         navigate('/login');
                     } else {
-                        if (result.message) {
-                            HelpersService.notify(result.message, "error");
+                        if (isError && error) {
+                            HelpersService.notify(error, "error");
                         }
                     }
                 } catch (error) {

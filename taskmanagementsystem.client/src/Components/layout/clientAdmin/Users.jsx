@@ -14,7 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-
+import useFetch from "../../../hooks/useFetch";
 
 const Users = ({ setSelectedItem }) => {
     const initialFormData = {
@@ -38,29 +38,31 @@ const Users = ({ setSelectedItem }) => {
     const [permissions, setpermissions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleteLoading, setIsDeleteIsLoading] = useState(false);
-
-
+    const { fetchCountries, handleRequest: getCountries } = useFetch("GET","constants/countries",{},false,"countries-query",{},false);
+    const { fetchRoles, handleRequest: getRoles } = useFetch("POST","Role/get-roles",{},false,"roles-query",{},true);
+    const { fetchUsers, handleRequest: getUsers } = useFetch("POST","User/get-users",{},false,"users-query",{},true);
+    const { fetchRegister, handleRequest: registerUser } = useFetch("POST","User/register",formData,false,"register-query",{},true);
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await ConstantsService.getCountries();
-                setCountries(response);
+                const { data } = await getCountries();
+                setCountries(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
         };
         const fetchRoles = async () => {
             try {
-                const response = await RoleService.getRoles();
-                setpermissions(response);
+                const { data } = await getRoles();
+                setpermissions(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
         };
         const fetchUsers = async () => {
             try {
-                const response = await UserService.getUsers();
-                setUsers(response);
+                const { data } = await getUsers();
+                setUsers(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -171,25 +173,25 @@ const Users = ({ setSelectedItem }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const result = await UserService.registerUser(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            const { data, isLoading, isSuccess, isError, error, errors } = await registerUser();
+            if (isSuccess) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(isLoading);
                 reset();
             } else {
-                if (result.errors) {
-                    setUserNameValidationMessage(result.errors.name && result.errors.name[0]);
-                    setUserEmailValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPasswordValidationMessage(result.errors.password && result.errors.password[0]);
-                    setUserPhoneValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+                if (errors) {
+                    setUserNameValidationMessage(errors.name && errors.name[0]);
+                    setUserEmailValidationMessage(errors.email && errors.email[0]);
+                    setPasswordValidationMessage(errors.password && errors.password[0]);
+                    setUserPhoneValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
+                if (data.message) {
+                    HelpersService.notify(data.message, "error");
                 }
-                if (result.errorMessage) {
-                    HelpersService.notify(result.errorMessage, "error");
+                if (isError && error) {
+                    HelpersService.notify(error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(isLoading);
             }
         } catch (error) {
             HelpersService.notify('Error during registration', "error");
