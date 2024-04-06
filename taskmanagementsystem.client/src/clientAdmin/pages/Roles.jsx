@@ -170,13 +170,13 @@ const Roles = () => {
                         />
                     </div>   
                 </div>
-                <div className="w-full flex-end">
-                    <PrimaryButton isLoading={isLoading} type="submit" text="Add Role" width="w-[100px] text-[15px] " />
+                <div className="flex ml-auto justify-end mt-2 xs:w-full lg:w-[120px]">
+                    <PrimaryButton isLoading={isLoading} type="submit" text="Add Role" className="w-[120px] text-[15px] xs:w-full" />
                 </div>
             </form>
-            <div className="mt-5 flex gap-x-1 gap-y-7 flex-wrap rounded-2 p-1">
+            <div className="mt-5 w-full flex justify-between flex-wrap rounded-2 p-1">
                 {roles && roles.map((role) => (
-                    <div key={role.id} className="sm:w-[100%] md:w-[48%] lg:w-[48%] xl:w-[33%] border p-1 shadow rounded-3">
+                    <div key={role.id} className="mb-3 xs:w-[100%] lg:w-[48%] xl:w-[33%] border p-1 shadow rounded-3">
                         {claims &&
                             <NestedCheckboxRoles
                                 parentName={role.name}

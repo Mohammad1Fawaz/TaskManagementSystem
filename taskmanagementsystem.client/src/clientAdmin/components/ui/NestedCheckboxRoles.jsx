@@ -73,12 +73,26 @@ const NestedCheckboxRoles = ({ parentName,parentId, children, onRoleUpdate, hand
                 </div>
 
             </div>
-            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, ml: 1 }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: 2,
+                    ml: 1,  
+                    '@media (max-width: 600px)': {
+                        flexDirection: 'row !important',
+                    },
+                    '@media (min-width: 961px)': {
+                        flexDirection: 'column !important',
+                    }
+                }}>
                 <div className="row">
                     {children.map((child) => (
-                        <div key={child.id} className="col-6 pr-1">
+                        <div key={child.id} className="col-6 pr-1 ">
                             <FormControlLabel
                                 key={child.id}
+                                className="!text-[10px]"
                                 label={child.claimValue}
                                 control={
                                     <Checkbox
@@ -95,6 +109,15 @@ const NestedCheckboxRoles = ({ parentName,parentId, children, onRoleUpdate, hand
                                 }
                                 sx={{
                                     color: "var(--text-primary-color)",
+                                    '@media (max-width: 600px)': {
+                                        fontSize: '12px !important',
+                                    },
+                                    '@media (min-width: 601px) and (max-width: 960px)': {
+                                        fontSize: '14px !important',
+                                    },
+                                    '@media (min-width: 961px)': {
+                                        fontSize: '15px !important',
+                                    },
                                 }}
                             />
                         </div>

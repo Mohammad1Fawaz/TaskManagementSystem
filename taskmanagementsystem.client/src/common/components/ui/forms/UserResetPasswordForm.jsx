@@ -84,8 +84,8 @@ export default function UserResetPasswordForm() {
         navigate(-1);
     }
 
-    return (<div className="flex-center w-full h-full bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-fixed bg-cover bg-center">
-        <div className="col-sm-6 col-md-3 shadow bg-white p-4 rounded h-auto">
+    return (
+        <>
             <div className="w-full flex-center mb-2">
                 <MediumLogo className="w-[40%]" />
             </div>
@@ -107,6 +107,6 @@ export default function UserResetPasswordForm() {
                     <PrimaryButton isLoading={isLoading} text="Verify" type="submit" className="w-1/2" />
                 </div>
             </form>
-        </div>
-    </div>);
+        </>
+    );
 }

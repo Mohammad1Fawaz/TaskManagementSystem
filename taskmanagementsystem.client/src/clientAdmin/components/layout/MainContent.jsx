@@ -7,7 +7,7 @@ import Roles from '../../pages/Roles';
 
 const MainContent = ({ selectedItem, setNotifications }) => {
     return (
-        <Box component="main" className="flex-grow mt-4 p-4 pt-5 bg-[var(--main-background-primary-color)] min-h-[100vh]">
+        <Box component="main" className="flex-grow mt-4 p-4 pt-5 bg-[var(--main-background-primary-color)] w-[40vh] min-h-[100vh]">
             {selectedItem === 0 && (
                 <div>
                     <Users setNotifications={setNotifications} />

@@ -53,20 +53,18 @@ const VerificationForm = ({ onSubmit }) => {
     };
 
     return (
-        <div className="flex-center w-full h-full bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-fixed bg-cover bg-center">
-            <div className="col-sm-6 col-md-3 shadow bg-white p-4 rounded h-auto">
-                <div className="w-full flex-center mb-2">
-                    <MainLogo />
-                </div>
-                <form onSubmit={handleSubmit}>
-                    <small className="text-danger text-xs">{userEmailValidationMessage}</small>
-                    <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
-                    <small className="text-danger text-xs">{userVerificationPageValidationMessage}</small>
-                    <TextInput type="text" name="verificationCode" className="mb-3 relative" placeholder="VerificationCode" value={formData.verificationCode} onChange={handleInputChange} icon="fa-envelope" />
-                    <PrimaryButton isLoading={isLoading} text="Verify" type="submit" />
-                </form>
+        <>
+            <div className="w-full flex-center mb-2">
+                <MainLogo className="w-[40%]" />
             </div>
-        </div>
+            <form onSubmit={handleSubmit}>
+                <small className="text-danger text-xs">{userEmailValidationMessage}</small>
+                <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
+                <small className="text-danger text-xs">{userVerificationPageValidationMessage}</small>
+                <TextInput type="text" name="verificationCode" className="mb-3 relative" placeholder="VerificationCode" value={formData.verificationCode} onChange={handleInputChange} icon="fa-envelope" />
+                <PrimaryButton isLoading={isLoading} text="Verify" type="submit" className="w-full" />
+            </form>
+        </>
     );
 };
 

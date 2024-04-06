@@ -16,6 +16,7 @@ const ClientAdminDashboardService = () => {
     const [darkTheme, setDarkTheme] = useState(false);
     const [customThemeColors, setCustomThemeColors] = useState(getSavedColors());
     const [anchorEl, setAnchorEl] = useState(null);
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const openPopover = Boolean(anchorEl);
     const navigate = useNavigate();
 
@@ -36,7 +37,25 @@ const ClientAdminDashboardService = () => {
         return () => {
             realTimeConnection.off("receiveNotification");
         };
+
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+
     }, [customThemeColors]);
+
+    useEffect(() => {
+        if (screenWidth < 960) {
+            setOpen(false);
+        } else {
+            setOpen(true);
+        }
+    }, [screenWidth]);
+
 
     const GetNotifications = async () => {
         try {
@@ -68,8 +87,8 @@ const ClientAdminDashboardService = () => {
         return {
             '--main-hover-primary-color': '#a4d1ff',
             '--main-hover-secondary-color': '#eff7ff',
-            '--main-focus-primary-color': '#44e6a2',
-            '--main-focus-secondary-color': '#44e6a2',
+            '--main-focus-primary-color': '#626262',
+            '--main-focus-secondary-color': '#626262',
             '--main-background-primary-color': '#f7f8f9',
             '--main-background-secondary-color': '#fff',
             '--text-primary-color': '#626262',

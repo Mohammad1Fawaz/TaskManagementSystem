@@ -90,34 +90,32 @@ const UserRegistrationForm = () => {
     };
 
     return (
-        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-contain bg-right">
-            <div className="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4  mx-[5%] shadow bg-white p-4 rounded h-auto">
-                <div className="w-full flex-center mb-2">
-                    <MainLogo className="w-[40%]" />
-                </div>
-                <form onSubmit={handleSubmit}>
-                    <small className="text-danger text-xs">{userEmailValidationMessage}</small>
-                    <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
-                    <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
-                    <PasswordInput value={formData.password} className="mb-3 relative" onChange={handleInputChange} />
-                    <small className="text-danger text-xs">{companyNameValidationMessage}</small>
-                    <TextInput type="text" name="companyName" className="mb-3 relative" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} icon="fa-building" />
-                    <small className="text-danger text-xs">{userPhoneNumberValidationMessage}</small>
-                    <PhoneInput
-                        countries={countries}
-                        handleInputChange={handleInputChange}
-                        handleSelectChange={handleSelectChange}
-                        phoneNumberValue={formData.phoneNumber}
-                        phoneCodeValue={formData.phoneCode}
-                        className="mb-3 relative flex w-full"
-                    />
-                    <PrimaryButton isLoading={isLoading} text="Register" type="submit" />
-                </form>
-                <div className="mt-3 flex justify-between w-full">
-                    <div className="text-sm text-black">Already have an account? </div><Link to="/login" className="w-fit text-main_color text-sm">Login here.</Link>
-                </div>
+        <>
+            <div className="w-full flex-center mb-2">
+                <MainLogo className="w-[40%]" />
             </div>
-        </div>
+            <form onSubmit={handleSubmit}>
+                <small className="text-danger text-xs">{userEmailValidationMessage}</small>
+                <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
+                <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
+                <PasswordInput value={formData.password} className="mb-3 relative" onChange={handleInputChange} />
+                <small className="text-danger text-xs">{companyNameValidationMessage}</small>
+                <TextInput type="text" name="companyName" className="mb-3 relative" placeholder="Company Name" value={formData.companyName} onChange={handleInputChange} icon="fa-building" />
+                <small className="text-danger text-xs">{userPhoneNumberValidationMessage}</small>
+                <PhoneInput
+                    countries={countries}
+                    handleInputChange={handleInputChange}
+                    handleSelectChange={handleSelectChange}
+                    phoneNumberValue={formData.phoneNumber}
+                    phoneCodeValue={formData.phoneCode}
+                    className="mb-3 relative flex w-full"
+                />
+                <PrimaryButton isLoading={isLoading} text="Register" type="submit" className="w-full" />
+            </form>
+            <div className="mt-3 flex justify-between w-full">
+                <div className="text-sm">Already have an account? </div><Link to="/login" className="w-fit text-main_color text-sm">Login here.</Link>
+            </div>
+        </>
     );
 }
 export default UserRegistrationForm;

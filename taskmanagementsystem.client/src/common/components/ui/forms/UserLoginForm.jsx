@@ -71,24 +71,22 @@ const UserLoginForm = () => {
     };
   
     return (
-        <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-contain bg-right">
-            <div className="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4  mx-[5%] shadow bg-white p-4 rounded h-auto">
-                <div className="w-full flex-center mb-2">
-                    <MainLogo className="w-[40%]" />
-                </div>
-                <form onSubmit={handleSubmit}>
-                    <small className="text-danger text-xs">{userEmailValidationMessage}</small>
-                    <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
-                    <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
-                    <PasswordInput className="mb-1 relative" value={formData.password} onChange={handleInputChange} />
-                    <Link to="/ResetPassword" className="inline-block text-sm text-main_color mb-3 mt-2 w-fit">Forgot password?</Link>
-                    <PrimaryButton isLoading={isLoading} text="Login" type="submit" />
-                </form>
-                <div className="mt-3 flex justify-between w-full">
-                    <div className="text-sm text-black">Don&apos;t have an account? </div><Link to="/register" className="w-fit text-main_color text-sm">Register here.</Link>
-                </div>
+        <>
+            <div className="w-full flex-center mb-2">
+                <MainLogo className="w-[40%]" />
             </div>
-        </div>
+            <form onSubmit={handleSubmit}>
+                <small className="text-danger text-xs">{userEmailValidationMessage}</small>
+                <TextInput type="email" name="email" className="mb-3 relative" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
+                <small className="text-danger text-xs">{userPasswordValidationMessage}</small>
+                <PasswordInput className="mb-1 relative" value={formData.password} onChange={handleInputChange} />
+                <Link to="/ResetPassword" className="inline-block text-sm text-main_color mb-3 mt-2 w-fit">Forgot password?</Link>
+                <PrimaryButton isLoading={isLoading} text="Login" type="submit" className="w-full" />
+            </form>
+            <div className="mt-3 flex justify-between w-full">
+                <div className="text-sm">Don&apos;t have an account? </div><Link to="/register" className="w-fit text-main_color text-sm">Register here.</Link>
+            </div>
+        </>
     );
 }
 export default UserLoginForm;

@@ -218,7 +218,7 @@ const Users = ({ setSelectedItem}) => {
         {
             field: 'userName',
             headerName: 'User Name',
-            width: 160,
+            width: 200,
             editable: true
         },
         {
@@ -247,7 +247,7 @@ const Users = ({ setSelectedItem}) => {
             headerName: 'Phone Number',
             description: '',
             sortable: false,
-            width: 150,
+            width: 200,
         },
         {
             field: 'createdAt',
@@ -261,7 +261,7 @@ const Users = ({ setSelectedItem}) => {
             headerName: 'Roles',
             description: '',
             sortable: true,
-            width: 120,
+            width: 200,
         },
         {
             field: 'Action',
@@ -285,21 +285,21 @@ const Users = ({ setSelectedItem}) => {
 
     return (
         <div className="">
-            <form className="w-full pb-4  flex flex-wrap gap-4 justify-content-between mt-3" onSubmit={handleSubmits}>
-                <div className="w-[45%] relative">
+            <form className="w-full pb-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={handleSubmits}>
+                <div className="relative xs:w-full lg:w-[45%]">
                     <small className="text-danger text-xs absolute top-[-20px]">{userNameValidationMessage}</small>
                     <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={handleInputChange} icon="fa-user" />
                 </div>
-                <div className="w-[45%] relative">
+                <div className="relative xs:w-full lg:w-[45%]">
                     <small className="text-danger text-xs absolute top-[-20px]">{userEmailValidationMessage}</small>
                     <TextInput type="text" className="relative" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
                 </div>
-                <div className="w-[45%] relative ">
+                <div className="relative xs:w-full lg:w-[45%]">
                     <small className="text-danger text-xs absolute top-[-20px]">{userPasswordValidationMessage}</small>
                     <PasswordInput className="relative" name="password" value={formData.password} onChange={handleInputChange} />
                 </div>
 
-                <div className="w-[45%] relative">
+                <div className="relative xs:w-full lg:w-[45%]">
                     <small className="text-danger text-xs absolute top-[-20px]">{userPhoneValidationMessage}</small>
                     <PhoneInput
                         countries={countries}
@@ -310,21 +310,18 @@ const Users = ({ setSelectedItem}) => {
                         className="relative flex w-[100%]"
                     />
                 </div>
-                <div className="w-[45%] ">
+                <div className="relative xs:w-full lg:w-[45%]">
                     <RolesInput
                         permissions={permissions}
                         handleSelectChange={handleRolesSelectChange}
                         className="w-[100%] relative"
                     />
                 </div>
-
-                <div className="d-flex flex-end mt-5">
-                    <PrimaryButton isLoading={isLoading} text="Create user" type="submit" width="120px text-[15px]" />
+                <div className="flex !flex-end sm:w-[45%] relative xs:w-full !mt-2 lg:w-[120px] mt-5">
+                    <PrimaryButton isLoading={isLoading} text="Create user" type="submit" className="w-[120px] text-[15px] xs:w-full" />
                 </div>
             </form>
             <MaterialUiTable columns={columns} rows={users} isLoadingForData={isLoading} dateTimeColumnIndices={[5]} />
-
-
         </div>
     );
 

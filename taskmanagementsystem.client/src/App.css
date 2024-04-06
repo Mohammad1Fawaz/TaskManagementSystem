@@ -9,8 +9,8 @@
     /* main */
     --main-hover-primary-color: #a4d1ff;
     --main-hover-secondary-color: #eff7ff;
-    --main-focus-primary-color: #44e6a2;
-    --main-focus-secondary-color: #44e6a2;
+    --main-focus-primary-color: #626262;
+    --main-focus-secondary-color: #626262;
     --main-background-primary-color: #f7f8f9;
     --main-background-secondary-color: #fff;
     /* main */
@@ -34,10 +34,26 @@
 
 #root {
     font-family: 'Rubik', sans-serif;
-    width: 100% !important;
-    height: 100vh !important;
+    --scrollbar-color: var(--text-primary-color);
 }
 
+::-webkit-scrollbar {
+    width: 5px;
+    scroll-behavior:smooth;
+    height : auto;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
+    border-radius: 5px;
+}
+
+html {
+    scrollbar-color: var(--scrollbar-color) transparent;
+    scrollbar-width: auto !important;
+    scrollbar-gutter:auto !important;
+}
 
 a {
     text-decoration: none;

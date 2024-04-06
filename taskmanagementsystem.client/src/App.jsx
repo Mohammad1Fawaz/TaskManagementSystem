@@ -65,7 +65,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
             <Router>
                 <ToastContainer autoClose={false} />
-                <main className="w-full h-full overflow-x-hidden">
+                <main className="w-full h-[100vh] overflow-x-hidden">
                     <Routes>
                         <Route path="/" element={<LoginPage />} />
                         <Route path="/login" element={<LoginPage />} />

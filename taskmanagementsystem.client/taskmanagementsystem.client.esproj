@@ -21,4 +21,13 @@
   <ItemGroup>
     <None Remove="src\Components\**" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />
+  </ItemGroup>
 </Project>
