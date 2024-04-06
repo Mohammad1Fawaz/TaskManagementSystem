@@ -6,6 +6,7 @@ namespace TaskManagementSystem.Server.Data
     {
         [Key]
         public int id { get; set; }
+        public int clientId { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
 

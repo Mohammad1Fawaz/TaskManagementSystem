@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import VerificationPage from '../src/pages/VerificationPage';
 import './App.css';
-import Home from './Components/layout/Home/IntroSection';
-import AccessDeniedPage from './pages/AccessDeniedPage';
-import ClientAdminPage from './pages/ClientAdminPage';
-import LoginPage from './pages/LoginPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import SignupPage from './pages/SignupPage';
-import AuthService from './Services/AuthService';
-import RoleService from './Services/RoleService';
-import ClientVerificationPage from './pages/ClientVerificationPage';
-import Developer from './pages/DeveloperPage';
 import { CircularProgress } from '@mui/material/index';
 import { QueryClient, QueryClientProvider } from 'react-query';
+
+import VerificationPage from './common/pages/VerificationPage';
+import AccessDeniedPage from './common/pages/AccessDeniedPage';
+import ClientAdminPage from './clientAdmin/pages/ClientAdminPage';
+import LoginPage from './common/pages/LoginPage';
+import ResetPasswordPage from './common/pages/ResetPasswordPage';
+import SignupPage from './common/pages/SignupPage';
+import AuthService from './common/Services/AuthService';
+import RoleService from './clientAdmin/Services/RoleService';
+import ClientVerificationPage from '../src/clientAdmin/pages/ClientAdminPage';
+import Developer from './developer/pages/DeveloperPage';
+
 
 const queryClient = new QueryClient();
 

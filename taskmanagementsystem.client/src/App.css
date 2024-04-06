@@ -84,6 +84,19 @@ input[type="number"] {
 .MuiDataGrid-columnHeaders {
     background-color: var(--main-hover-primary-color);
 }
+
+.MuiBadge-badge {
+    height: 15px !important;
+    width: 15px !important;
+    border-radius: 50% !important;
+    font-size: 0.7rem !important;
+    padding: 4px 4px !important;
+    top: 4px !important;
+    right: 3px !important;
+    background-color: #70ad12 !important;
+    color : var(--text-primary-color) !important;
+}
+
 /* Custom styles for SweetAlert modal */
 .swal2-popup {
     background-color: var(--main-background-primary-color);
@@ -98,4 +111,10 @@ input[type="number"] {
 }
 .css-1l8j5k8 {
     background-color: var(--main-background-primary-color) !important;
+}
+
+.container{
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
 }

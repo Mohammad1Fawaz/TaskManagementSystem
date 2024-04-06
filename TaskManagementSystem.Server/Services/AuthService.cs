@@ -43,7 +43,7 @@ namespace TaskManagementSystem.Server.Services
                 {
                     return new ResultViewModel(false, "Login failed, email not confirmed.");
                 }
-                bool isClient = user.ClientId == null ? true : false;
+                bool isClient = user.ClientId == user.Id ? true : false;
                 string token = GenerateJwtToken(user , isClient);
                 return new ResultViewModel(true, "Login successful",token);
             }
@@ -53,24 +53,25 @@ namespace TaskManagementSystem.Server.Services
             }
         }
 
-        public string GenerateJwtToken(ApplicationUser client , bool isClient = false)
+        public string GenerateJwtToken(ApplicationUser client, bool isClient = false)
         {
             if (client != null)
             {
-                string? email = client.Email != null ? client.Email : "";
-                string? phoneNumber = client.PhoneNumber != null ? client.PhoneNumber : "";
+                string email = client.Email ?? "";
+                string phoneNumber = client.PhoneNumber ?? "";
 
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                byte[] key = Encoding.ASCII.GetBytes(Constants._jwtSecret);
+                byte[] key = Encoding.ASCII.GetBytes(ConstantStrings._jwtSecret);
                 SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[]
                     {
-                    new Claim(ClaimTypes.Role, isClient ? "ClientAdmin" : "User"),
-                    new Claim(ClaimTypes.NameIdentifier, client.Id.ToString()),
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.MobilePhone,phoneNumber),
-                }),
+                new Claim(ClaimTypes.Role, isClient ? "ClientAdmin" : "User"),
+                new Claim(ClaimTypes.NameIdentifier, client.Id.ToString()),
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.MobilePhone, phoneNumber),
+                new Claim("clientId", client.ClientId.ToString() ?? "")
+            }),
                     Expires = DateTime.UtcNow.AddHours(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
@@ -80,6 +81,7 @@ namespace TaskManagementSystem.Server.Services
             }
             return "";
         }
+
 
         public async Task<ResultViewModel> Logout()
         {

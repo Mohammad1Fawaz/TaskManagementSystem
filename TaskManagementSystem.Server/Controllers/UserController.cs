@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using TaskManagementSystem.Server.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
-using static TaskManagementSystem.Server.Services.UserService;
 
 namespace TaskManagementSystem.Server.Controllers
 {
@@ -55,7 +52,7 @@ namespace TaskManagementSystem.Server.Controllers
         [HttpPost("get-users")]
         public IActionResult GetUsers()
         {          
-            List<UserWithRoles>? users = _userService.GetUsers()?.Result;
+            List<UserWithRolesViewModel>? users = _userService.GetUsers()?.Result;
             return Ok(users);
         }
 
