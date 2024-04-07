@@ -33,8 +33,13 @@ namespace TaskManagementSystem.Server.Services
             {
                 return new ResultViewModel(false, "Role name is required");
             }
+            if (permissions.Count == 0)
+            {
+                return new ResultViewModel(false, "Can't add role with no permissions");
+            }
+
             ApplicationRole? role = await _roleManager.FindByNameAsync(roleName);
-            int clientId = _validationService.GetAuthenticatedClientId();
+            int clientId =   _validationService.GetAuthenticatedClientId();
 
             if (role == null)
             {
@@ -54,7 +59,7 @@ namespace TaskManagementSystem.Server.Services
                 }
             }
 
-            return new ResultViewModel(false, "You don't have permission to add roles");
+            return new ResultViewModel(false, "A role with same name already exists");
         }
 
 
@@ -67,7 +72,7 @@ namespace TaskManagementSystem.Server.Services
                 return new ResultViewModel(false, "You don't have permission to Delete roles");
             }
             ApplicationRole? role = await _roleManager.FindByIdAsync(roleId);
-            int clientId = _validationService.GetAuthenticatedClientId();
+            int clientId =   _validationService.GetAuthenticatedClientId();
 
             if (role != null)
             {
@@ -117,7 +122,7 @@ namespace TaskManagementSystem.Server.Services
 
         public async Task<List<ApplicationRole>> GetAllCreatedRoles()
         {
-            int clientId = _validationService.GetAuthenticatedClientId();
+            int clientId =  _validationService.GetAuthenticatedClientId();
 
             if (clientId != 0)
             {
@@ -129,7 +134,7 @@ namespace TaskManagementSystem.Server.Services
         }
         public async Task<List<ApplicationRole>> GetUserRoles(int userId)
         {
-            int clientId = _validationService.GetAuthenticatedClientId();
+            int clientId =   _validationService.GetAuthenticatedClientId();
 
             if (clientId != 0)
             {
@@ -159,13 +164,6 @@ namespace TaskManagementSystem.Server.Services
             return new List<ApplicationRole>();
         }
 
-
-        public string GetUserRole()
-        {
-            string? role = _validationService.GetUserRole();
-            return !string.IsNullOrEmpty(role) ? role : "";
-        }
-
         public async Task<List<IdentityRoleClaim<int>>> GetRolesPermission()
         {
             string? roleValue = _validationService.GetUserRole();
@@ -175,7 +173,7 @@ namespace TaskManagementSystem.Server.Services
                 return new List<IdentityRoleClaim<int>>();
             }
 
-            int clientId = _validationService.GetAuthenticatedClientId();
+            int clientId =   _validationService.GetAuthenticatedClientId();
 
             if (clientId == 0)
             {

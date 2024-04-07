@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
+using TaskManagementSystem.Server.RealTime;
 using TaskManagementSystem.Server.Services;
 
 namespace TaskManagementSystem.Server
@@ -23,20 +24,19 @@ namespace TaskManagementSystem.Server
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddDistributedMemoryCache();
-
+            services.AddHttpContextAccessor();
+            services.AddSignalR();
 
             services.AddSession(options =>
             {
                 // Set session timeout (default is 20 minutes)
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust as needed
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
 
-                // Make the session cookie essential
                 options.Cookie.IsEssential = true;
 
-                // Set session cookie properties
-                options.Cookie.HttpOnly = true; // Protects the cookie from JavaScript access
-                options.Cookie.SameSite = SameSiteMode.Strict; // Ensures the cookie is sent only in first-party contexts
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Sends the cookie only over HTTPS
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             services.AddDbContext<AppDbContext>(options =>
@@ -52,7 +52,8 @@ namespace TaskManagementSystem.Server
                 {
                     builder.WithOrigins(["http://localhost:3000"])
                            .AllowAnyMethod()
-                           .AllowAnyHeader();
+                           .AllowAnyHeader()
+                           .AllowCredentials();
                 });
             });
 
@@ -101,10 +102,12 @@ namespace TaskManagementSystem.Server
             
             services.AddScoped<IClientService,ClientService>();
             services.AddScoped<ConstantsService>();
-            services.AddScoped<IValidationService,ValidationService>();
+            services.AddTransient<IValidationService, ValidationService>();
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IAuthService,AuthService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddSingleton<ConnectionManager>();
         }
     }
 }

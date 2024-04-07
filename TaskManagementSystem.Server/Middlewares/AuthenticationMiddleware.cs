@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using System.Threading.Tasks;
 using TaskManagementSystem.Server.Common;
 
 namespace TaskManagementSystem.Server.Middlewares
@@ -11,7 +8,7 @@ namespace TaskManagementSystem.Server.Middlewares
     public class AuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly string _jwtSecretKey = Constants._jwtSecret;
+        private readonly string _jwtSecretKey = ConstantStrings._jwtSecret;
 
         public AuthenticationMiddleware(RequestDelegate next)
         {
@@ -42,9 +39,18 @@ namespace TaskManagementSystem.Server.Middlewares
                             role = parsedRole;
                             isAuthenticated = true;
 
-                            context.Session.SetString("UserId", userId);
-                            context.Session.SetString("ClientId", clientId);
-                            context.Session.SetString("Role", role);
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                context.Session.SetString("userId", userId);
+                            }
+                            if (!string.IsNullOrEmpty(clientId))
+                            {
+                                context.Session.SetString("clientId", clientId);
+                            }
+                            if (!string.IsNullOrEmpty(role))
+                            {
+                                context.Session.SetString("role", role);
+                            }
                         }
                         else
                         {
@@ -52,13 +58,22 @@ namespace TaskManagementSystem.Server.Middlewares
                             return;
                         }
                     }
+
+                    context.Items["isAuthenticated"] = isAuthenticated;
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        context.Items["userId"] = userId;
+                    }
+                    if (!string.IsNullOrEmpty(clientId))
+                    {
+                        context.Items["clientId"] = clientId;
+                    }
+                    if (!string.IsNullOrEmpty(role))
+                    {
+                        context.Items["role"] = role;
+                    }
                 }
-
-                context.Items["IsAuthenticated"] = isAuthenticated;
-                context.Items["UserId"] = userId;
-                context.Items["ClientId"] = clientId;
-                context.Items["Role"] = role;
-
                 await _next(context);
             }
             catch (Exception ex)
@@ -93,14 +108,20 @@ namespace TaskManagementSystem.Server.Middlewares
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "nameid").Value;
                 var role = jwtToken.Claims.First(x => x.Type == "role").Value;
-                var clientId = role == "ClientAdmin" ? userId : jwtToken.Claims.First(x => x.Type == "clientId").Value;
+                var clientId = jwtToken.Claims.First(x => x.Type == "clientId").Value;
 
                 return (userId, clientId, role, true);
+            }
+            catch (SecurityTokenException ex)
+            {
+                // Handle invalid token
+                throw new UnauthorizedAccessException("Invalid authorization token", ex);
             }
             catch (Exception ex)
             {
                 throw new SecurityTokenException("Token validation failed", ex);
             }
         }
+
     }
 }

@@ -2062,6 +2062,45 @@ namespace TaskManagementSystem.Server.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.Notification", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("forAll")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("isRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("userReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userSenderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("TaskManagementSystem.Server.Models.Permission", b =>
                 {
                     b.Property<int>("id")
@@ -2079,6 +2118,9 @@ namespace TaskManagementSystem.Server.Migrations
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
@@ -2098,6 +2140,9 @@ namespace TaskManagementSystem.Server.Migrations
 
                     b.Property<string>("VerificationCode")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");

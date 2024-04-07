@@ -13,11 +13,11 @@ namespace TaskManagementSystem.Server.Services
 
         public List<Country> GetCountries()
         {
-            return Constants.allCountries;
+            return SeedData.allCountries;
         }
         public List<Permission> GetPermissions()
         {
-            return Constants.allPermissions;
+            return SeedData.allPermissions;
         }
     }
 }

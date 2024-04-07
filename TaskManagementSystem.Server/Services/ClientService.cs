@@ -46,8 +46,9 @@ namespace TaskManagementSystem.Server.Services
                 return new ResultViewModel(false, "Something went wrong error code:HS12JS3.");
             }
 
+            client.ClientId = client.Id;
             string verificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(client);
-            string verificationEndpoint = $"{Constants.url}/ClientVerificationPage";
+            string verificationEndpoint = $"{ConstantStrings.url}/ClientVerificationPage";
             string subject = "Verification Email";
             string body = _mailService.getVerificationEmailBody(verificationEndpoint, verificationToken, email);
 

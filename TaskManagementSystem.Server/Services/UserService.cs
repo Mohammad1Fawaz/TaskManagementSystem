@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
+using TaskManagementSystem.Server.RealTime;
 using TaskManagementSystem.Server.ViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
@@ -16,21 +19,23 @@ namespace TaskManagementSystem.Server.Services
         private readonly IValidationService _validationService;
         private readonly IRoleService _roleService;
         private readonly AppDbContext _dbContext;
+        private readonly INotificationsService _notificationsService;
 
-
-        public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender mailService, IValidationService validationService, IRoleService roleService)
+        public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender mailService, IValidationService validationService, IRoleService roleService , INotificationsService notificationsService)
         {
-            this._dbContext = dbContext;
-            this._userManager = userManager;
-            this._signInManager = signInManager;
-            this._mailService = mailService;
-            this._validationService = validationService;
-            this._roleService = roleService;
+            _dbContext = dbContext;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _mailService = mailService;
+            _validationService = validationService;
+            _roleService = roleService;
+            _notificationsService = notificationsService;
         }
 
         public async Task<ResultViewModel> RegisterUser(UserRegisterViewModel model)
         {
-            int clientId = _validationService.GetAuthenticatedClientId();
+            int clientId =   _validationService.GetAuthenticatedClientId();
+            
             bool onlyNameDuplicate = false;
             string errorMessage = "";
             if (clientId == 0)
@@ -79,7 +84,7 @@ namespace TaskManagementSystem.Server.Services
 
                 _validationService.StoreVerificationCode(newUser.Id, verificationCode);
 
-                string verificationEndpoint = $"{Constants.url}/VerificationPage";
+                string verificationEndpoint = $"{ConstantStrings.url}/VerificationPage";
                 string body = _mailService.getVerificationCodeEmailBody(verificationEndpoint, verificationCode, newUser.Id);
                 await _mailService.SendEmailAsync(model.email, "VerificationEmail", body);
 
@@ -90,6 +95,7 @@ namespace TaskManagementSystem.Server.Services
                     await _dbContext.SaveChangesAsync();
                 }
 
+                await _notificationsService.NotifyAllAsync("New user registered");
                 return new ResultViewModel(true, "Registration success. Please check your email for verification.");
             }
             else
@@ -98,30 +104,20 @@ namespace TaskManagementSystem.Server.Services
             }
         }
 
-        public class UserWithRoles
-        {
-            public int? id { get; set; }
-            public string? userName { get; set; }
-            public string? email { get; set; }
-            public bool emailConfirmed { get; set; }
-            public string? phoneNumber { get; set; }
-            public DateTime createdAt { get; set; }
-            public List<string?> roles { get; set; }   
-        }
 
-        public async Task<List<UserWithRoles>> GetUsers()
+        public async Task<List<UserWithRolesViewModel>> GetUsers()
         {
-            List<UserWithRoles> users = new List<UserWithRoles>();
-            int clientId = _validationService.GetAuthenticatedClientId();
+            List<UserWithRolesViewModel> users = new List<UserWithRolesViewModel>();
+            int clientId =  _validationService.GetAuthenticatedClientId();
             if (clientId == 0)
             {
                 return [];
             }
-            List<ApplicationUser> allUsers = await _dbContext.Users.Where(x => x.ClientId == clientId).ToListAsync();
+            List<ApplicationUser> allUsers = await _dbContext.Users.Where(x => x.ClientId == clientId && x.ClientId != x.Id).ToListAsync();
             foreach (var user in allUsers)
             {
                List<ApplicationRole> userRoles = await  _roleService.GetUserRoles(user.Id);
-                users.Add(new UserWithRoles
+                users.Add(new UserWithRolesViewModel
                 {
                     id = user.Id,
                     userName = user.UserName,
@@ -132,8 +128,6 @@ namespace TaskManagementSystem.Server.Services
                     roles = userRoles.Select(x => x.Name).ToList()
                 });
             }
-
-
 
             return users;
         }
@@ -169,6 +163,7 @@ namespace TaskManagementSystem.Server.Services
 
         public async Task<ResultViewModel> DeleteUser(string userId)
         {
+            int clientId =   _validationService.GetAuthenticatedClientId();
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
@@ -183,8 +178,11 @@ namespace TaskManagementSystem.Server.Services
                 return new ResultViewModel(false, errorMessage);
             }
 
+            await _notificationsService.NotifyAsync(clientId, "User Deleted");
             return new ResultViewModel(true, "User deleted successfully");
         }
+
+
         public async Task<ResultViewModel> EditUser(UserRegisterViewModel userData)
         {
             var user = await _userManager.FindByEmailAsync(userData.email);

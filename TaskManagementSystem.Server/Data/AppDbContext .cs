@@ -58,6 +58,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
     public DbSet<Country> Countries { get; set; }
     public DbSet<UserVerificationCode> UserVerificationCodes { get; set; }
     public DbSet<Permission> Permissions { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
     
 
     public static void Configure(DbContextOptionsBuilder optionsBuilder, string connectionString)
@@ -90,8 +91,5 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
             entity.UpdateTimestamps();
         }
     }
-
-
-
 }
 

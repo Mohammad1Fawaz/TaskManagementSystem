@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Server.Common;
-using TaskManagementSystem.Server.Models;
 
 public static class ModelBuilderExtensions
 {
@@ -10,7 +9,7 @@ public static class ModelBuilderExtensions
         {
             Console.WriteLine("Start Seeding Data ...");
 
-            modelBuilder.Entity<Country>().HasData(Constants.allCountries);
+            modelBuilder.Entity<Country>().HasData(SeedData.allCountries);
 
         }
         catch (Exception ex)

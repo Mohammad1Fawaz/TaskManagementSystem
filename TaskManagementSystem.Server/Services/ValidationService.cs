@@ -24,7 +24,6 @@ namespace TaskManagementSystem.Server.Services
         public async Task<IdentityResult> ValidateAsync(ApplicationUser user)
         {
             var errors = new List<IdentityError>();
-
             var clientId = user.ClientId;
             var normalizedEmail = _userManager.NormalizeEmail(user.Email);
 
@@ -43,11 +42,11 @@ namespace TaskManagementSystem.Server.Services
 
         public int GetAuthenticatedClientId()
         {
-            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.Session.GetString("ClientId"));
+            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.Session.GetString("clientId"));
         }     
         public int GetAuthenticatedUserId()
         {
-            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.Session.GetString("UserId"));
+            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.Session.GetString("userId"));
         }
 
         public bool IsEmailTaken(string email)
@@ -80,7 +79,7 @@ namespace TaskManagementSystem.Server.Services
 
         public string GetUserRole()
         {
-           return  _httpContextAccessor.HttpContext?.Session?.GetString("Role") ?? "";
+           return  _httpContextAccessor.HttpContext?.Session?.GetString("role") ?? "";
         }
         public void ClearSession()
         {

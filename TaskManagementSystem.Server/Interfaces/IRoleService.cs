@@ -13,6 +13,5 @@ namespace TaskManagementSystem.Server.Interfaces
         Task<List<ApplicationRole>> GetUserRoles(int userId);
         Task<List<IdentityRoleClaim<int>>> GetRolesPermission();
         Task AddClaimsToRole(string roleName, IList<string> claimValues);
-        string GetUserRole();
     }
 }
