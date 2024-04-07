@@ -31,27 +31,7 @@ const RoleService = {
 
         const responseData = await response.json();
         return await responseData;
-    },
-    getUserRoles: async (token) => {
-        try {
-            const response = await fetch(`${apiBaseUrl}/Role/get-role`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const rolesData = await response.json();
-                return rolesData.role;
-            } else {
-                return [];
-            }
-        } catch (error) {
-            console.error('Error fetching user roles:', error);
-            return [];
-        }
-    },
+    },   
     getRolesPermissions: async (token) => {
         try {
             const response = await fetch(`${apiBaseUrl}/Role/get-role-permissions`, {

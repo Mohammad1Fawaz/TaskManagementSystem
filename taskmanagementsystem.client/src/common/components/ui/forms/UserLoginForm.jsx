@@ -37,7 +37,6 @@ const UserLoginForm = () => {
         e.preventDefault();
         setIsLoading(true);
         const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        console.log("fetchQuery",fetchQuery);
         setIsLoading(isLoading);
         try {
             if (isSuccess) {
@@ -45,9 +44,8 @@ const UserLoginForm = () => {
                 setIsLoading(isLoading);
                 AuthService.saveToken(data.token);
                 reset();
-                const userRole = await RoleService.getUserRoles(data.token);
-                console.log("userRole", userRole);
-                if (userRole == "ClientAdmin") {
+                const userInfo = await AuthService.getUserInfo(data.token);
+                if (userInfo.role.includes("ClientAdmin")) {
                     navigate('/ClientAdmin');
                 } else {
                     navigate('/Developer');

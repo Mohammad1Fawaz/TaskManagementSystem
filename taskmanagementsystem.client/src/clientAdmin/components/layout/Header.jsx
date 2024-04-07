@@ -1,5 +1,6 @@
 // Header.js
 import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -15,6 +16,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { styled} from '@mui/material/styles';
 import NotificationBox from '../layout/NotificationBox';
 import Popover from '@mui/material/Popover';
+import Avatar from '../../../common/components/ui/other/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const drawerWidth = 240;
 
@@ -34,9 +41,27 @@ const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 }));
 
-
-
-const Header = ({ open, darkTheme, openPopover, handlePopoverOpen, notifications, notificationsCount, handleThemeToggle, showLogo, handleDrawerOpen, handleSettings, handleLogout, anchorEl, handlePopoverClose}) => {
+const Header = ({
+    open,
+    darkTheme,
+    openNotifications,
+    openLogoutDropdown,
+    handleCloseNotifications,
+    handleOpenNotifications,
+    handleLogoutDropdownOpen,
+    handleLogoutDropdownClose,
+    notifications,
+    notificationsCount,
+    handleThemeToggle,
+    showLogo,
+    handleDrawerOpen,
+    handleSettings,
+    handleLogout,
+    notificationsAnchorEl,
+    logoutAnchorEl,
+    userInfo,
+}) => {
+    const navigate = useNavigate();
 
     return (
         <AppBar position="fixed" open={open} className="">
@@ -65,8 +90,8 @@ const Header = ({ open, darkTheme, openPopover, handlePopoverOpen, notifications
                         {darkTheme ? <Brightness3Icon sx={{ color: 'var(--button-primary-color)' }} /> : <WbSunnyIcon sx={{ color: 'var(--button-primary-color)' }} />}
                     </IconButton>
                     <IconButton
-                        onClick={handlePopoverOpen}
-                        aria-describedby={openPopover ? 'notifications-popover' : undefined}
+                        onClick={handleOpenNotifications}
+                        aria-describedby={openNotifications ? 'notifications-popover' : undefined}
                     >
                         <Badge badgeContent={notificationsCount ?? 0} color="primary">
                             <NotificationsIcon sx={{ color: 'var(--button-primary-color)' }} />
@@ -74,9 +99,9 @@ const Header = ({ open, darkTheme, openPopover, handlePopoverOpen, notifications
                     </IconButton>
                     <Popover
                         id="notifications-popover"
-                        open={openPopover}
-                        anchorEl={anchorEl}
-                        onClose={handlePopoverClose}
+                        open={openNotifications}
+                        anchorEl={notificationsAnchorEl}
+                        onClose={handleCloseNotifications}
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
@@ -100,6 +125,53 @@ const Header = ({ open, darkTheme, openPopover, handlePopoverOpen, notifications
                     <IconButton onClick={handleLogout}>
                         <AccountBoxIcon sx={{ color: 'var(--button-primary-color)' }} />
                     </IconButton>
+                    <IconButton onClick={handleLogoutDropdownOpen}
+                        aria-describedby={openLogoutDropdown ? 'avatar-popover' : undefined}
+                    >
+                        <Avatar
+                            text={userInfo.userName.charAt(0).toUpperCase()}
+                            size="40px"
+                            sx={{
+                                width: '30px',
+                                height: '30px',
+                            }}
+                        />
+                        <Typography className= "!text-[15px] ms-2">Admin</Typography>  
+                        <ExpandMoreIcon />
+                    </IconButton>
+                    <Popover
+                        id="avatar-popover"
+                        open={openLogoutDropdown}
+                        anchorEl={logoutAnchorEl}
+                        onClose={handleLogoutDropdownClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        PaperProps={{
+                            sx: {
+                                width: '150px',
+                            },
+                        }}
+                        className="text-[var(--text-secondary-color)] !w-[800px]"
+                    >
+                        <List className="bg-[var(--main-background-primary-color)]">
+                            <ListItem>
+                                <button onClick={() => { handleLogoutDropdownClose(); handleLogout() }}>
+                                    <LogoutIcon />  Logout
+                                </button>
+                            </ListItem>
+                            <ListItem>
+                                <button onClick={() => { handleLogoutDropdownClose(); navigate('/Developer'); }}>
+                                   <DeveloperBoardIcon /> Developer
+                                </button>
+                            </ListItem>
+                        </List>
+                    </Popover>
                 </Typography>
             </Toolbar>
         </AppBar>

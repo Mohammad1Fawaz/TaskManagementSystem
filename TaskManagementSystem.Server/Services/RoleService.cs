@@ -164,13 +164,6 @@ namespace TaskManagementSystem.Server.Services
             return new List<ApplicationRole>();
         }
 
-
-        public string GetUserRole()
-        {
-            string? role = _validationService.GetUserRole();
-            return !string.IsNullOrEmpty(role) ? role : "";
-        }
-
         public async Task<List<IdentityRoleClaim<int>>> GetRolesPermission()
         {
             string? roleValue = _validationService.GetUserRole();

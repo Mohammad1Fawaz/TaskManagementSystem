@@ -92,5 +92,22 @@ namespace TaskManagementSystem.Server.Services
             return new ResultViewModel(true, "Logout successful");
         }
 
+        public async Task<UserDataViewModel> GetUserInfo()
+        {
+            int clientId = _validationService.GetAuthenticatedClientId();
+            var client = await _userManager.FindByIdAsync(clientId.ToString());
+            string? role = _validationService.GetUserRole();
+
+            UserDataViewModel clientData = new UserDataViewModel()
+            {
+                id = client?.Id,
+                userName = client?.UserName,
+                email = client?.Email,
+                phoneNumber = client?.PhoneNumber,
+                role = role
+            };
+            return clientData;
+        }
+
     }
 }

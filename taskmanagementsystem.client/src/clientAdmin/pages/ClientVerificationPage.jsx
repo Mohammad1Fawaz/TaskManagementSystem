@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import MediumLogo from '../Components/ui/images/MainLogo';
+import MediumLogo from '../components/ui/images/MainLogo';
 import AuthService from '../Services/AuthService';
 import ClientService from '../Services/ClientService';
 import HelpersService from '../Services/HelpersService';

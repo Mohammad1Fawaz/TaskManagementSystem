@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import Avatar from "../../common/components/ui/other/Avatar";
 
 
 const Users = ({ setSelectedItem}) => {
@@ -209,9 +210,14 @@ const Users = ({ setSelectedItem}) => {
             editable: true,
             renderCell: (params) => {
                 return (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems:'center' }}>
-                        <div className="w-[45px] h-[45px] rounded-[100%] border-2 flex-center p-3 border-[var(--button-primary-color)] font-bold text-lg">{params.row.userName.charAt(0).toUpperCase()}</div>
-                    </div>
+                    <Avatar
+                        text={params.row.userName.charAt(0).toUpperCase()}
+                        size="40px"
+                        sx={{
+                            width:'45px',
+                            height:'45px',
+                        }}
+                    />
                 );
             },
         },
@@ -285,7 +291,7 @@ const Users = ({ setSelectedItem}) => {
 
     return (
         <div className="">
-            <form className="w-full pb-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={handleSubmits}>
+            <form className="w-full shadow rounded-2 mb-5 p-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={handleSubmits}>
                 <div className="relative xs:w-full lg:w-[45%]">
                     <small className="text-danger text-xs absolute top-[-20px]">{userNameValidationMessage}</small>
                     <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={handleInputChange} icon="fa-user" />

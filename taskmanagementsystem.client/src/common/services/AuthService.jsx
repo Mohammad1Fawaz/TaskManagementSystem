@@ -33,6 +33,26 @@ const AuthService = {
             throw error;
         }
     },
+    getUserInfo: async (token) => {
+        try {
+            const response = await fetch(`${apiBaseUrl}/Auth/get-user-info`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const res = await response.json();
+                return res.userInfo;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.error('Error fetching user roles:', error);
+            return [];
+        }
+    },
     clearToken: (token) => {
         Cookies.remove("token");
     },

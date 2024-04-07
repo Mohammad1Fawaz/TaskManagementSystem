@@ -1,4 +1,4 @@
-import UserRegistrationForm from "../Components/ui/forms/UserRegistrationForm";
+import UserRegistrationForm from "../components/ui/forms/UserRegistrationForm";
 
 export default function SignupPage() {
     return (

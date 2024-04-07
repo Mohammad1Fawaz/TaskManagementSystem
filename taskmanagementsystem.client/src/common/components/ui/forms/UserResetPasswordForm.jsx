@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import ClientService from '../../../../clientAdmin/services/ClientService';
-import ConstantsService from '../../../Services/ConstantsService';
-import HelpersService from '../../../Services/HelpersService';
+import ConstantsService from '../../../services/ConstantsService';
+import HelpersService from '../../../services/HelpersService';
 import PrimaryButton from "../buttons/PrimaryButton";
 import MediumLogo from "../images/MainLogo";
 import DangerButton from '../buttons/DangerButton';

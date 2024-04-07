@@ -16,10 +16,10 @@
     <Folder Include="src\developer\services\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptConfiguration Remove="src\Components\**" />
+    <TypeScriptConfiguration Remove="src\components\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="src\Components\**" />
+    <None Remove="src\components\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />

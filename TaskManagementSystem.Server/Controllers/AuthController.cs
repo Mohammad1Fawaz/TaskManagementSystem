@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Server.Interfaces;
+using TaskManagementSystem.Server.Services;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Controllers
@@ -51,7 +52,6 @@ namespace TaskManagementSystem.Server.Controllers
             }
 
         }
-
       
         [HttpPost("logout")]
         public IActionResult Logout()
@@ -60,6 +60,22 @@ namespace TaskManagementSystem.Server.Controllers
             {
                 var registrationResult = _authService.Logout();
                 return Ok(new { success = registrationResult.Result.success, message = registrationResult.Result.message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
+        [HttpGet("get-user-info")]
+        public async Task<IActionResult> GetRole()
+        {
+            try
+            {
+                UserDataViewModel userInfo = await _authService.GetUserInfo();
+                return Ok(new { userInfo = userInfo });
             }
             catch (Exception ex)
             {

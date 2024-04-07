@@ -148,21 +148,5 @@ namespace TaskManagementSystem.Server.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpGet("get-role")]
-        public IActionResult GetRole()
-        {
-            try
-            {
-                string role = _roleService.GetUserRole();
-                return Ok(new { role = role });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
     }
 }

@@ -9,5 +9,7 @@ namespace TaskManagementSystem.Server.Interfaces
         Task<ResultViewModel> Login(ClientLoginViewModel model);
         string GenerateJwtToken(ApplicationUser client, bool isClient = false);
         Task<ResultViewModel> Logout();
+        Task<UserDataViewModel> GetUserInfo();
+
     }
 }

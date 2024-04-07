@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ClientService from '../../../../clientAdmin/services/ClientService';
-import ConstantsService from '../../../Services/ConstantsService';
-import HelpersService from '../../../Services/HelpersService';
-import AuthService from "../../../Services/AuthService"
+import ConstantsService from '../../../services/ConstantsService';
+import HelpersService from '../../../services/HelpersService';
+import AuthService from "../../../services/AuthService"
 import PrimaryButton from '../buttons/PrimaryButton';
 import MainLogo from '../images/MainLogo';
 import PhoneInput from '../inputs/PhoneInput';

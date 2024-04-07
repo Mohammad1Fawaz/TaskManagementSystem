@@ -11,7 +11,7 @@ import ClientAdminDashboardService from '../../services/ClientAdminDashboardServ
 const ClientDashboardLayoutContext = createContext();
 export const useClientDashboardLayoutContext = () => useContext(ClientDashboardLayoutContext);
 
-const ClientDashboard = () => {
+const ClientDashboard = ({ userInfo }) => {
     const {
         open,
         setOpen,
@@ -27,11 +27,11 @@ const ClientDashboard = () => {
         setDarkTheme,
         customThemeColors,
         setCustomThemeColors,
-        anchorEl,
-        setAnchorEl,
-        openPopover,
-        handlePopoverOpen,
-        handlePopoverClose,
+        notificationsAnchorEl,
+        setNotificationsAnchorEl,
+        openNotifications,
+        handleOpenNotifications,
+        handleCloseNotifications,
         handleCloseSettings,
         handleSettings,
         handleLogout,
@@ -41,6 +41,11 @@ const ClientDashboard = () => {
         handleThemeToggle,
         handleColorChange,
         markNotificationsAsRead,
+        openLogoutDropdown,
+        handleLogoutDropdownOpen,
+        handleLogoutDropdownClose,
+        logoutAnchorEl,
+        setLogoutAnchorEl,
     } = ClientAdminDashboardService();
 
     return (
@@ -51,16 +56,22 @@ const ClientDashboard = () => {
                     open={open}
                     darkTheme={darkTheme}
                     handleThemeToggle={handleThemeToggle}
-                    handlePopoverOpen={handlePopoverOpen}
-                    handlePopoverClose={handlePopoverClose}
+                    handleOpenNotifications={handleOpenNotifications}
+                    handleCloseNotifications={handleCloseNotifications}
                     notifications={notifications}
                     notificationsCount={notificationsCount}
                     handleSettings={handleSettings}
                     handleLogout={handleLogout}
                     showLogo={showLogo}
                     handleDrawerOpen={handleDrawerOpen}
-                    openPopover={openPopover}
-                    anchorEl={anchorEl}
+                    openNotifications={openNotifications}
+                    notificationsAnchorEl={notificationsAnchorEl}
+                    openLogoutDropdown={openLogoutDropdown}
+                    handleLogoutDropdownOpen={handleLogoutDropdownOpen}
+                    handleLogoutDropdownClose={handleLogoutDropdownClose}
+                    logoutAnchorEl={logoutAnchorEl}
+                    setLogoutAnchorEl={setLogoutAnchorEl}
+                    userInfo={userInfo}
                 />
                 <Sidebar
                     open={open}

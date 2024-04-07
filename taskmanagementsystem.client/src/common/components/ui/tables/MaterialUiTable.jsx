@@ -54,7 +54,7 @@ export default function MaterialUiTable({ columns, rows, isLoadingForData, dateT
     };
 
     return (
-        <div style={{ width: '100%', overflowX : 'auto' }}>
+        <div className="table-scrollbar w-full overflow-x-auto">
             <DataGrid
                 rows={rows ?? rows.map((user) => ({ ...user, id: user.id }))}
                 columns={columns.map((column, index) => ({

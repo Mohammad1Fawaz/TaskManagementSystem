@@ -15,9 +15,11 @@ const ClientAdminDashboardService = () => {
     const [show, setShow] = useState(false);
     const [darkTheme, setDarkTheme] = useState(false);
     const [customThemeColors, setCustomThemeColors] = useState(getSavedColors());
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
+    const [logoutAnchorEl, setLogoutAnchorEl] = useState(null);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const openPopover = Boolean(anchorEl);
+    const openNotifications = Boolean(notificationsAnchorEl);
+    const [openLogoutDropdown, setOpenLogoutDropdown] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -67,17 +69,28 @@ const ClientAdminDashboardService = () => {
         }
     };
 
-    const handlePopoverOpen = (event) => {
+    const handleOpenNotifications = (event) => {
         if (notifications.length === 0) {
             return;
         }
-        setAnchorEl(event.currentTarget);
+        setNotificationsAnchorEl(event.currentTarget);
         markNotificationsAsRead();
     };
 
-    const handlePopoverClose = () => {
-        setAnchorEl(null);
+    const handleCloseNotifications = () => {
+        setNotificationsAnchorEl(null);
     };
+
+    const handleLogoutDropdownOpen = (event) => {
+        setLogoutAnchorEl(event.currentTarget);
+        setOpenLogoutDropdown(true);
+    };
+
+    const handleLogoutDropdownClose = () => {
+        setLogoutAnchorEl(null);
+        setOpenLogoutDropdown(false);
+    };
+
     function getSavedColors() {
         const savedColors = localStorage.getItem('customThemeColors');
         return savedColors ? JSON.parse(savedColors) : getDefaultColors();
@@ -219,11 +232,11 @@ const ClientAdminDashboardService = () => {
         setDarkTheme,
         customThemeColors,
         setCustomThemeColors,
-        anchorEl,
-        setAnchorEl,
-        openPopover,
-        handlePopoverOpen,
-        handlePopoverClose,
+        notificationsAnchorEl,
+        setNotificationsAnchorEl,
+        openNotifications,
+        handleOpenNotifications,
+        handleCloseNotifications,
         handleCloseSettings,
         handleSettings,
         handleLogout,
@@ -233,6 +246,12 @@ const ClientAdminDashboardService = () => {
         handleThemeToggle,
         handleColorChange,
         markNotificationsAsRead,
+        openLogoutDropdown,
+        handleLogoutDropdownOpen,
+        handleLogoutDropdownClose,
+        logoutAnchorEl,
+        setLogoutAnchorEl,
+        
     };
 };
 

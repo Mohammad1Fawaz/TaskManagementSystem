@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom/dist/index";
-import PrimaryButton from "../Components/ui/buttons/PrimaryButton";
+import PrimaryButton from "../components/ui/buttons/PrimaryButton";
 
 export default function AccessDenied() {
     const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import VerificationForm from '../Components/ui/forms/VerificationForm';
+import VerificationForm from '../components/ui/forms/VerificationForm';
 const VerificationPage = () => {   
 
     return (

@@ -1,7 +1,7 @@
-import ClientDashboard from "../Components/layout/ClientDashboard";
+import ClientDashboard from "../components/layout/ClientDashboard";
 
-export default function ClientAdmin() {
+export default function ClientAdmin({ userInfo }) {
     return (
-        <ClientDashboard />
+        <ClientDashboard userInfo={userInfo} />
     )
 }

@@ -37,6 +37,11 @@
     --scrollbar-color: var(--text-primary-color);
 }
 
+* {
+    scrollbar-color: var(--scrollbar-color) transparent;
+    scrollbar-width: thin !important;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
     scroll-behavior:smooth;
@@ -44,20 +49,17 @@
     background-color: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-color);
     border-radius: 5px;
 }
 
-html {
-    scrollbar-color: var(--scrollbar-color) transparent;
-    scrollbar-width: auto !important;
-    scrollbar-gutter:auto !important;
-}
+
 
 a {
     text-decoration: none;
 }
+
 
 p,a,h1,h2,h3,h4,h5,h6,input,button,td,tr,div{
     color:var(--text-primary-color) !important;
