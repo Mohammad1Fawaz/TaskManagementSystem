@@ -4,17 +4,28 @@ import MediumLogo from '../components/ui/images/MainLogo';
 import AuthService from '../Services/AuthService';
 import ClientService from '../Services/ClientService';
 import HelpersService from '../Services/HelpersService';
-
+import useFetch from "../../common/hooks/useFetch"
 const ClientVerificationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const token = new URLSearchParams(location.search).get('token');
     const email = new URLSearchParams(location.search).get('email');
+    const { mutate } = useFetch("verify-query", {}, false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const result = await ClientService.verifyClient(token, email);
+                const formData= {
+                    token: token,
+                    email: email,
+                };
+                const variables = {
+                    endPoint: 'Client/verify-email',
+                    method: 'POST',
+                    requestData:formData
+                };
+                const response = await mutate.mutateAsync(variables);
+                const result = response.data;
                 if (result.success) {
                     HelpersService.notify(result.message, "success");
                     AuthService.saveToken(result.token);

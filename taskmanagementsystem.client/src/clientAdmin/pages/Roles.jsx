@@ -11,7 +11,7 @@ import HelpersService from '../../common/services/HelpersService';
 import Checkbox from '@mui/material/Checkbox';
 import NestedCheckboxRoles from '../../clientAdmin/components/ui/NestedCheckboxRoles';
 import Swal from 'sweetalert2';
-import useFetch from "../../../hooks/useFetch";
+import useFetch from "../../common/hooks/useFetch";
 const Roles = () => {
     const initialFormData = {
         roleName: "",

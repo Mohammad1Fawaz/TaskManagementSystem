@@ -15,7 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Avatar from "../../common/components/ui/other/Avatar";
-import useFetch from "../../../hooks/useFetch";
+import useFetch from "../../common/hooks/useFetch"
 
 
 const Users = ({ setSelectedItem}) => {
@@ -74,7 +74,7 @@ const Users = ({ setSelectedItem}) => {
                     method: 'POST',
                 };
                 const usersData = await getUsers.mutateAsync(variablesRole);
-                setpermissions(usersData.data);
+                setUsers(usersData.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -84,7 +84,7 @@ const Users = ({ setSelectedItem}) => {
         fetchUsers();
         fetchCountries();
 
-    }, [isLoading, isDeleteLoading]);
+    }, [deleteUser, editUser]);
 
 
     const reset = () => {
@@ -162,15 +162,7 @@ const Users = ({ setSelectedItem}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const userDataToUpdate = { ...updatedUserData };
-                    const updateFormData = {
-                        email: userDataToUpdate.email,
-                        password: "---------------",
-                        name: userDataToUpdate.userName,
-                        phoneNumber: userDataToUpdate.phoneNumber,
-                        phoneCode: '+961',
-                        roles: [],
-                    };
+                    setUpdateFormData( updatedUserData );
                     const variables = {
                         endPoint: 'User/edit-user',
                         method: 'POST',
@@ -216,9 +208,9 @@ const Users = ({ setSelectedItem}) => {
             } else {
                 if (data.errors) {
                     setCompanyNameValidationMessage(data.errors.companyName && data.errors.companyName[0]);
-                    setEmailNameValidationMessage(data.errors.email && data.errors.email[0]);
-                    setPasswordNameValidationMessage(data.errors.password && data.errors.password[0]);
-                    setPhoneNumberNameValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
+                    setUserEmailValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPasswordValidationMessage(data.errors.password && data.errors.password[0]);
+                    setUserPhoneValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
                 }
                 if (data.message) {
                     HelpersService.notify(data.message, "error");

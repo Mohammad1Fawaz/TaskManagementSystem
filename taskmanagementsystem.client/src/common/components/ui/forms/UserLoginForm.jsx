@@ -7,7 +7,7 @@ import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
 import HelpersService from '../../../../common/services/HelpersService';
 import MainLogo from '../images/MainLogo';
-import useFetch from '../../../hooks/useFetch';
+import useFetch from "../../common/hooks/useFetch";
 const UserLoginForm = () => {
     let navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const UserLoginForm = () => {
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
     const { mutate } = useFetch("login-query", {}, false);
-    const { fetchedData } = useFetch(['roles-query','Role/get-role'], {}, true);
+    const { fetchedData } = useFetch(['roles-query','Auth/get-user-info'], {}, true);
 
     const reset = () => {
         setFormData(initialFormData);
@@ -50,7 +50,8 @@ const UserLoginForm = () => {
                 setIsLoading(mutate.isLoading);
                 AuthService.saveToken(data.token);
                 reset();
-                const userInfo = await AuthService.getUserInfo(data.token);
+                const response = await fetchedData.refetch('Auth/get-user-info');
+                const userInfo=response.data;
                 if (userInfo.role.includes("ClientAdmin")) {
                     navigate('/ClientAdmin');
                 } else {
