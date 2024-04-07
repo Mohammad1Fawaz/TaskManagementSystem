@@ -28,7 +28,6 @@ const RoleService = {
             },
             body: JSON.stringify(roleData),
         });
-
         const responseData = await response.json();
         return await responseData;
     },   

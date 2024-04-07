@@ -9,7 +9,7 @@ import MainLogo from '../images/MainLogo';
 import PhoneInput from '../inputs/PhoneInput';
 import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
-
+import useFetch from '../../../hooks/useFetch';
 const UserRegistrationForm = () => {
     const initialFormData = {
         companyName: '',
@@ -26,12 +26,14 @@ const UserRegistrationForm = () => {
     const [userPhoneNumberValidationMessage, setPhoneNumberNameValidationMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [countries, setCountries] = useState([]);
+    const {fetchedData}=useFetch(['countries-query','constants/countries'],{},false);
+    const {mutate}=useFetch("register-query", {}, false)
 
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await ConstantsService.getCountries();
-                setCountries(response);
+                const response = await fetchedData.refetch('constants/countries');
+                setCountries(response.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -62,30 +64,37 @@ const UserRegistrationForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        const variables={
+            endPoint: 'Client/register',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            const result = await ClientService.registerClient(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
-                const token = result.token;
+            if (data.success) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(mutate.isLoading);
+                const token = data.token;
                 AuthService.saveToken(token);
                 reset();
                 //navigate to page ...
             } else {
-                if (result.errors) {
-                    setCompanyNameValidationMessage(result.errors.companyName && result.errors.companyName[0]);
-                    setEmailNameValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPasswordNameValidationMessage(result.errors.password && result.errors.password[0]);
-                    setPhoneNumberNameValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+                if (data.errors) {
+                    setCompanyNameValidationMessage(data.errors.companyName && data.errors.companyName[0]);
+                    setEmailNameValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPasswordNameValidationMessage(data.errors.password && data.errors.password[0]);
+                    setPhoneNumberNameValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
                 }
-                if (result.existUser) {
-                    HelpersService.notify(result.message, "error");
+                if (data.message) {
+                    HelpersService.notify(data.message, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(mutate.isLoading);
             }
         } catch (error) {
             HelpersService.notify('Error during registration', "error");
-            setIsLoading(false);
+            setIsLoading(mutate.isLoading);
         }
     };
 

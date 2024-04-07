@@ -8,6 +8,7 @@ import MediumLogo from "../images/MainLogo";
 import DangerButton from '../buttons/DangerButton';
 import PhoneInput from "../inputs/PhoneInput";
 import TextInput from '../inputs/TextInput';
+import useFetch from '../../../hooks/useFetch';
 
 export default function UserResetPasswordForm() {
     let navigate = useNavigate();
@@ -23,12 +24,13 @@ export default function UserResetPasswordForm() {
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
     const [countries, setCountries] = useState([]);
-
+    const {fetchedData}=useFetch(['countries-query','constants/countries'],{},false);
+    const {mutate}=useFetch("reset-query", {}, false);
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await ConstantsService.getCountries();
-                setCountries(response);
+                const response = await fetchedData.refetch('constants/countries');
+                setCountries(response.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -55,28 +57,35 @@ export default function UserResetPasswordForm() {
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
+        const variables={
+            endPoint: 'Client/reset-password',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            const result = await ClientService.resetPasswordClient(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            if (data.success) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(mutate.isLoading);
                 reset(initialFormData);
 
                 navigate('/login');
             } else {
-                if (result.errors) {
-                    setEmailValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPhoneNumberValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+                if (data.errors) {
+                    setEmailValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPhoneNumberValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
 
                 }
-                if (result.error) {
-                    HelpersService.notify(result.error, "error");
+                if (data.error) {
+                    HelpersService.notify(data.error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(mutate.isLoading);
             }
         } catch (err) {
             HelpersService.notify('Error during resseting the password', "error");
-            setIsLoading(false);
+            setIsLoading(mutate.isLoading);
         }
     }
 

@@ -1,9 +1,7 @@
-import { useEffect } from 'react';
 import axios from "axios";
-import config from '../../../config'
-import AuthService from '../../common/services/AuthService';
-import { useQuery, useMutation } from 'react-query';
-
+import config from "../../config";
+import AuthService from "../Services/AuthService";
+import { useQuery, useMutation } from "react-query";
 //const queryOptions = {
 //    enabled: true, // Whether the query should automatically execute. Defaults to true.
 //    suspense: false, // Whether to use React Suspense for this query. Defaults to false.
@@ -25,88 +23,77 @@ import { useQuery, useMutation } from 'react-query';
 //    structuralSharing: true, // Whether to use structural sharing to minimize memory usage when caching data. Defaults to true.
 //};
 
-
-const useFetch = (method, endPoint, requestData = {}, fetchDirectly = false, queryKey = "data-query", queryOptions = {}, needAuthentication = true) => {
+const useFetch = (queryKey = [], queryOptions = {}, needAuthentication = true) => {
     const token = needAuthentication ? AuthService.getToken() : "";
     const baseUrl = config.apiBaseUrl;
-    const fetchData = async () => {
+    const headers = needAuthentication
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+
+    const getData = async (endPoint, requestParam = "") => {
         try {
-            let response;
-            const headers = needAuthentication ? { Authorization: `Bearer ${token}` } : {};
-            switch (method) {
-                case "GET":
-                    const dataIdToGet = endPoint.substring(endPoint.lastIndexOf('/') + 1);
-                    response = await axios.get(`${baseUrl}/${endPoint}`, { headers, params: { id: dataIdToGet } });
-                    break;
-                case "POST":
-                    response = await axios.post(`${baseUrl}/${endPoint}`, requestData, { headers });
-                    break;
-                case "PUT":
-                    const dataIdToUpdate = endPoint.substring(endPoint.lastIndexOf('/') + 1);
-                    response = await axios.put(`${baseUrl}/${endPoint}`, requestData, { headers, params: { id: dataIdToUpdate } });
-                    break;
-                case "DELETE":
-                    const dataIdToDelete = endPoint.substring(endPoint.lastIndexOf('/') + 1);
-                    response = await axios.delete(`${baseUrl}/${endPoint}`, { headers, data: requestData, params: { id: dataIdToDelete } });
-                    break;
-                default:
-                    throw new Error(`Unsupported HTTP method: ${method}`);
+            let url = `${baseUrl}/${endPoint}`;
+            if (requestParam !== "") {
+                url = `${baseUrl}/${endPoint}/${requestParam}`;
             }
-            return {
-                data: response.data,
-                isLoading: false,
-                isSuccess: true,
-                isError: false,
-                error: ""
-            };
+            const response = await axios.get(
+                url,
+                { headers }
+            );
+            return response.data;
         } catch (error) {
-            console.log(error);
-            return {
-                data: null,
-                isLoading: false,
-                isSuccess: false,
-                isError: true,
-                error: error.response.data.message,
-                errors: error.response.data.errors
-            };
-        } finally {
+            console.log(error.response);
+            return error.response;
         }
-            };
+    };
+    const fetchedData = useQuery(queryKey, ({queryKey} ) => getData(queryKey[1]), {
+        ...queryOptions,
+        enabled: false
+    });
 
-    useEffect(() => {
-        if (fetchDirectly) {
-            fetchData();
+    const mutateData = async (endPoint, method, requestData = {}, requestParam = '') => {
+        try {
+            let url = `${baseUrl}/${endPoint}`;
+            if (requestParam !== "") {
+                url = `${baseUrl}/${endPoint}/${requestParam}`;
+            }
+            switch (method) {
+                case 'POST': {
+                    const response = await axios.post(url, requestData, { headers });
+                    return response;
+                }
+                case 'PUT': {
+                    const response = await axios.put(url, requestData, { headers });
+                    return response;
+                }
+                case 'DELETE': {
+                    const response = await axios.delete(url, { headers });
+                    return response;
+                }
+                default:
+                    break;
+            }
+        } catch (error) {
+            return error.response;
         }
-    }, [fetchDirectly, fetchData]);
-
-    
-    const fetchQuery = useQuery(
-        queryKey,
-        async () => { },
+    };
+    const mutate = useMutation(
+        async ({ endPoint, method, requestData = {}, requestParam = '' }) => {
+            return await mutateData(endPoint, method, requestData, requestParam);
+        },
         {
-            enabled: fetchDirectly,
-            ...queryOptions
+            ...queryOptions,
+            onSuccess: (response) => {
+                console.log('Mutation succeeded:', response);
+                return response;
+            },
+            onError: (error) => {
+                console.error('Mutation failed:', error);
+            }
         }
     );
 
-    const mutateQuery = useMutation(fetchData, {
-        onSuccess: (response) => {
-            fetchQuery.refetch();
-            return response;
-        },
-    });
-
-
-    const handleRequest = async () => {
-        try {
-            const response = await mutateQuery.mutateAsync();
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    return { fetchQuery, handleRequest };
+    return { fetchedData, mutate };
 
     // Summary of fetchQuery uses:
     // 1. Data Access: Use fetchQuery.data to access fetched data.

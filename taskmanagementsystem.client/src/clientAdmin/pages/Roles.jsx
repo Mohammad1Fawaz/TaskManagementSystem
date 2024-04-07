@@ -11,12 +11,11 @@ import HelpersService from '../../common/services/HelpersService';
 import Checkbox from '@mui/material/Checkbox';
 import NestedCheckboxRoles from '../../clientAdmin/components/ui/NestedCheckboxRoles';
 import Swal from 'sweetalert2';
-
+import useFetch from "../../common/hooks/useFetch";
 const Roles = () => {
-
     const initialFormData = {
-        roleName: '',
-        permissions: []
+        roleName: "",
+        permissions: [],
     };
     const [formData, setFormData] = useState(initialFormData);
     const [fetched, setFetched] = useState(false);
@@ -24,35 +23,54 @@ const Roles = () => {
     const [roles, setRoles] = useState([]);
     const [claims, setClaims] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [roleNameValidationMessage, setRoleNameValidationMessage] = useState('');
-    const [permissionsValidationMessage, setPermissionsValidationMessage] = useState('');
+    const [roleNameValidationMessage, setRoleNameValidationMessage] =
+        useState("");
+    const [permissionsValidationMessage, setPermissionsValidationMessage] =
+        useState("");
 
-   useEffect(() => {
+    const { fetchedData } = useFetch(['permissions-query', 'constants/permissions'], {}, false);
+    const { mutate: getRoles } = useFetch("roles-query", {}, true);
+    const { mutate: getRolePermissions } = useFetch("roles-permission-query", {}, false);
+    const { mutate: addRole } = useFetch("add-role-query", {}, true);
+    const { mutate:deleteRole } = useFetch("delete-role-query", {}, true);
+    useEffect(() => {
         const fetchData = async () => {
             try {
-                const [permissionsData, rolesData, claimsData] = await Promise.all([
-                    ConstantsService.getPermissions(),
-                    RoleService.getRoles(),
-                    RoleService.getRolesPermissions()
-                ]);
-                setPermissions(permissionsData);
-                setRoles(rolesData);
-                setClaims(claimsData);
+                const variablesRole = {
+                    endPoint: 'Role/get-roles',
+                    method: 'POST',
+                    requestData: roles
+                };
+                const variablesPerm = {
+                    endPoint: 'Role/get-role-permissions',
+                    method: 'POST',
+                };
+                const permissionsData = await fetchedData.refetch('constants/permissions');
+                const rolesData = await getRoles.mutateAsync(variablesRole);
+                const claimsData = await getRolePermissions.mutateAsync(variablesPerm);
+                setPermissions(permissionsData.data);
+                setRoles(rolesData.data);
+                setClaims(claimsData.data);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error("Error fetching data:", error);
             }
         };
 
         fetchData();
-   }, [isLoading, fetched]);
+    }, [addRole,deleteRole]);
 
     const reset = () => {
         setFormData(initialFormData);
-    }
-    
+    };
+
     const handleSelectChange = (selectedOption) => {
         if (selectedOption) {
-            setFormData({ ...formData, permissions: selectedOption.map((option) => { return option.value; }) });
+            setFormData({
+                ...formData,
+                permissions: selectedOption.map((option) => {
+                    return option.value;
+                }),
+            });
         }
     };
 
@@ -64,24 +82,30 @@ const Roles = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const result = await RoleService.AddRole(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            const variables = {
+                endPoint: 'Role/add-role',
+                method: 'POST',
+                requestData: formData
+            };
+            const response = await addRole.mutateAsync(variables);
+            const data = response.data;
+            if (data.success) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(addRole.isLoading);
                 reset();
             } else {
-                if (result.errors) {
-                    setRoleNameValidationMessage(result.errors.RoleName && result.errors.RoleName[0]);
-                    setPermissionsValidationMessage(result.errors.Permissions && result.errors.Permissions[0]);
+                if (data.errors) {
+                    setRoleNameValidationMessage(data.errors.RoleName && data.errors.RoleName[0]);
+                    setPermissionsValidationMessage(data.errors.Permissions && data.errors.Permissions[0]);
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
+                if (data.message) {
+                    HelpersService.notify(data.message, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(addRole.isLoading);
             }
         } catch (error) {
             reset();
-            HelpersService.notify('Error during registration', "error");
+            HelpersService.notify("Error addinng new role", "error");
             console.error(error, "error");
             setIsLoading(false);
         }
@@ -89,17 +113,23 @@ const Roles = () => {
 
     const handleDeleteRole = async (roleId) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: 'You won\'t be able to revert this!',
-            icon: 'warning',
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: 'var(--button-primary-color)',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, continue!'
+            confirmButtonColor: "var(--button-primary-color)",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, continue!",
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await RoleService.DeleteRole(roleId);
+                    const variables = {
+                        endPoint: 'Role/delete-role',
+                        method: 'DELETE',
+                        requestParam:roleId
+                    };
+                    const response = await deleteRole.mutateAsync(variables);
+                    const result = response.data;
                     if (result.success) {
                         HelpersService.notify(result.message, "success");
                         reset();
@@ -110,21 +140,21 @@ const Roles = () => {
                         }
                     }
                 } catch (error) {
-                    HelpersService.notify('Something went wrong', "error");
+                    HelpersService.notify("Something went wrong", "error");
                     console.error(error, "error");
                 }
             }
-        });             
-    }
+        });
+    };
     const handleUpdateRole = async (roleId, checkedClaims) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: 'You won\'t be able to revert this!',
-            icon: 'warning',
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: 'var(--button-primary-color)',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, continue!'
+            confirmButtonColor: "var(--button-primary-color)",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, continue!",
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -139,19 +169,24 @@ const Roles = () => {
                         }
                     }
                 } catch (error) {
-                    HelpersService.notify('Something went wrong', "error");
+                    HelpersService.notify("Something went wrong", "error");
                     console.error(error, "error");
                 }
             }
-        });             
-    }
+        });
+    };
     return (
         <div>
-            <h1 className="" >Roles</h1>
-            <form className="w-100 p-4 mt-3 shadow rounded-2" onSubmit={handleAddRole}>
+            <h1 className="">Roles</h1>
+            <form
+                className="w-100 p-4 mt-3 shadow rounded-2"
+                onSubmit={handleAddRole}
+            >
                 <div className="flex gap-2">
                     <div className="w-[50%] relative">
-                        <small className="text-danger text-xs absolute top-[-20px]">{roleNameValidationMessage}</small>
+                        <small className="text-danger text-xs absolute top-[-20px]">
+                            {roleNameValidationMessage}
+                        </small>
                         <TextInput
                             type="text"
                             value={formData.roleName}
@@ -160,15 +195,17 @@ const Roles = () => {
                             className="mb-3 relative"
                             name="roleName"
                         />
-                    </div>             
+                    </div>
                     <div className="w-[50%] relative">
-                        <small className="text-danger text-xs absolute top-[-20px]">{permissionsValidationMessage}</small>
+                        <small className="text-danger text-xs absolute top-[-20px]">
+                            {permissionsValidationMessage}
+                        </small>
                         <PermisionInput
                             permissions={permissions}
                             handleSelectChange={handleSelectChange}
                             className="relative mb-3"
                         />
-                    </div>   
+                    </div>
                 </div>
                 <div className="flex ml-auto justify-end mt-2 xs:w-full lg:w-[120px]">
                     <PrimaryButton isLoading={isLoading} type="submit" text="Add Role" className="w-[120px] text-[15px] xs:w-full" />
@@ -191,6 +228,6 @@ const Roles = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Roles;

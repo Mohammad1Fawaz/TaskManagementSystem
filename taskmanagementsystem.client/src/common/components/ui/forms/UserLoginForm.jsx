@@ -7,7 +7,7 @@ import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
 import HelpersService from '../../../../common/services/HelpersService';
 import MainLogo from '../images/MainLogo';
-import useFetch from '../../../hooks/useFetch';
+import useFetch from "../../common/hooks/useFetch";
 const UserLoginForm = () => {
     let navigate = useNavigate();
 
@@ -21,7 +21,8 @@ const UserLoginForm = () => {
 
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
-    const { fetchQuery, handleRequest } = useFetch("POST", "Auth/login", formData, false, "login-query", {}, false);
+    const { mutate } = useFetch("login-query", {}, false);
+    const { fetchedData } = useFetch(['roles-query','Auth/get-user-info'], {}, true);
 
     const reset = () => {
         setFormData(initialFormData);
@@ -36,38 +37,44 @@ const UserLoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        setIsLoading(isLoading);
+        const variables = {
+            endPoint: 'Auth/login',
+            method: 'POST',
+            requestData: formData
+        };
+        const response = await mutate.mutateAsync(variables);
+        const data=response.data
         try {
-            if (isSuccess) {
+            if (data.success ) {
                 HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
                 AuthService.saveToken(data.token);
                 reset();
-                const userInfo = await AuthService.getUserInfo(data.token);
+                const response = await fetchedData.refetch('Auth/get-user-info');
+                const userInfo=response.data;
                 if (userInfo.role.includes("ClientAdmin")) {
                     navigate('/ClientAdmin');
                 } else {
                     navigate('/Developer');
                 }
             } else {
-                if (errors) {
-                    setEmailNameValidationMessage(errors.email && errors.email[0]);
-                    setPasswordNameValidationMessage(errors.password && errors.password[0]);
+                if (data.errors) {
+                    setEmailNameValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPasswordNameValidationMessage(data.errors.password && data.errors.password[0]);
                 }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
+                if(!data.success){
+                    HelpersService.notify(data.message, "error");
                 }
-                setIsLoading(isLoading);
             }
+            setIsLoading(mutate.isLoading);
 
         } catch (error) {
+            console.log('went to catch',error)
             HelpersService.notify('Error during Login', "error");
-            console.log(error);
             setIsLoading(isLoading);
         }
     };
-  
+
     return (
         <>
             <div className="w-full flex-center mb-2">

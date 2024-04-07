@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Avatar from "../../common/components/ui/other/Avatar";
+import useFetch from "../../common/hooks/useFetch"
 
 
 const Users = ({ setSelectedItem}) => {
@@ -39,29 +40,41 @@ const Users = ({ setSelectedItem}) => {
     const [permissions, setpermissions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleteLoading, setIsDeleteIsLoading] = useState(false);
-
-
+    const {fetchedData}=useFetch(['countries-query','constants/countries'],{},false);
+    const { mutate: getRoles } = useFetch("roles-query", {}, true);
+    const { mutate: getUsers } = useFetch("users-query", {}, true);
+    const {mutate}=useFetch("register-query", {}, true);
+    const { mutate:deleteUser } = useFetch("delete-user-query", {}, true);
+    const { mutate:editUser } = useFetch("edit-user-query", {}, true);
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await ConstantsService.getCountries();
-                setCountries(response);
+                const response = await fetchedData.refetch('constants/countries');
+                setCountries(response.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
         };
         const fetchRoles = async () => {
             try {
-                const response = await RoleService.getRoles();
-                setpermissions(response);
+                const variablesRole = {
+                    endPoint: 'Role/get-roles',
+                    method: 'POST',
+                };
+                const rolesData = await getRoles.mutateAsync(variablesRole);
+                setpermissions(rolesData.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
         };
         const fetchUsers = async () => {
             try {
-                const response = await UserService.getUsers();
-                setUsers(response);
+                const variablesRole = {
+                    endPoint: 'User/get-users',
+                    method: 'POST',
+                };
+                const usersData = await getUsers.mutateAsync(variablesRole);
+                setUsers(usersData.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -71,7 +84,7 @@ const Users = ({ setSelectedItem}) => {
         fetchUsers();
         fetchCountries();
 
-    }, [isLoading, isDeleteLoading]);
+    }, [deleteUser, editUser]);
 
 
     const reset = () => {
@@ -111,7 +124,13 @@ const Users = ({ setSelectedItem}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await UserService.deleteUser(userId);
+                    const variables = {
+                        endPoint: 'Role/delete-role',
+                        method: 'DELETE',
+                        requestParam:userId
+                    };
+                    const response = await deleteUser.mutateAsync(variables);
+                    const result = response.data;
                     if (result.success) {
                         HelpersService.notify(result.message, "success");
                         setIsDeleteIsLoading(false);
@@ -143,17 +162,15 @@ const Users = ({ setSelectedItem}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const userDataToUpdate = { ...updatedUserData };
-                    const updateFormData = {
-                        email: userDataToUpdate.email,
-                        password: "---------------",
-                        name: userDataToUpdate.userName,
-                        phoneNumber: userDataToUpdate.phoneNumber,
-                        phoneCode: '+961',
-                        roles: [],
+                    setUpdateFormData( updatedUserData );
+                    const variables = {
+                        endPoint: 'User/edit-user',
+                        method: 'POST',
+                        requestData:updateFormData,
+                        requestParam:userId
                     };
-
-                    const result = await UserService.editUser(userId, updateFormData);
+                    const response = await editUser.mutateAsync(variables);
+                    const result = response.data;
                     if (result.success) {
                         HelpersService.notify(result.message, "success");
                         reset();
@@ -174,31 +191,35 @@ const Users = ({ setSelectedItem}) => {
     const handleSubmits = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        const variables={
+            endPoint: 'Client/register',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            const result = await UserService.registerUser(formData);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            if (data.success) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(mutate.isLoading);
                 reset();
+                //navigate to page ...
             } else {
-                if (result.errors) {
-                    setUserNameValidationMessage(result.errors.name && result.errors.name[0]);
-                    setUserEmailValidationMessage(result.errors.email && result.errors.email[0]);
-                    setPasswordValidationMessage(result.errors.password && result.errors.password[0]);
-                    setUserPhoneValidationMessage((result.errors.phoneNumber && result.errors.phoneNumber[0]) || (result.errors.phoneCode && result.errors.phoneCode[0]) || '');
+                if (data.errors) {
+                    setCompanyNameValidationMessage(data.errors.companyName && data.errors.companyName[0]);
+                    setUserEmailValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPasswordValidationMessage(data.errors.password && data.errors.password[0]);
+                    setUserPhoneValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
+                if (data.message) {
+                    HelpersService.notify(data.message, "error");
                 }
-                if (result.errorMessage) {
-                    HelpersService.notify(result.errorMessage, "error");
-                }
-                setIsLoading(false);
+                setIsLoading(mutate.isLoading);
             }
         } catch (error) {
             HelpersService.notify('Error during registration', "error");
-            console.error(error, "error");
-            setIsLoading(false);
+            setIsLoading(mutate.isLoading);
         }
     };
 

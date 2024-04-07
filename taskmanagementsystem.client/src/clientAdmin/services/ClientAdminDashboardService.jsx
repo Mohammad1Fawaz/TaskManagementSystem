@@ -4,7 +4,7 @@ import HelpersService from '../../common/services/HelpersService';
 import Swal from 'sweetalert2';
 import AuthService from '../../common/services/AuthService';
 import { useNavigate } from 'react-router-dom'
-
+import useFetch from "../../common/hooks/useFetch"
 const ClientAdminDashboardService = () => {
 
     const [open, setOpen] = useState(true);
@@ -20,6 +20,7 @@ const ClientAdminDashboardService = () => {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const openNotifications = Boolean(notificationsAnchorEl);
     const [openLogoutDropdown, setOpenLogoutDropdown] = useState(false);
+    const { mutate } = useFetch("logout-query", {}, true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -137,18 +138,23 @@ const ClientAdminDashboardService = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await AuthService.logout();
-                    if (result.success) {
+                    const variables = {
+                        endPoint: 'Auth/logout',
+                        method: 'POST'
+                    };
+                    const response = await mutate.mutateAsync(variables);
+                    const data = response.data;
+                    if (data.success) {
                         AuthService.clearToken();
-                        HelpersService.notify(result.message, "success");
+                        HelpersService.notify(data.message, "success");
                         navigate('/login');
                     } else {
-                        if (result.message) {
-                            HelpersService.notify(result.message, "error");
+                        if (data.error) {
+                            HelpersService.notify(data.error, "error");
                         }
                     }
                 } catch (error) {
-                    HelpersService.notify('Error during registration', "error");
+                    HelpersService.notify('Error during Logout', "error");
                     console.error(error, "error");
                 }
             }

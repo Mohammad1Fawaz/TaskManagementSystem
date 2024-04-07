@@ -5,6 +5,7 @@ import UserService from '../../../../clientAdmin/services/UserService';
 import TextInput from '../inputs/TextInput';
 import PrimaryButton from '../buttons/PrimaryButton';
 import MainLogo from '../images/MainLogo';
+import useFetch from '../../../hooks/useFetch';
 
 const VerificationForm = ({ onSubmit }) => {
 
@@ -20,7 +21,8 @@ const VerificationForm = ({ onSubmit }) => {
     const [formData, setFormData] = useState(initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
     const [userVerificationPageValidationMessage, setUserVerificationPageValidationMessage] = useState('');
-
+    const { fetchQuery, handleRequest } = useFetch("POST", "User/verify-user", formData, false, "verify-query", {}, false);
+    const {mutate}=useFetch("verify-query", {}, false);
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -28,26 +30,31 @@ const VerificationForm = ({ onSubmit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        const variables={
+            endPoint: 'User/verify-user',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            const result =await UserService.verifyUser(formData);
-            console.log(result);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
+            if (data.success) {
+                HelpersService.notify(data.message, "success");
+                setIsLoading(mutate.isLoading);
                 navigate('/login');
             } else {
-                if (result.errors) {
-                    console.log(result.errors);
-                    setUserEmailValidationMessage(result.errors.Email && result.errors.Email[0]);
-                    setUserVerificationPageValidationMessage(result.errors.VerificationCode && result.errors.VerificationCode[0]);
+                if (data.errors) {
+                    setUserEmailValidationMessage(data.errors.Email && data.errors.Email[0]);
+                    setUserVerificationPageValidationMessage(data.errors.VerificationCode && data.errors.VerificationCode[0]);
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
+                if (data.error) {
+                    HelpersService.notify(data.error, "error");
                 }
-                setIsLoading(false);
+                setIsLoading(mutate.isLoading);
             }
         } catch (error) {
-            setIsLoading(false);
+            setIsLoading(mutate.isLoading);
             console.error('Error fetching verification code:', error.message);
         }
     };
