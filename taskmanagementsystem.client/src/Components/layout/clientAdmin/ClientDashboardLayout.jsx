@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -106,7 +106,7 @@ const ClientDashboardLayout = ({ children }) => {
     const [customThemeColors, setCustomThemeColors] = useState(getSavedColors());
     const theme = useTheme();
     const navigate = useNavigate();
-    const { fetchQuery, handleRequest } = useFetch("POST", "Auth/logout",{}, false, "logout-query", {}, true);
+    const { mutate } = useFetch("logout-query", {}, true);
     useEffect(() => {
         applyCustomTheme();
         saveColors();
@@ -157,18 +157,23 @@ const ClientDashboardLayout = ({ children }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-                    if (isSuccess) {
+                    const variables = {
+                        endPoint: 'Auth/logout',
+                        method: 'POST'
+                    };
+                    const response = await mutate.mutateAsync(variables);
+                    const data = response.data;
+                    if (data.success) {
                         AuthService.clearToken();
                         HelpersService.notify(data.message, "success");
                         navigate('/login');
                     } else {
-                        if (isError && error) {
-                            HelpersService.notify(error, "error");
+                        if (data.error) {
+                            HelpersService.notify(data.error, "error");
                         }
                     }
                 } catch (error) {
-                    HelpersService.notify('Error during registration', "error");
+                    HelpersService.notify('Error during Logout', "error");
                     console.error(error, "error");
                 }
             }
@@ -309,7 +314,7 @@ const ClientDashboardLayout = ({ children }) => {
                                             color: 'var(--text-primary-color)'
                                         }}
                                     >
-                                        {index === 0 ? <PersonIcon /> : index === 1 ? <GroupIcon /> : <WorkIcon/>}
+                                        {index === 0 ? <PersonIcon /> : index === 1 ? <GroupIcon /> : <WorkIcon />}
                                     </ListItemIcon>
                                     <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                                 </ListItemButton>

@@ -24,12 +24,13 @@ export default function UserResetPasswordForm() {
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
     const [countries, setCountries] = useState([]);
-    const { fetchQuery, handleRequest } = useFetch("POST", "Client/reset-password", formData, false, "reset-query", {}, false);
+    const {fetchedData}=useFetch(['countries-query','constants/countries'],{},false);
+    const {mutate}=useFetch("reset-query", {}, false);
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await ConstantsService.getCountries();
-                setCountries(response);
+                const response = await fetchedData.refetch('constants/countries');
+                setCountries(response.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -56,30 +57,35 @@ export default function UserResetPasswordForm() {
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
-        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        console.log("fetchQuery",fetchQuery);
-        setIsLoading(isLoading);
+        const variables={
+            endPoint: 'Client/reset-password',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            if (isSuccess) {
+            if (data.success) {
                 HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
                 reset(initialFormData);
 
                 navigate('/login');
             } else {
-                if (errors) {
-                    setEmailValidationMessage(errors.email && errors.email[0]);
-                    setPhoneNumberValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
+                if (data.errors) {
+                    setEmailValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPhoneNumberValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
 
                 }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
+                if (data.error) {
+                    HelpersService.notify(data.error, "error");
                 }
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
             }
         } catch (err) {
             HelpersService.notify('Error during resseting the password', "error");
-            setIsLoading(isLoading);
+            setIsLoading(mutate.isLoading);
         }
     }
 

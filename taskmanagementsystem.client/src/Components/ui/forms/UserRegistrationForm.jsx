@@ -26,13 +26,14 @@ const UserRegistrationForm = () => {
     const [userPhoneNumberValidationMessage, setPhoneNumberNameValidationMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [countries, setCountries] = useState([]);
-    const { fetchQuery, handleRequest } = useFetch("POST", "Client/register", formData, false, "register-query", {}, false);
+    const {fetchedData}=useFetch(['countries-query','constants/countries'],{},false);
+    const {mutate}=useFetch("register-query", {}, false)
 
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await ConstantsService.getCountries();
-                setCountries(response);
+                const response = await fetchedData.refetch('constants/countries');
+                setCountries(response.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -63,32 +64,37 @@ const UserRegistrationForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        console.log("fetchQuery",fetchQuery);
-        setIsLoading(isLoading);
+        const variables={
+            endPoint: 'Client/register',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            if (isSuccess) {
+            if (data.success) {
                 HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
                 const token = data.token;
                 AuthService.saveToken(token);
                 reset();
                 //navigate to page ...
             } else {
-                if (errors) {
-                    setCompanyNameValidationMessage(errors.companyName && errors.companyName[0]);
-                    setEmailNameValidationMessage(errors.email && errors.email[0]);
-                    setPasswordNameValidationMessage(errors.password && errors.password[0]);
-                    setPhoneNumberNameValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
+                if (data.errors) {
+                    setCompanyNameValidationMessage(data.errors.companyName && data.errors.companyName[0]);
+                    setEmailNameValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPasswordNameValidationMessage(data.errors.password && data.errors.password[0]);
+                    setPhoneNumberNameValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');
                 }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
+                if (data.message) {
+                    HelpersService.notify(data.message, "error");
                 }
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
             }
         } catch (error) {
             HelpersService.notify('Error during registration', "error");
-            setIsLoading(isLoading);
+            setIsLoading(mutate.isLoading);
         }
     };
 

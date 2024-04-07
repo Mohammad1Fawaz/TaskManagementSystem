@@ -23,6 +23,7 @@ const VerificationForm = ({ onSubmit }) => {
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
     const [userVerificationPageValidationMessage, setUserVerificationPageValidationMessage] = useState('');
     const { fetchQuery, handleRequest } = useFetch("POST", "User/verify-user", formData, false, "verify-query", {}, false);
+    const {mutate}=useFetch("verify-query", {}, false);
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -30,26 +31,31 @@ const VerificationForm = ({ onSubmit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        console.log("fetchQuery",fetchQuery);
-        setIsLoading(isLoading);
+        const variables={
+            endPoint: 'User/verify-user',
+            method: 'POST',
+            requestData: formData
+        };
+        const response= await mutate.mutateAsync(variables);
+        const data= response.data;
+        setIsLoading(mutate.isLoading);
         try {
-            if (isSuccess) {
+            if (data.success) {
                 HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
                 navigate('/login');
             } else {
-                if (errors) {
-                    setUserEmailValidationMessage(errors.Email && errors.Email[0]);
-                    setUserVerificationPageValidationMessage(errors.VerificationCode && errors.VerificationCode[0]);
+                if (data.errors) {
+                    setUserEmailValidationMessage(data.errors.Email && data.errors.Email[0]);
+                    setUserVerificationPageValidationMessage(data.errors.VerificationCode && data.errors.VerificationCode[0]);
                 }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
+                if (data.error) {
+                    HelpersService.notify(data.error, "error");
                 }
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
             }
         } catch (error) {
-            setIsLoading(isLoading);
+            setIsLoading(mutate.isLoading);
             console.error('Error fetching verification code:', error.message);
         }
     };

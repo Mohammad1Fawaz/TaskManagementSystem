@@ -27,59 +27,37 @@ const Roles = () => {
         useState("");
     const [permissionsValidationMessage, setPermissionsValidationMessage] =
         useState("");
-    const { fetchPermission, handleRequest: getPermissions } = useFetch(
-        "GET",
-        "constants/permissions",
-        {},
-        false,
-        "permissions-query",
-        {},
-        false
-    );
-    const { fetchRoles, handleRequest: getRoles } = useFetch(
-        "POST",
-        "Role/get-roles",
-        roles,
-        false,
-        "roles-query",
-        {},
-        true
-    );
-    const { fetchRolePermissions, handleRequest: getRolePermissions } = useFetch(
-        "POST",
-        "Role/get-role-permissions",
-        {},
-        false,
-        "roles-permission-query",
-        {},
-        false
-    );
-    const { addRole, handleRequest: addRole } = useFetch(
-        "POST",
-        "Role/add-role",
-        roles,
-        false,
-        "add-role-query",
-        {},
-        true
-    );
-    //  const { fetchDeleteRole, handleRequest:deleteRole } = useFetch("DELETE", "Role/add-role",roles, false, "add-role-query", {}, true);
+
+    const { fetchedData } = useFetch(['permissions-query', 'constants/permissions'], {}, false);
+    const { mutate: getRoles } = useFetch("roles-query", {}, true);
+    const { mutate: getRolePermissions } = useFetch("roles-permission-query", {}, false);
+    const { mutate: addRole } = useFetch("add-role-query", {}, true);
+    const { mutate:deleteRole } = useFetch("delete-role-query", {}, true);
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { permissionsData } = await getPermissions();
-                const { rolesData } = await getRoles();
-                const { claimsData } = await getRolePermissions();
-                setPermissions(permissionsData);
-                setRoles(rolesData);
-                setClaims(claimsData);
+                const variablesRole = {
+                    endPoint: 'Role/get-roles',
+                    method: 'POST',
+                    requestData: roles
+                };
+                const variablesPerm = {
+                    endPoint: 'Role/get-role-permissions',
+                    method: 'POST',
+                };
+                const permissionsData = await fetchedData.refetch('constants/permissions');
+                const rolesData = await getRoles.mutateAsync(variablesRole);
+                const claimsData = await getRolePermissions.mutateAsync(variablesPerm);
+                setPermissions(permissionsData.data);
+                setRoles(rolesData.data);
+                setClaims(claimsData.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
 
         fetchData();
-    }, []);
+    }, [addRole,deleteRole]);
 
     const reset = () => {
         setFormData(initialFormData);
@@ -104,26 +82,30 @@ const Roles = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const { data, isLoading, isSuccess, isError, error, errors } = await addRole();
-            if (isSuccess) {
+            const variables = {
+                endPoint: 'Role/add-role',
+                method: 'POST',
+                requestData: formData
+            };
+            const response = await addRole.mutateAsync(variables);
+            const data = response.data;
+            if (data.success) {
                 HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
+                setIsLoading(addRole.isLoading);
                 reset();
             } else {
-                if (errors) {
-                    setRoleNameValidationMessage(errors.RoleName && errors.RoleName[0]);
-                    setPermissionsValidationMessage(
-                        errors.Permissions && errors.Permissions[0]
-                    );
+                if (data.errors) {
+                    setRoleNameValidationMessage(data.errors.RoleName && data.errors.RoleName[0]);
+                    setPermissionsValidationMessage(data.errors.Permissions && data.errors.Permissions[0]);
                 }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
+                if (data.message) {
+                    HelpersService.notify(data.message, "error");
                 }
-                setIsLoading(isLoading);
+                setIsLoading(addRole.isLoading);
             }
         } catch (error) {
             reset();
-            HelpersService.notify("Error during registration", "error");
+            HelpersService.notify("Error addinng new role", "error");
             console.error(error, "error");
             setIsLoading(false);
         }
@@ -141,17 +123,13 @@ const Roles = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    // const { data, isLoading, isSuccess, isError, error, errors } = await deleteRole();
-                    //                     if (isSuccess) {
-                    //                         HelpersService.notify(data.message, "success");
-                    //                         reset();
-                    //                         setFetched(true);
-                    //                     } else {
-                    //                         if (isError && error) {
-                    //                             HelpersService.notify(error, "error");
-                    //                         }
-                    //                     }
-                    const result = await RoleService.DeleteRole(roleId);
+                    const variables = {
+                        endPoint: 'Role/delete-role',
+                        method: 'DELETE',
+                        requestParam:roleId
+                    };
+                    const response = await deleteRole.mutateAsync(variables);
+                    const result = response.data;
                     if (result.success) {
                         HelpersService.notify(result.message, "success");
                         reset();

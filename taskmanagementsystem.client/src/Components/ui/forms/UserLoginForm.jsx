@@ -21,7 +21,8 @@ const UserLoginForm = () => {
 
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
-    const { fetchQuery, handleRequest } = useFetch("POST", "Auth/login", formData, false, "login-query", {}, false);
+    const { mutate } = useFetch("login-query", {}, false);
+    const { fetchedData } = useFetch(['roles-query','Role/get-role'], {}, true);
 
     const reset = () => {
         setFormData(initialFormData);
@@ -36,39 +37,43 @@ const UserLoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        console.log("fetchQuery",fetchQuery);
-        setIsLoading(isLoading);
+        const variables = {
+            endPoint: 'Auth/login',
+            method: 'POST',
+            requestData: formData
+        };
+        const response = await mutate.mutateAsync(variables);
+        const data=response.data
         try {
-            if (isSuccess) {
+            if (data.success ) {
                 HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
+                setIsLoading(mutate.isLoading);
                 AuthService.saveToken(data.token);
                 reset();
-                const userRole = await RoleService.getUserRoles(data.token);
-                if (userRole == "ClientAdmin") {
+                const {data:userRole}=await fetchedData.refetch('Role/get-role')
+                if (userRole.role == "ClientAdmin") {
                     navigate('/ClientAdmin');
                 } else {
                     navigate('/Developer');
                 }
             } else {
-                if (errors) {
-                    setEmailNameValidationMessage(errors.email && errors.email[0]);
-                    setPasswordNameValidationMessage(errors.password && errors.password[0]);
+                if (data.errors) {
+                    setEmailNameValidationMessage(data.errors.email && data.errors.email[0]);
+                    setPasswordNameValidationMessage(data.errors.password && data.errors.password[0]);
                 }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
+                if(!data.success){
+                    HelpersService.notify(data.message, "error");
                 }
-                setIsLoading(isLoading);
             }
+            setIsLoading(mutate.isLoading);
 
         } catch (error) {
+            console.log('went to catch',error)
             HelpersService.notify('Error during Login', "error");
-            console.log(error);
             setIsLoading(isLoading);
         }
     };
-  
+
     return (
         <div className="flex flex-col justify-content-center  w-full h-full mt-auto mb-auto bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-no-repeat bg-contain bg-right">
             <div className="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4  mx-[5%] shadow bg-white p-4 rounded h-auto">
