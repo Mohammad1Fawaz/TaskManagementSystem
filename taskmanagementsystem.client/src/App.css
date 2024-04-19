@@ -38,7 +38,7 @@
 }
 
 * {
-    scrollbar-color: var(--scrollbar-color) transparent;
+    scrollbar-color: var(--scrollbar-color) var(--main-hover-secondary-color);
     scrollbar-width: thin !important;
 }
 

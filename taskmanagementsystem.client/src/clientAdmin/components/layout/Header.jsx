@@ -129,7 +129,7 @@ const Header = ({
                         aria-describedby={openLogoutDropdown ? 'avatar-popover' : undefined}
                     >
                         <Avatar
-                            text={userInfo.userName.charAt(0).toUpperCase()}
+                            text={userInfo?.userName?.charAt(0).toUpperCase()}
                             size="40px"
                             sx={{
                                 width: '30px',

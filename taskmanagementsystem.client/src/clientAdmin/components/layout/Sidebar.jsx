@@ -87,7 +87,8 @@ const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick })
                 {['Users', 'Roles', 'Projects'].map((text, index) => (
                     <ListItem
                         key={text}
-                        disablePadding sx={{ display: 'block' }}
+                        disablePadding
+                        sx={{ display: 'block' , borderRadius:'50px' }}
                         onClick={() => handleListItemClick(index)}
                         selected={selectedItem === index}>
                         <ListItemButton
@@ -99,7 +100,9 @@ const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick })
                                 '&:hover': {
                                     bgcolor: 'var(--main-hover-secondary-color)',
                                 },
-                                color: 'var(--text-primary-color)'
+                                color: 'var(--text-primary-color)',
+                                borderTopRightRadius: '50px',
+                                borderBottomRightRadius: '50px',
                             }}
                         >
                             <ListItemIcon
