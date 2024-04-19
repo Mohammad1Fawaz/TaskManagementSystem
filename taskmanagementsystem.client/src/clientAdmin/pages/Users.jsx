@@ -80,11 +80,11 @@ const Users = ({ setSelectedItem}) => {
             }
         };
 
-        fetchRoles();
-        fetchUsers();
+         fetchRoles();
+         fetchUsers();
         fetchCountries();
 
-    }, [deleteUser, editUser]);
+    }, []);
 
 
     const reset = () => {
@@ -125,7 +125,7 @@ const Users = ({ setSelectedItem}) => {
             if (result.isConfirmed) {
                 try {
                     const variables = {
-                        endPoint: 'Role/delete-role',
+                        endPoint: 'User/delete-user',
                         method: 'DELETE',
                         requestParam:userId
                     };
@@ -162,12 +162,20 @@ const Users = ({ setSelectedItem}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    setUpdateFormData( updatedUserData );
+                    const userDataToUpdate = { ...updatedUserData };
+                    const updateFormData = {
+                        email: userDataToUpdate.email,
+                        password: "---------------",
+                        name: userDataToUpdate.userName,
+                        phoneNumber: userDataToUpdate.phoneNumber,
+                        phoneCode: '+961',
+                        roles: [],
+                    };
+                    console.log('update data',updateFormData);
                     const variables = {
                         endPoint: 'User/edit-user',
                         method: 'POST',
-                        requestData:updateFormData,
-                        requestParam:userId
+                        requestData:updateFormData
                     };
                     const response = await editUser.mutateAsync(variables);
                     const result = response.data;
@@ -192,12 +200,13 @@ const Users = ({ setSelectedItem}) => {
         e.preventDefault();
         setIsLoading(true);
         const variables={
-            endPoint: 'Client/register',
+            endPoint: 'User/register',
             method: 'POST',
             requestData: formData
         };
         const response= await mutate.mutateAsync(variables);
         const data= response.data;
+        console.log(data);
         setIsLoading(mutate.isLoading);
         try {
             if (data.success) {
@@ -207,7 +216,6 @@ const Users = ({ setSelectedItem}) => {
                 //navigate to page ...
             } else {
                 if (data.errors) {
-                    setCompanyNameValidationMessage(data.errors.companyName && data.errors.companyName[0]);
                     setUserEmailValidationMessage(data.errors.email && data.errors.email[0]);
                     setPasswordValidationMessage(data.errors.password && data.errors.password[0]);
                     setUserPhoneValidationMessage((data.errors.phoneNumber && data.errors.phoneNumber[0]) || (data.errors.phoneCode && data.errors.phoneCode[0]) || '');

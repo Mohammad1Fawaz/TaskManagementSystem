@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@emotion/styled": "^11.11.5",
+    "install": "^0.13.0"
+  }
+}

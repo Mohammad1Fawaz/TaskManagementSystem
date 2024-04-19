@@ -77,12 +77,14 @@ const useFetch = (queryKey = [], queryOptions = {}, needAuthentication = true) =
             return error.response;
         }
     };
+
     const mutate = useMutation(
         async ({ endPoint, method, requestData = {}, requestParam = '' }) => {
             return await mutateData(endPoint, method, requestData, requestParam);
         },
         {
             ...queryOptions,
+            enabled: false,
             onSuccess: (response) => {
                 console.log('Mutation succeeded:', response);
                 return response;

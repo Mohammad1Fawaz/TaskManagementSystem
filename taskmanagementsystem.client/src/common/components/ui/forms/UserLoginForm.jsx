@@ -50,8 +50,9 @@ const UserLoginForm = () => {
                 AuthService.saveToken(data.token);
                 reset();
                 const response = await fetchedData.refetch('Auth/get-user-info');
-                const userInfo=response.data;
-                if (userInfo.role.includes("ClientAdmin")) {
+                const user=response.data.userInfo;
+                console.log('roles: ',user);
+                if (user.role.includes("ClientAdmin")) {
                     navigate('/ClientAdmin');
                 } else {
                     navigate('/Developer');

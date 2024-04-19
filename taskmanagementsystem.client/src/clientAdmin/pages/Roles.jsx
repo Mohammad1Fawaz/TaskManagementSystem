@@ -46,18 +46,19 @@ const Roles = () => {
                     method: 'POST',
                 };
                 const permissionsData = await fetchedData.refetch('constants/permissions');
-                const rolesData = await getRoles.mutateAsync(variablesRole);
-                const claimsData = await getRolePermissions.mutateAsync(variablesPerm);
-                setPermissions(permissionsData.data);
-                setRoles(rolesData.data);
-                setClaims(claimsData.data);
+                 const rolesData = await getRoles.mutateAsync(variablesRole);
+                 const claimsData = await getRolePermissions.mutateAsync(variablesPerm);
+                 console.log('perms:',claimsData);
+                 setPermissions(permissionsData.data);
+                 setRoles(rolesData.data);
+                 setClaims(claimsData.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
 
         fetchData();
-    }, [addRole,deleteRole]);
+    },[]);
 
     const reset = () => {
         setFormData(initialFormData);
@@ -82,6 +83,7 @@ const Roles = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
+            console.log('data',formData)
             const variables = {
                 endPoint: 'Role/add-role',
                 method: 'POST',
