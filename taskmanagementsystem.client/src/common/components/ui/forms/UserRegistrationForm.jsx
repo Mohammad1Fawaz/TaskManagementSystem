@@ -9,7 +9,7 @@ import MainLogo from '../images/MainLogo';
 import PhoneInput from '../inputs/PhoneInput';
 import TextInput from '../inputs/TextInput';
 import PasswordInput from '../inputs/PasswordInput';
-import useFetch from '../../../hooks/useFetch';
+import useFetch from "../../../hooks/useFetch"
 const UserRegistrationForm = () => {
     const initialFormData = {
         companyName: '',

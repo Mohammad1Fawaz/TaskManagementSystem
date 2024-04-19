@@ -1,6 +1,6 @@
 import axios from "axios";
-import config from "../../config";
-import AuthService from "../Services/AuthService";
+import config from "../../../config";
+import AuthService from "../services/AuthService";
 import { useQuery, useMutation } from "react-query";
 //const queryOptions = {
 //    enabled: true, // Whether the query should automatically execute. Defaults to true.

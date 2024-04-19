@@ -8,7 +8,7 @@ import MediumLogo from "../images/MainLogo";
 import DangerButton from '../buttons/DangerButton';
 import PhoneInput from "../inputs/PhoneInput";
 import TextInput from '../inputs/TextInput';
-import useFetch from '../../../hooks/useFetch';
+import useFetch from "../../../hooks/useFetch"
 
 export default function UserResetPasswordForm() {
     let navigate = useNavigate();

@@ -21,7 +21,6 @@ const VerificationForm = ({ onSubmit }) => {
     const [formData, setFormData] = useState(initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
     const [userVerificationPageValidationMessage, setUserVerificationPageValidationMessage] = useState('');
-    const { fetchQuery, handleRequest } = useFetch("POST", "User/verify-user", formData, false, "verify-query", {}, false);
     const {mutate}=useFetch("verify-query", {}, false);
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
