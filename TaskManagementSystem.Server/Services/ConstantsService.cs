@@ -1,5 +1,7 @@
 ﻿using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Models;
+using TaskManagementSystem.Server.ViewModels;
+using static TaskManagementSystem.Server.Common.EnumConstants;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -15,9 +17,24 @@ namespace TaskManagementSystem.Server.Services
         {
             return SeedData.allCountries;
         }
-        public List<Permission> GetPermissions()
+        public List<PermissionViewModel> GetPermissions()
         {
-            return SeedData.allPermissions;
+            var permissions = new List<PermissionViewModel>();
+
+            foreach (CLaimsValue claimValue in Enum.GetValues(typeof(CLaimsValue)))
+            {
+                string displayName = claimValue.GetDisplayName();
+                var permission = new PermissionViewModel
+                {
+                    key = claimValue.ToString(),
+                    value = displayName,
+                    description = $"Permission related to {displayName}"
+                };
+
+                permissions.Add(permission);
+            }
+
+            return permissions;
         }
     }
 }

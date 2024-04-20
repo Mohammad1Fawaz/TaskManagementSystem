@@ -57,7 +57,11 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
 
@@ -73,7 +77,11 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
 
@@ -100,7 +108,11 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
 
@@ -127,7 +139,11 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
 
@@ -145,7 +161,11 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
     }

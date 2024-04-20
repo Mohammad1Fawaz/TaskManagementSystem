@@ -25,13 +25,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
             .HasOne(u => u.Client)
             .WithMany()
             .HasForeignKey(u => u.ClientId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ApplicationRole>()
                 .HasOne(r => r.ApplicationUser)
                 .WithMany()
                 .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ApplicationUser>()
             .HasIndex(e => e.NormalizedUserName)
@@ -55,11 +55,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
 
     }
 
+    #region DatabaseTables
     public DbSet<Country> Countries { get; set; }
     public DbSet<UserVerificationCode> UserVerificationCodes { get; set; }
-    public DbSet<Permission> Permissions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
-    
+    #endregion DatabaseTables
+
 
     public static void Configure(DbContextOptionsBuilder optionsBuilder, string connectionString)
     {
@@ -76,6 +77,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
+    public override int SaveChanges()
+    {
+        UpdateTimestamps();
+        return base.SaveChanges();
+    }
+
     private void UpdateTimestamps()
     {
         var entities = ChangeTracker.Entries()
@@ -87,6 +94,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
             if (entityEntry.State == EntityState.Added)
             {
                 entity.createdAt = DateTime.UtcNow;
+            }           
+            if (entityEntry.State == EntityState.Modified)
+            {
+                entity.updatedAt = DateTime.UtcNow;
             }
             entity.UpdateTimestamps();
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.Services;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
@@ -23,34 +24,45 @@ namespace TaskManagementSystem.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] ClientLoginViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Login failed. Invalid Data.",
+                        errors = ModelState.Values
+                         .Where(v => v.Errors.Count > 0)
+                         .ToDictionary(
+                             k => k.Errors,
+                             v => v.Errors.Select(e => e.ErrorMessage).ToList()
+                         )
+                    });
+                }
+                var registrationResult = _authService.Login(model);
+
+                if (registrationResult.Result.success)
+                {
+                    return Ok(new { success = registrationResult.Result.success, message = registrationResult.Result.message, token = registrationResult.Result.token });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        success = registrationResult.Result.success,
+                        message = registrationResult.Result.message
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
                 return BadRequest(new
                 {
-                    message = "Login failed. Invalid Data.",
-                    errors = ModelState.Values
-                     .Where(v => v.Errors.Count > 0)
-                     .ToDictionary(
-                         k => k.Errors,
-                         v => v.Errors.Select(e => e.ErrorMessage).ToList()
-                     )
+                    success = false,
+                    message = "Something went wrong,please contact support."
                 });
             }
-            var registrationResult = _authService.Login(model);
-
-            if (registrationResult.Result.success)
-            {
-                return Ok(new { success = registrationResult.Result.success, message = registrationResult.Result.message, token = registrationResult.Result.token });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    success = registrationResult.Result.success,
-                    message = registrationResult.Result.message
-                });
-            }
-
         }
       
         [HttpPost("logout")]
@@ -64,7 +76,11 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
 
@@ -80,7 +96,30 @@ namespace TaskManagementSystem.Server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Error fetching user roles: " + ex.Message);
-                return StatusCode(500, "Internal server error");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
+            }
+        }
+
+        [HttpPost("authorize-element")]
+        public async Task<IActionResult> AuthorizeElement([FromBody] List<string> RequiredClaims)
+        {
+            try
+            {
+                bool isAuthorized = await _authService.AuthorizeElement(RequiredClaims);
+                return Ok(new { IsAuthorized = isAuthorized });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
             }
         }
     }

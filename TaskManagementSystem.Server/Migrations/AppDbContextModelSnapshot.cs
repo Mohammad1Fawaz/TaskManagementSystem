@@ -2049,6 +2049,9 @@ namespace TaskManagementSystem.Server.Migrations
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("userType")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -2099,38 +2102,6 @@ namespace TaskManagementSystem.Server.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("TaskManagementSystem.Server.Models.Permission", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("clientId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("createdAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("updatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Server.Models.UserVerificationCode", b =>
@@ -2214,7 +2185,7 @@ namespace TaskManagementSystem.Server.Migrations
                     b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
@@ -2225,7 +2196,7 @@ namespace TaskManagementSystem.Server.Migrations
                     b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Client");
                 });

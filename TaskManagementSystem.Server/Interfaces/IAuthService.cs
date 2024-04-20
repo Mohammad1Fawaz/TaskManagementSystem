@@ -10,6 +10,7 @@ namespace TaskManagementSystem.Server.Interfaces
         string GenerateJwtToken(ApplicationUser client, bool isClient = false);
         Task<ResultViewModel> Logout();
         Task<UserDataViewModel> GetUserInfo();
+        Task<bool> AuthorizeElement(List<string> RequiredClaims);
 
     }
 }

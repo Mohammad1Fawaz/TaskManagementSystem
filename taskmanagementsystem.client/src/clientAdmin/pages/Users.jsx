@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Avatar from "../../common/components/ui/other/Avatar";
+import AuthorizeElement from "../../common/components/ui/other/AuthorizeElement";
 
 
 const Users = ({ setSelectedItem}) => {
@@ -291,42 +292,44 @@ const Users = ({ setSelectedItem}) => {
 
     return (
         <div className="">
-            <form className="w-full shadow rounded-2 mb-5 p-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={handleSubmits}>
-                <div className="relative xs:w-full lg:w-[45%]">
-                    <small className="text-danger text-xs absolute top-[-20px]">{userNameValidationMessage}</small>
-                    <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={handleInputChange} icon="fa-user" />
-                </div>
-                <div className="relative xs:w-full lg:w-[45%]">
-                    <small className="text-danger text-xs absolute top-[-20px]">{userEmailValidationMessage}</small>
-                    <TextInput type="text" className="relative" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
-                </div>
-                <div className="relative xs:w-full lg:w-[45%]">
-                    <small className="text-danger text-xs absolute top-[-20px]">{userPasswordValidationMessage}</small>
-                    <PasswordInput className="relative" name="password" value={formData.password} onChange={handleInputChange} />
-                </div>
+            <AuthorizeElement requiredClaims={['Manage Users']}>
+                <form className="w-full shadow rounded-2 mb-5 p-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={handleSubmits}>
+                    <div className="relative xs:w-full lg:w-[45%]">
+                        <small className="text-danger text-xs absolute top-[-20px]">{userNameValidationMessage}</small>
+                        <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={handleInputChange} icon="fa-user" />
+                    </div>
+                    <div className="relative xs:w-full lg:w-[45%]">
+                        <small className="text-danger text-xs absolute top-[-20px]">{userEmailValidationMessage}</small>
+                        <TextInput type="text" className="relative" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} icon="fa-envelope" />
+                    </div>
+                    <div className="relative xs:w-full lg:w-[45%]">
+                        <small className="text-danger text-xs absolute top-[-20px]">{userPasswordValidationMessage}</small>
+                        <PasswordInput className="relative" name="password" value={formData.password} onChange={handleInputChange} />
+                    </div>
 
-                <div className="relative xs:w-full lg:w-[45%]">
-                    <small className="text-danger text-xs absolute top-[-20px]">{userPhoneValidationMessage}</small>
-                    <PhoneInput
-                        countries={countries}
-                        handleInputChange={handleInputChange}
-                        handleSelectChange={handlePhoneSelectChange}
-                        phoneNumberValue={formData.phoneNumber}
-                        phoneCodeValue={formData.phoneCode}
-                        className="relative flex w-[100%]"
-                    />
-                </div>
-                <div className="relative xs:w-full lg:w-[45%]">
-                    <RolesInput
-                        permissions={permissions}
-                        handleSelectChange={handleRolesSelectChange}
-                        className="w-[100%] relative"
-                    />
-                </div>
-                <div className="flex !flex-end sm:w-[45%] relative xs:w-full !mt-2 lg:w-[120px] mt-5">
-                    <PrimaryButton isLoading={isLoading} text="Create user" type="submit" className="w-[120px] text-[15px] xs:w-full" />
-                </div>
-            </form>
+                    <div className="relative xs:w-full lg:w-[45%]">
+                        <small className="text-danger text-xs absolute top-[-20px]">{userPhoneValidationMessage}</small>
+                        <PhoneInput
+                            countries={countries}
+                            handleInputChange={handleInputChange}
+                            handleSelectChange={handlePhoneSelectChange}
+                            phoneNumberValue={formData.phoneNumber}
+                            phoneCodeValue={formData.phoneCode}
+                            className="relative flex w-[100%]"
+                        />
+                    </div>
+                    <div className="relative xs:w-full lg:w-[45%]">
+                        <RolesInput
+                            permissions={permissions}
+                            handleSelectChange={handleRolesSelectChange}
+                            className="w-[100%] relative"
+                        />
+                    </div>
+                    <div className="flex !flex-end sm:w-[45%] relative xs:w-full !mt-2 lg:w-[120px] mt-5">
+                        <PrimaryButton isLoading={isLoading} text="Create user" type="submit" className="w-[120px] text-[15px] xs:w-full" />
+                    </div>
+                </form>
+            </AuthorizeElement>
             <MaterialUiTable columns={columns} rows={users} isLoadingForData={isLoading} dateTimeColumnIndices={[5]} />
         </div>
     );

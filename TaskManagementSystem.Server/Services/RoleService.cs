@@ -217,5 +217,22 @@ namespace TaskManagementSystem.Server.Services
                 }
             }
         }
+
+        public async Task<List<string?>> GetUserClaimsByUserIdAsync(int userId)
+        {
+            // Retrieve user claims from the database based on userId
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user != null)
+            {
+                var userClaims = await _dbContext.UserClaims
+                    .Where(uc => uc.UserId == user.Id)
+                    .Select(uc => uc.ClaimValue)
+                    .ToListAsync();
+
+                return userClaims;
+            }
+
+            return new List<string?>();
+        }
     }
 }

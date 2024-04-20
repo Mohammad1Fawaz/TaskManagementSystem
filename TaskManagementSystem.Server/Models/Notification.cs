@@ -15,6 +15,6 @@ namespace TaskManagementSystem.Server.Models
 
         public bool isRead { get; set; }
 
-        public norificationType type {get;set;}
+        public NotificationType type {get;set;}
     }
 }

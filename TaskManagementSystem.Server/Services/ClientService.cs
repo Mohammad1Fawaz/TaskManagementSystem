@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.ViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
+using static TaskManagementSystem.Server.Common.EnumConstants;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -47,6 +49,7 @@ namespace TaskManagementSystem.Server.Services
             }
 
             client.ClientId = client.Id;
+            client.userType = UserType.ClientAdmin;
             string verificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(client);
             string verificationEndpoint = $"{ConstantStrings.url}/ClientVerificationPage";
             string subject = "Verification Email";
@@ -63,6 +66,15 @@ namespace TaskManagementSystem.Server.Services
                 }
             }
             await _userManager.AddToRoleAsync(client, "ClientAdmin");
+            foreach (CLaimsValue claimValue in Enum.GetValues(typeof(CLaimsValue)))
+            {
+                var claim = new Claim("Permission", claimValue.GetDisplayName());
+                var addClaimsResult = await _userManager.AddClaimAsync(client, claim);
+                if (!addClaimsResult.Succeeded)
+                {
+                    return new ResultViewModel(false, "Failed to add claims to the user.");
+                }
+            }
             var userToken = new IdentityUserToken<int>
             {
                 UserId = client.Id,
@@ -104,7 +116,7 @@ namespace TaskManagementSystem.Server.Services
             ApplicationUser? client = await _userManager.FindByEmailAsync(model.email);
             if (client != null)
             {
-                string password = client.PasswordHash;
+                string password = client.PasswordHash ?? "";
 
                 string subject = "Password Reset Request";
                 if (string.IsNullOrEmpty(client.Email))

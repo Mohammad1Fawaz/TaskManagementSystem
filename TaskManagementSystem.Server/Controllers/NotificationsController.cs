@@ -20,9 +20,21 @@ namespace TaskManagementSystem.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetGlobalUnreadNotifications()
         {
-            List <NotificationViewModel> notifications = await _notificationService.GetUnreadNotifications();
+            try
+            {
+                List<NotificationViewModel> notifications = await _notificationService.GetUnreadNotifications();
 
-             return Ok(notifications);
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import config from '../../../config';
 import AuthService from '../../common/services/AuthService';
+import HelpersService from '../../common/services/HelpersService';
 
 const apiBaseUrl = config.apiBaseUrl;
 
@@ -33,7 +34,12 @@ const UserService = {
                     'Authorization': `Bearer ${token}`
                 },
             });
-            return await response.json();
+            if (response.status == 400) {
+                HelpersService.notify("you don't have access for this.", "error");
+                return [];
+            } else {
+                return await response.json();
+            }
         } catch (error) {
             console.error('Error registering user:', error);
             throw error;

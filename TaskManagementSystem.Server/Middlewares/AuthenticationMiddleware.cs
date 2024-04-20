@@ -114,7 +114,6 @@ namespace TaskManagementSystem.Server.Middlewares
             }
             catch (SecurityTokenException ex)
             {
-                // Handle invalid token
                 throw new UnauthorizedAccessException("Invalid authorization token", ex);
             }
             catch (Exception ex)

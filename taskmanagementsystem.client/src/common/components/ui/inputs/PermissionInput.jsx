@@ -4,7 +4,7 @@ import Select from 'react-select';
 export default function PermisionInput({ permissions,className, handleSelectChange }) {
 
     const options = permissions?.map(permission => ({
-        label: permission.value,
+        label: permission.key.toString().replace(/([A-Z])/g, ' $1'),
         value: permission.value,
     }));
 

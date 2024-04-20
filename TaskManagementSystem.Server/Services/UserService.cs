@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.RealTime;
 using TaskManagementSystem.Server.ViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
+using static TaskManagementSystem.Server.Common.EnumConstants;
 
 namespace TaskManagementSystem.Server.Services
 {
@@ -44,6 +42,7 @@ namespace TaskManagementSystem.Server.Services
             }
             var newUser = new ApplicationUser
             {
+                userType = UserType.User,
                 UserName = model.name,
                 Email = model.email,
                 ClientId = clientId,

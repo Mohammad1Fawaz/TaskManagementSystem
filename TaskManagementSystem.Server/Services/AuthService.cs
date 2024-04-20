@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,12 +17,14 @@ namespace TaskManagementSystem.Server.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IValidationService _validationService;
+        private readonly IRoleService _roleService;
 
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IValidationService validationService)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IValidationService validationService, IRoleService roleService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _validationService = validationService;
+            _roleService = roleService;
         }
 
         public async Task<ResultViewModel> Login(ClientLoginViewModel model)
@@ -107,6 +110,16 @@ namespace TaskManagementSystem.Server.Services
                 role = role
             };
             return clientData;
+        }
+
+        public async Task<bool> AuthorizeElement(List<string> requiredClaims)
+        {
+            int userId = _validationService.GetAuthenticatedUserId();
+            var userClaims = await _roleService.GetUserClaimsByUserIdAsync(userId);
+
+            bool isAuthorized = requiredClaims.All(claim => userClaims.Contains(claim));
+
+            return isAuthorized;
         }
 
     }

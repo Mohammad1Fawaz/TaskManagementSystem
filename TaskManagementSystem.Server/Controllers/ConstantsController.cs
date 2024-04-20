@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TaskManagementSystem.Server.Services;
-using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Controllers
 {
@@ -21,15 +19,39 @@ namespace TaskManagementSystem.Server.Controllers
         [HttpGet("countries")]
         public IActionResult GetCountries()
         {
-            var countries = _constantsService.GetCountries();
-            return Ok(countries); 
+            try
+            {
+                var countries = _constantsService.GetCountries();
+                return Ok(countries);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
+            }
         }
 
         [HttpGet("permissions")]
         public IActionResult GetPermissions()
         {
-            var permissions = _constantsService.GetPermissions();
-            return Ok(permissions);
+            try
+            {
+                var permissions = _constantsService.GetPermissions();
+                return Ok(permissions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user roles: " + ex.Message);
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Something went wrong,please contact support."
+                });
+            }
         }
     }
 }

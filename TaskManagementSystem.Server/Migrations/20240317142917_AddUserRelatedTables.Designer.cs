@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TaskManagementSystem.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240317142917_RefreshTables")]
-    partial class RefreshTables
+    [Migration("20240317142917_AddUserRelatedTables")]
+    partial class AddUserRelatedTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
