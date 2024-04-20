@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import MediumLogo from '../components/ui/images/MainLogo';
-import AuthService from '../Services/AuthService';
-import ClientService from '../Services/ClientService';
-import HelpersService from '../Services/HelpersService';
+import MediumLogo from '../../common/components/ui/images/MainLogo';
+import AuthService from '../../common/services/AuthService';
+import ClientService from '../services/ClientService';
+import HelpersService from '../../common/services/HelpersService';
 import useFetch from "../../common/hooks/useFetch"
+
 const ClientVerificationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();

@@ -8,7 +8,7 @@ export default function AccessDenied() {
         navigate('/login');
     }
     return (
-        <div className="justify-center w-full h-full bg-[url('/src/assets/AccessDeniedImage.png')] bg-no-repeat bg-fixed bg-contain bg-center">
+        <div className="justify-center w-full h-[100vh] bg-[url('/src/assets/AccessDeniedImage.png')] bg-no-repeat bg-fixed bg-contain bg-center">
             <div className="flex-center flex-col h-full">
                 <h1 className="text-[red] text-[100px] ">Access Denied</h1>
                 <PrimaryButton text='<-- Login First' onClick={returnToHome} className="w-[10%] mt-3 text-[red] mt-auto mb-5" />

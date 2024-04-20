@@ -12,7 +12,7 @@ import ClientAdminPage from './clientAdmin/pages/ClientAdminPage';
 import LoginPage from './common/pages/LoginPage';
 import ResetPasswordPage from './common/pages/ResetPasswordPage';
 import SignupPage from './common/pages/SignupPage';
-import ClientVerificationPage from '../src/clientAdmin/pages/ClientAdminPage';
+import ClientVerificationPage from '../src/clientAdmin/pages/ClientVerificationPage';
 import Developer from './developer/pages/DeveloperPage';
 const queryClient = new QueryClient();
 function App() {
@@ -20,7 +20,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
             <Router>
                 <ToastContainer autoClose={false} />
-                <main className="w-full h-[100vh] overflow-x-hidden">
+                <main className="w-full overflow-x-hidden">
                     <Routes>
                         <Route path="/" element={<LoginPage />} />
                         <Route path="/login" element={<LoginPage />} />
@@ -42,7 +42,7 @@ const PrivateRoute = ({ element, requiredRoles }) => {
     const { isLoading, isAuthenticated, isAuthorized , userInfo } = usePrivateRoute(requiredRoles);
 
     if (isLoading) {
-        return <div className="flex flex-center h-full"><CircularProgress /></div>;
+        return <div className="flex flex-center h-[100vh]"><CircularProgress /></div>;
     }
 
     return isAuthenticated && isAuthorized ? (
