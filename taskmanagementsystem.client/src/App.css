@@ -1,6 +1,6 @@
 ﻿/* App.css */
 @import 'bootstrap/dist/css/bootstrap.min.css';
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 @import url(assets/Css/BootstrapAdditionalStyles.css);
 
@@ -9,7 +9,7 @@
     /* main */
     --main-hover-primary-color: #a4d1ff;
     --main-hover-secondary-color: #eff7ff;
-    --main-focus-primary-color: #626262;
+    --main-focus-primary-color: #66b2ff;
     --main-focus-secondary-color: #626262;
     --main-background-primary-color: #f7f8f9;
     --main-background-secondary-color: #fff;
@@ -33,13 +33,14 @@
 }
 
 #root {
-    font-family: 'Rubik', sans-serif;
+    font-family: 'Poppins', sans-serif !important;
     --scrollbar-color: var(--text-primary-color);
 }
 
 * {
     scrollbar-color: var(--scrollbar-color) var(--main-hover-secondary-color);
     scrollbar-width: thin !important;
+    font-family: 'Poppins', sans-serif;
 }
 
 ::-webkit-scrollbar {

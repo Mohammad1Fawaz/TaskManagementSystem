@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import RoleService from '../../../../clientAdmin/services/RoleService';
 import AuthService from '../../../../common/services/AuthService';
-import PrimaryButton from '../buttons/PrimaryButton';
-import TextInput from '../inputs/TextInput';
-import PasswordInput from '../inputs/PasswordInput';
 import HelpersService from '../../../../common/services/HelpersService';
+import { useGetRequest, usePostRequest } from '../../../hooks/useGetRequest';
+import PrimaryButton from '../buttons/PrimaryButton';
 import MainLogo from '../images/MainLogo';
-import useFetch from '../../../hooks/useFetch';
+import PasswordInput from '../inputs/PasswordInput';
+import TextInput from '../inputs/TextInput';
 const UserLoginForm = () => {
     let navigate = useNavigate();
 
@@ -21,7 +20,8 @@ const UserLoginForm = () => {
 
     const [userEmailValidationMessage, setEmailNameValidationMessage] = useState('');
     const [userPasswordValidationMessage, setPasswordNameValidationMessage] = useState('');
-    const { fetchQuery, handleRequest } = useFetch("POST", "Auth/login", formData, false, "login-query", {}, false);
+    const { mutate: loginUser } = usePostRequest('/Auth/login', false);
+    const {refetch :refetchUserInfo } = useGetRequest('/Auth/get-user-info', null, null, true, {enabled:false});
 
     const reset = () => {
         setFormData(initialFormData);
@@ -33,38 +33,47 @@ const UserLoginForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const { data, isLoading, isSuccess, isError, error, errors } = await handleRequest();
-        setIsLoading(isLoading);
         try {
-            if (isSuccess) {
-                HelpersService.notify(data.message, "success");
-                setIsLoading(isLoading);
-                AuthService.saveToken(data.token);
-                reset();
-                const userInfo = await AuthService.getUserInfo(data.token);
-                if (userInfo.role.includes("ClientAdmin")) {
-                    navigate('/ClientAdmin');
-                } else {
-                    navigate('/Developer');
+            await loginUser(formData, {
+                onError: ({ response: result }) => {
+                    if (result.data.errors) {
+                        const errors = result.data.errors;
+                        setEmailNameValidationMessage(errors.email && errors.email[0]);
+                        setPasswordNameValidationMessage(errors.password && errors.password[0]);
+                    }
+                    if (result.data.message) {
+                        HelpersService.notify(result.data.message, "error");
+                    }
+                    if (result.data.errorMessage) {
+                        HelpersService.notify(result.data.errorMessage, "error");
+                    }
+                    setIsLoading(false);
+                },
+                onSuccess: async (data) => {
+                    await AuthService.saveTokenAsync(data.token);
+                    reset();
+                    setIsLoading(false)
+                    const { data: userData, isLoading: loadingUserInfo, error: userInfoError } = await refetchUserInfo(data.token);
+                    if (userInfoError) {
+                        HelpersService.notify('Something wen wrong ... please contact support.', "error");
+                        return;
+                    }
+                    if (!loadingUserInfo) {
+                        if (userData.userInfo.role?.includes("ClientAdmin")) {
+                            navigate('/ClientAdmin');
+                        } else {
+                            navigate('/Developer');
+                        }
+                    }
                 }
-            } else {
-                if (errors) {
-                    setEmailNameValidationMessage(errors.email && errors.email[0]);
-                    setPasswordNameValidationMessage(errors.password && errors.password[0]);
-                }
-                if (isError && error) {
-                    HelpersService.notify(error, "error");
-                }
-                setIsLoading(isLoading);
-            }
-
+            });
         } catch (error) {
-            HelpersService.notify('Error during Login', "error");
-            console.log(error);
-            setIsLoading(isLoading);
+            HelpersService.notify('Error while Login', "error");
+            setIsLoading(false);
         }
     };
   

@@ -59,7 +59,9 @@ const AuthService = {
     saveToken: (token) => {
         Cookies.set("token", token);
     },
-
+    saveTokenAsync: async (token) => {
+        Cookies.set("token", token);
+    },
     getToken: () => {
         return Cookies.get("token");
     }

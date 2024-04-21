@@ -9,9 +9,9 @@ namespace TaskManagementSystem.Server.Controllers
     [Route("[controller]")]
     //[PermissionAuthorize("Admin", "CanRead")]
 
-    public class UserController:ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;       
+        private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
         private readonly IRoleService _roleService;
 
@@ -67,7 +67,7 @@ namespace TaskManagementSystem.Server.Controllers
             }
         }
 
-        [HttpPost("get-users")]
+        [HttpGet("get-users")]
         public IActionResult GetUsers()
         {
             try
@@ -158,12 +158,12 @@ namespace TaskManagementSystem.Server.Controllers
             }
         }
 
-        [HttpPost("edit-user")]
-        public IActionResult EditUser([FromBody] UserRegisterViewModel userData)
+        [HttpPut("edit-user/{userId}")]
+        public IActionResult EditUser([FromRoute] string userId, [FromBody] UserRegisterViewModel userData)
         {
             try
             {
-                var updateResult = _userService.EditUser(userData);
+                var updateResult = _userService.EditUser(userId, userData);
 
                 if (updateResult.Result.success)
                 {
@@ -180,9 +180,10 @@ namespace TaskManagementSystem.Server.Controllers
                 return BadRequest(new
                 {
                     success = false,
-                    message = "Something went wrong,please contact support."
+                    message = "Something went wrong, please contact support."
                 });
             }
         }
+
     }
 }

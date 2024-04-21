@@ -39,11 +39,13 @@ export default function MaterialUiTable({ columns, rows, isLoadingForData, dateT
             });
         } else if (Array.isArray(params.value)) {
             return (
-                <div>
+                <div className="flex flex-wrap">
                     {params.value.map((item, index) => (
                         <React.Fragment key={index}>
-                            {item + (index % 2 == 0 ? "|" : "")} 
-                            <br />
+                            <p>
+                                {item}
+                                {index !== params.value.length - 1 && <span className='text-[var(--button-primary-color)] px-1'>|</span>}
+                            </p>
                         </React.Fragment>
                     ))}
                 </div>

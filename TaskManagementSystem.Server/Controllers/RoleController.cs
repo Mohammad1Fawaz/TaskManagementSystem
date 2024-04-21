@@ -65,7 +65,7 @@ namespace TaskManagementSystem.Server.Controllers
             }
         }
 
-        [HttpPost("get-roles")]
+        [HttpGet("get-roles")]
         public IActionResult GetRoles()
         {
             try
@@ -117,7 +117,7 @@ namespace TaskManagementSystem.Server.Controllers
         }
 
         [HttpPut("edit-role/{roleId}")]
-        public IActionResult EditRole(string roleId , List<string> claims)
+        public IActionResult EditRole([FromRoute] string roleId , [FromBody] List<string> claims)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace TaskManagementSystem.Server.Controllers
 
 
 
-        [HttpPost("get-role-permissions")]
+        [HttpGet("get-role-permissions")]
         public IActionResult GetRolesPermissions()
         {
             try

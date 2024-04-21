@@ -1,7 +1,7 @@
-import DeveloperDashboardLayout from "./DeveloperDashboardLayout";
+import DeveloperDashboard from "../components/layout/DeveloperDashboard";
 
-export default function Developer() {
+export default function Developer({ userInfo }) {
     return (
-        <DeveloperDashboardLayout />
+        <DeveloperDashboard userInfo={userInfo} />
     )
 }

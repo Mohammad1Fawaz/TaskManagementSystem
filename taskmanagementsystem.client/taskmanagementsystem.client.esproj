@@ -11,23 +11,11 @@
   <ItemGroup>
     <Folder Include="src\admin\" />
     <Folder Include="src\common\components\layout\" />
-    <Folder Include="src\developer\components\layout\" />
-    <Folder Include="src\developer\components\ui\" />
-    <Folder Include="src\developer\services\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptConfiguration Remove="src\components\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="src\components\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="src\clientAdmin\components\layout\ClientDashboardLayout.jsx" />
   </ItemGroup>
 </Project>

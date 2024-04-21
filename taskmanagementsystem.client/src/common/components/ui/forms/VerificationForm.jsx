@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import HelpersService from '../../../../common/services/HelpersService';
-import UserService from '../../../../clientAdmin/services/UserService';
-import TextInput from '../inputs/TextInput';
+import { usePostRequest } from '../../../hooks/useGetRequest';
 import PrimaryButton from '../buttons/PrimaryButton';
 import MainLogo from '../images/MainLogo';
+import TextInput from '../inputs/TextInput';
 
 const VerificationForm = ({ onSubmit }) => {
 
@@ -20,6 +20,7 @@ const VerificationForm = ({ onSubmit }) => {
     const [formData, setFormData] = useState(initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
     const [userVerificationPageValidationMessage, setUserVerificationPageValidationMessage] = useState('');
+    const { mutate: verifyUser } = usePostRequest('/User/verify-user', true);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,23 +30,26 @@ const VerificationForm = ({ onSubmit }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const result =await UserService.verifyUser(formData);
-            console.log(result);
-            if (result.success) {
-                HelpersService.notify(result.message, "success");
-                setIsLoading(false);
-                navigate('/login');
-            } else {
-                if (result.errors) {
-                    console.log(result.errors);
-                    setUserEmailValidationMessage(result.errors.Email && result.errors.Email[0]);
-                    setUserVerificationPageValidationMessage(result.errors.VerificationCode && result.errors.VerificationCode[0]);
+            await verifyUser(formData, {
+                onError: ({ response: result }) => {
+                    setIsLoading(false);
+                    if (result.data.errors) {
+                        const errors = result.data.errors;
+                        setUserEmailValidationMessage(errors.Email && errors.Email[0]);
+                        setUserVerificationPageValidationMessage(errors.VerificationCode && errors.VerificationCode[0]);
+                    }
+                    if (result.data.message) {
+                        HelpersService.notify(result.data.message, "error");
+                    }
+                    if (result.data.errorMessage) {
+                        HelpersService.notify(result.data.errorMessage, "error");
+                    }
+                },
+                onSuccess: () => {
+                    setIsLoading(false);
+                    navigate('/login');
                 }
-                if (result.message) {
-                    HelpersService.notify(result.message, "error");
-                }
-                setIsLoading(false);
-            }
+            });
         } catch (error) {
             setIsLoading(false);
             console.error('Error fetching verification code:', error.message);

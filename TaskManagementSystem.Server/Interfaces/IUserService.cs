@@ -9,7 +9,7 @@ namespace TaskManagementSystem.Server.Interfaces
         Task<List<UserWithRolesViewModel>> GetUsers();
         Task<ResultViewModel> VerifyUser(UserVerificationViewModel model);
         Task<ResultViewModel> DeleteUser(string userId);
-        Task<ResultViewModel> EditUser(UserRegisterViewModel userData);
+        Task<ResultViewModel> EditUser(string userId , UserRegisterViewModel userData);
 
     }
 }

@@ -182,9 +182,9 @@ namespace TaskManagementSystem.Server.Services
         }
 
 
-        public async Task<ResultViewModel> EditUser(UserRegisterViewModel userData)
+        public async Task<ResultViewModel> EditUser(string userId ,UserRegisterViewModel userData)
         {
-            var user = await _userManager.FindByEmailAsync(userData.email);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return new ResultViewModel(false, "User not found");

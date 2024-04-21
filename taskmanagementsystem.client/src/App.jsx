@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import { CircularProgress } from '@mui/material/index';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import usePrivateRoute from '../src/common/hooks/usePrivateRoute';
 import VerificationPage from './common/pages/VerificationPage';
 import AccessDeniedPage from './common/pages/AccessDeniedPage';
@@ -34,6 +35,7 @@ function App() {
                     </Routes>
                 </main>
             </Router>
+            < ReactQueryDevtools initialIsOpem={false} position='bottom-right' />
         </QueryClientProvider>
     );
 }
