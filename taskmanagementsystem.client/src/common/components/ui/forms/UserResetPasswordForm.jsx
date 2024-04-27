@@ -24,7 +24,7 @@ export default function UserResetPasswordForm() {
     const [phoneNumberValidationMessage, setPhoneNumberValidationMessage] = useState('');
     const [countries, setCountries] = useState([]);
     const { data: fetchedCountries, isLoading: loadingCountries, error: countriesError } = useGetRequest('/constants/countries', null, null, false);
-    const { mutate: resetPassword } = usePostRequest('/Client/reset-password', true);
+    const { mutate: resetPassword } = usePostRequest('/Client/reset-password', false);
 
     
     useEffect(() => {

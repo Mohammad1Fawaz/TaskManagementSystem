@@ -20,7 +20,7 @@ const VerificationForm = ({ onSubmit }) => {
     const [formData, setFormData] = useState(initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
     const [userVerificationPageValidationMessage, setUserVerificationPageValidationMessage] = useState('');
-    const { mutate: verifyUser } = usePostRequest('/User/verify-user', true);
+    const { mutate: verifyUser } = usePostRequest('/User/verify-user', false);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

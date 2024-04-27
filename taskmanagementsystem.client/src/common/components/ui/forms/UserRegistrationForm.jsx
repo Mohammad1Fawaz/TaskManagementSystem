@@ -27,7 +27,7 @@ const UserRegistrationForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [countries, setCountries] = useState([]);
     const { data: fetchedCountries, isLoading: loadingCountries, error: countriesError } = useGetRequest('/constants/countries', null, null, false);
-    const { mutate: register } = usePostRequest('/Client/register', true);
+    const { mutate: register } = usePostRequest('/Client/register', false);
 
     useEffect(() => {
         if (fetchedCountries) {
