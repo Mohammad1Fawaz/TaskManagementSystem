@@ -10,7 +10,7 @@ import HelpersService from '../../common/services/HelpersService';
 const apiBaseUrl = config.apiBaseUrl;
 
 const UserService = {
-    initialFormData : {
+    initialFormData: {
         email: '',
         password: '',
         name: '',
@@ -42,7 +42,7 @@ const UserService = {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     },
 
-    handleDeleteUser: async (userId,deleteUser) => {
+    handleDeleteUser: async (userId, deleteUser) => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You won\'t be able to revert this!',
@@ -84,8 +84,8 @@ const UserService = {
                         roles: [],
                     }
                     const updateFormData = {
-                        data:data,
-                        id :userId
+                        data: data,
+                        id: userId
                     };
                     await editUser(updateFormData, {
                         onError: ({ response: result }) => {
@@ -105,7 +105,7 @@ const UserService = {
         });
     },
 
-    handleSubmits: async (e, formData, setFormData, setIsLoading, setUserNameValidationMessage, setUserEmailValidationMessage, setUserPhoneValidationMessage, setPasswordValidationMessage,addUser) => {
+    handleSubmits: async (e, formData, setFormData, setIsLoading, setUserNameValidationMessage, setUserEmailValidationMessage, setUserPhoneValidationMessage, setPasswordValidationMessage, addUser) => {
         e.preventDefault();
         setIsLoading(true);
         try {
@@ -113,31 +113,31 @@ const UserService = {
                 onError: ({ response: result }) => {
                     setIsLoading(false);
                     if (result.data.errors) {
-                       const errors = result.data.errors;
-                       setUserNameValidationMessage(errors.name && errors.name[0]);
-                       setUserEmailValidationMessage(errors.email && errors.email[0]);
-                       setPasswordValidationMessage(errors.password && errors.password[0]);
-                       setUserPhoneValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
-                   }
+                        const errors = result.data.errors;
+                        setUserNameValidationMessage(errors.name && errors.name[0]);
+                        setUserEmailValidationMessage(errors.email && errors.email[0]);
+                        setPasswordValidationMessage(errors.password && errors.password[0]);
+                        setUserPhoneValidationMessage((errors.phoneNumber && errors.phoneNumber[0]) || (errors.phoneCode && errors.phoneCode[0]) || '');
+                    }
                     if (result.data.message) {
                         HelpersService.notify(result.data.message, "error");
-                   }
+                    }
                     if (result.data.errorMessage) {
                         HelpersService.notify(result.data.errorMessage, "error");
-                   }
+                    }
                 },
                 onSuccess: () => {
                     UserService.reset(setFormData, setUserEmailValidationMessage, setPasswordValidationMessage, setUserPhoneValidationMessage, setUserNameValidationMessage);
                     setIsLoading(false);
                 }
             });
-            
+
         } catch (error) {
             HelpersService.notify('Something went wrong', "error");
             setIsLoading(false);
         }
     },
-    generateUserTableColumns: (deleteUser, editUser) => {
+    generateUserTableColumns: (deleteUser, editUser, onlineUsers) => {
         return [
             {
                 field: 'avatar',
@@ -153,6 +153,7 @@ const UserService = {
                                 width: '45px',
                                 height: '45px',
                             }}
+                            status={onlineUsers?.map(user => user.toString()).includes(params.row.id.toString())}
                         />
                     );
                 },

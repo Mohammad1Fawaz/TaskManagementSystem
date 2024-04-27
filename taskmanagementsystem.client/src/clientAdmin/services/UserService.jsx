@@ -137,7 +137,7 @@ const UserService = {
             setIsLoading(false);
         }
     },
-    generateUserTableColumns: (deleteUser, editUser) => {
+    generateUserTableColumns: (deleteUser, editUser, onlineUsers) => {
         return [
             {
                 field: 'avatar',
@@ -153,6 +153,7 @@ const UserService = {
                                 width: '45px',
                                 height: '45px',
                             }}
+                            status={onlineUsers?.map(user => user.toString()).includes(params.row.id.toString())}
                         />
                     );
                 },

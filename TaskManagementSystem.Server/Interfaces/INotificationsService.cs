@@ -14,5 +14,7 @@ namespace TaskManagementSystem.Server.Interfaces
 
         Task NotifyAllAsync(string content);
 
+        Task SendOnlineUsers(List<int> connectedUsersIds);
+
     }
 }

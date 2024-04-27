@@ -9,9 +9,10 @@ import TextInput from '../../common/components/ui/inputs/TextInput';
 import AuthorizeElement from "../../common/components/ui/other/AuthorizeElement";
 import MaterialUiTable from "../../common/components/ui/tables/MaterialUiTable";
 import { useGetRequest, useDeleteRequest, useUpdateRequest, usePostRequest } from "../../common/hooks/useGetRequest";
+import { NotificationService } from "../../common/services/NotificationService";
 
 
-const Users = ({ setSelectedItem }) => {
+const Users = ({ setSelectedItem, onlineUsers }) => {
 
     const [formData, setFormData] = useState(UserService.initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
@@ -22,7 +23,6 @@ const Users = ({ setSelectedItem }) => {
     const [users, setUsers] = useState([]);
     const [permissions, setPermissions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const { data: fetchedCountries, isLoading: loadingCountries, error: countriesError } = useGetRequest('/constants/countries', null, null, true);
     const { data: roles, isLoading: loadingRoles, error: rolesError } = useGetRequest('/Role/get-roles', null, null, true);
     const { data: fetchedUsers, isLoading: loadingUsers, error: usersError } = useGetRequest('/User/get-users', null, null, true);
@@ -97,7 +97,7 @@ const Users = ({ setSelectedItem }) => {
                         </div>
                     </form>
                 </AuthorizeElement>
-                <MaterialUiTable columns={UserService.generateUserTableColumns(deleteUser, editUser)} rows={users} isLoadingForData={isLoading} dateTimeColumnIndices={[5]} />
+                <MaterialUiTable columns={UserService.generateUserTableColumns(deleteUser, editUser, onlineUsers)} rows={users} isLoadingForData={isLoading} dateTimeColumnIndices={[5]}  />
             </div>
         );
     }

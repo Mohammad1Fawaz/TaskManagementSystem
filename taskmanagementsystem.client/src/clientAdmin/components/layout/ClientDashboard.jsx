@@ -46,6 +46,9 @@ const ClientDashboard = ({ userInfo }) => {
         handleLogoutDropdownClose,
         logoutAnchorEl,
         setLogoutAnchorEl,
+        GetOnlineUsers,
+        onlineUsers,
+        OnlineUsersCount
     } = ClientAdminDashboardService();
 
     return (
@@ -79,7 +82,7 @@ const ClientDashboard = ({ userInfo }) => {
                     handleDrawerClose={handleDrawerClose}
                     handleListItemClick={handleListItemClick}
                 />
-                <MainContent selectedItem={selectedItem} />
+                <MainContent selectedItem={selectedItem} onlineUsers={onlineUsers} />
                 <SettingsOffcanvas
                     show={show}
                     handleCloseSettings={handleCloseSettings}

@@ -20,13 +20,27 @@ namespace TaskManagementSystem.Server.RealTime
         public override async Task OnConnectedAsync()
         {
             int userId = _validationService.GetAuthenticatedUserId();
-            _connectionManager.AddConnection(userId.ToString(), Context.ConnectionId);
+            string connectionId = Context.ConnectionId;
+            if (!_connectionManager.ConnectionExists(userId, connectionId))
+            {
+                _connectionManager.AddConnection(userId, connectionId);
+                List<int> onlineUserIds = _connectionManager.GetAllUserIdsWithConnections();
+                await _notificationService.SendOnlineUsers(onlineUserIds);
+            }
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            _connectionManager.RemoveConnection(Context.ConnectionId);
+            int userId = _validationService.GetAuthenticatedUserId();
+
+            if (userId != 0)
+            {
+                _connectionManager.RemoveConnection(userId, Context.ConnectionId);
+                List<int> onlineUserIds = _connectionManager.GetAllUserIdsWithConnections();
+                await _notificationService.SendOnlineUsers(onlineUserIds);
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -48,6 +62,13 @@ namespace TaskManagementSystem.Server.RealTime
         public async Task MarkAllNotificationAsReadAsync()
         {
             await _notificationService.MarkAllNotificationAsReadAsync();
+        }
+
+        public List<int> GetOnlineUsers()
+        {
+            var onlineUserIds = _connectionManager.GetAllUserIdsWithConnections();
+
+            return onlineUserIds.ToList();
         }
     }
 }

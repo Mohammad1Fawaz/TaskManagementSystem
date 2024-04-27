@@ -1,6 +1,6 @@
 // Header.js
 import React, { useState } from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -13,7 +13,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Badge from '@mui/material/Badge';
 import MainLogo from '../../../common/components/ui/images/MainLogo';
 import MenuIcon from '@mui/icons-material/Menu';
-import { styled} from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import NotificationBox from '../layout/NotificationBox';
 import Popover from '@mui/material/Popover';
 import Avatar from '../../../common/components/ui/other/Avatar';
@@ -115,7 +115,7 @@ const Header = ({
                                 width: '500px',
                             },
                         }}
-                        className = "text-[var(--text-secondary-color)] !w-[800px]"
+                        className="text-[var(--text-secondary-color)] !w-[800px]"
                     >
                         <NotificationBox notifications={notifications} />
                     </Popover>
@@ -136,7 +136,7 @@ const Header = ({
                                 height: '30px',
                             }}
                         />
-                        <Typography className= "!text-[15px] ms-2">Admin</Typography>  
+                        <Typography className="!text-[15px] ms-2">Admin</Typography>
                         <ExpandMoreIcon />
                     </IconButton>
                     <Popover
@@ -167,7 +167,7 @@ const Header = ({
                             </ListItem>
                             <ListItem>
                                 <button onClick={() => { handleLogoutDropdownClose(); navigate('/Developer'); }}>
-                                   <DeveloperBoardIcon /> Developer
+                                    <DeveloperBoardIcon /> Developer
                                 </button>
                             </ListItem>
                         </List>

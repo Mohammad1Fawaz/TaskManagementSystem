@@ -91,7 +91,7 @@ namespace TaskManagementSystem.Server.Services
             await _dbContext.SaveChangesAsync();
 
 
-            List<string> receiverConnections = _connectionManager.GetConnections(receiverId.ToString());
+            List<string> receiverConnections = _connectionManager.GetConnections(receiverId);
 
             foreach (var connectionId in receiverConnections)
             {
@@ -117,6 +117,11 @@ namespace TaskManagementSystem.Server.Services
             await _dbContext.SaveChangesAsync();
 
             await _hubContext.Clients.All.SendAsync("receiveNotification", notification);
+        }
+
+        public async Task SendOnlineUsers(List<int> connectedUsersIds)
+        {
+            await _hubContext.Clients.All.SendAsync("newOnlineUser", connectedUsersIds);
         }
     }
 }

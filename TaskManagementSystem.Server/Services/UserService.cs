@@ -108,11 +108,12 @@ namespace TaskManagementSystem.Server.Services
         {
             List<UserWithRolesViewModel> users = new List<UserWithRolesViewModel>();
             int clientId =  _validationService.GetAuthenticatedClientId();
+            int userId =  _validationService.GetAuthenticatedUserId();
             if (clientId == 0)
             {
                 return [];
             }
-            List<ApplicationUser> allUsers = await _dbContext.Users.Where(x => x.ClientId == clientId && x.ClientId != x.Id).ToListAsync();
+            List<ApplicationUser> allUsers = await _dbContext.Users.Where(x => x.ClientId == clientId && x.Id != userId).ToListAsync();
             foreach (var user in allUsers)
             {
                List<ApplicationRole> userRoles = await  _roleService.GetUserRoles(user.Id);

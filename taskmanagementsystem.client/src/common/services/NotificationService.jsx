@@ -14,12 +14,28 @@ const realTimeConnection = new signalR.HubConnectionBuilder()
     .configureLogging(signalR.LogLevel.Information)
     .build();
 
-realTimeConnection.onclose(() => {
-    console.log("SignalR connection closed . trying to restart ...");
-    realTimeConnection.start()
-        .then(() => console.log("SignalR Connected"))
-        .catch((err) => console.error("Error starting SignalR connection:", err));
+realTimeConnection.onclose((error) => {
+    console.log("SignalR connection closed." , error);
+    if (shouldRestartConnection(error)) {
+        console.log("Attempting to restart SignalR connection...");
+        realTimeConnection.start()
+            .then(() => console.log("SignalR Connected"))
+            .catch((err) => console.error("Error restarting SignalR connection:", err));
+    } else {
+        console.log("SignalR connection not restarted.");
+    }
 });
+
+function shouldRestartConnection(error) {
+    return error && isNetworkError(error);
+}
+
+function isNetworkError(error) {
+    const errorMessage = error && error.toString().toLowerCase();
+    return errorMessage.includes("network") || errorMessage.includes("timeout");
+}
+
+
 
 const startConnection = async () => {
     try {
@@ -27,6 +43,14 @@ const startConnection = async () => {
         console.log("SignalR Connected");
     } catch (err) {
         console.error("Error starting SignalR connection:", err);
+    }
+};
+const stopConnection = async () => {
+    try {
+        await realTimeConnection.stop();
+        console.log("SignalR stopped");
+    } catch (err) {
+        console.error("Error stopping SignalR connection:", err);
     }
 };
 
@@ -66,6 +90,17 @@ const NotificationService = {
         await startConnection();
     },
 
+    sendOnlineUserNotification: async () => {
+        return invokeMethodSafely("SendOnlineUserNotification");
+    },
+
+    stopConnection: async () => {
+        await stopConnection();
+    },
+
+    getOnlineUsers: async () => {
+        return invokeMethodSafely("GetOnlineUsers");
+    }
 };
 
 export { NotificationService, realTimeConnection };

@@ -9,9 +9,10 @@ import TextInput from '../../common/components/ui/inputs/TextInput';
 import AuthorizeElement from "../../common/components/ui/other/AuthorizeElement";
 import MaterialUiTable from "../../common/components/ui/tables/MaterialUiTable";
 import { useGetRequest, useDeleteRequest, useUpdateRequest, usePostRequest } from "../../common/hooks/useGetRequest";
+import { NotificationService } from "../../common/services/NotificationService";
 
 
-const Users = ({ setSelectedItem }) => {
+const Users = ({ setSelectedItem, onlineUsers }) => {
 
     const [formData, setFormData] = useState(UserService.initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
@@ -22,7 +23,6 @@ const Users = ({ setSelectedItem }) => {
     const [users, setUsers] = useState([]);
     const [permissions, setPermissions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const { data: fetchedCountries, isLoading: loadingCountries, error: countriesError } = useGetRequest('/constants/countries', null, null, true);
     const { data: roles, isLoading: loadingRoles, error: rolesError } = useGetRequest('/Role/get-roles', null, null, true);
     const { data: fetchedUsers, isLoading: loadingUsers, error: usersError } = useGetRequest('/User/get-users', null, null, true);
@@ -51,8 +51,8 @@ const Users = ({ setSelectedItem }) => {
 
     if (loadingCountries || loadingRoles || loadingUsers) {
         return <div className="flex h-[100vh] justify-center align-center">
-                    <CircularProgress />
-               </div>;
+            <CircularProgress />
+        </div>;
     }
     else if (countriesError || rolesError || usersError) {
         return window.location.reload();
@@ -63,7 +63,7 @@ const Users = ({ setSelectedItem }) => {
                     <form className="w-full shadow rounded-2 mb-5 p-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={(e) => UserService.handleSubmits(e, formData, setFormData, setIsLoading, setUserNameValidationMessage, setUserEmailValidationMessage, setUserPhoneValidationMessage, setPasswordValidationMessage, addUser)}>
                         <div className="relative xs:w-full lg:w-[45%]">
                             <small className="text-danger text-xs absolute top-[-20px]">{userNameValidationMessage}</small>
-                            <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={(e) => UserService.handleInputChange(e, formData,setFormData)} icon="fa-user" />
+                            <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={(e) => UserService.handleInputChange(e, formData, setFormData)} icon="fa-user" />
                         </div>
                         <div className="relative xs:w-full lg:w-[45%]">
                             <small className="text-danger text-xs absolute top-[-20px]">{userEmailValidationMessage}</small>
@@ -88,7 +88,7 @@ const Users = ({ setSelectedItem }) => {
                         <div className="relative xs:w-full lg:w-[45%]">
                             <RolesInput
                                 permissions={permissions}
-                                handleSelectChange={(selectedOption) => UserService.handleRolesSelectChange(selectedOption,formData,setFormData)}
+                                handleSelectChange={(selectedOption) => UserService.handleRolesSelectChange(selectedOption, formData, setFormData)}
                                 className="w-[100%] relative"
                             />
                         </div>
@@ -97,7 +97,7 @@ const Users = ({ setSelectedItem }) => {
                         </div>
                     </form>
                 </AuthorizeElement>
-                <MaterialUiTable columns={UserService.generateUserTableColumns(deleteUser, editUser)} rows={users} isLoadingForData={isLoading} dateTimeColumnIndices={[5]} />
+                <MaterialUiTable columns={UserService.generateUserTableColumns(deleteUser, editUser, onlineUsers)} rows={users} isLoadingForData={isLoading} dateTimeColumnIndices={[5]} />
             </div>
         );
     }

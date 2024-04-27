@@ -11,6 +11,7 @@ const ClientAdminDashboardService = () => {
     const [showLogo, setShowLogo] = useState(false);
     const [selectedItem, setSelectedItem] = useState(0);
     const [notifications, setNotifications] = useState([]);
+    const [onlineUsers, setOnlineUsers] = useState([]);
     const [notificationsCount, setNotificationsCount] = useState(0);
     const [show, setShow] = useState(false);
     const [darkTheme, setDarkTheme] = useState(false);
@@ -30,6 +31,11 @@ const ClientAdminDashboardService = () => {
             localStorage.setItem('darkTheme', darkTheme);
         }
 
+
+    }, []);
+
+    useEffect(() => {
+
         realTimeConnection.on("receiveNotification", (notification) => {
             const newNotification = {
                 id: notification.id,
@@ -40,12 +46,17 @@ const ClientAdminDashboardService = () => {
             setNotificationsCount((prevCount) => prevCount + 1);
             HelpersService.notify(`New: ${notification.content}`, "info");
         });
+
+        realTimeConnection.on("newOnlineUser", (newOnlineUserId) => {
+            setOnlineUsers(newOnlineUserId);
+        });
+
         GetNotifications();
         return () => {
             realTimeConnection.off("receiveNotification");
+            realTimeConnection.off("newOnlineUser");
         };
-
-    }, []);
+    }, [realTimeConnection]);
 
 
     useEffect(() => {
@@ -156,6 +167,7 @@ const ClientAdminDashboardService = () => {
                     if (result.success) {
                         AuthService.clearToken();
                         HelpersService.notify(result.message, "success");
+                        await NotificationService.stopConnection();
                         navigate('/login');
                     } else {
                         if (result.message) {
@@ -234,7 +246,15 @@ const ClientAdminDashboardService = () => {
             console.error('Error fetching Notifications:', error);
         }
     }
-
+    const GetOnlineUsers = async () => {
+        try {
+            const onlineUsers = await NotificationService.getOnlineUsers();
+            setOnlineUsers(onlineUsers);
+            setOnlineUsersCount(onlineUsers.length);
+        } catch (error) {
+            console.error('Error fetching Notifications:', error);
+        }
+    };
 
     return {
         open,
@@ -270,7 +290,8 @@ const ClientAdminDashboardService = () => {
         handleLogoutDropdownClose,
         logoutAnchorEl,
         setLogoutAnchorEl,
-        
+        GetOnlineUsers,
+        onlineUsers,
     };
 };
 

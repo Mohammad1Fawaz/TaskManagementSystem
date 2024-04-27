@@ -1,15 +1,15 @@
 import React, { createContext } from 'react';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import MainContent from './MainContent';
-import SettingsOffcanvas from './SettingsOffcanvas ';
+import Header from '../layout/Header';
+import Sidebar from '../layout/Sidebar';
+import MainContent from '../layout/MainContent';
+import SettingsOffcanvas from '../layout/SettingsOffcanvas ';
 
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import ClientAdminDashboardService from '../../services/ClientAdminDashboardService';
+import DeveloperDashboardService from '../../services/DeveloperDashboardService';
 
-const ClientDashboardLayoutContext = createContext();
-export const useClientDashboardLayoutContext = () => useContext(ClientDashboardLayoutContext);
+const DeveloperDashboardLayoutContext = createContext();
+export const useDeveloperDashboardLayoutContext = () => useContext(DeveloperDashboardLayoutContext);
 
 const DeveloperDashboard = ({ userInfo }) => {
     const {
@@ -46,10 +46,12 @@ const DeveloperDashboard = ({ userInfo }) => {
         handleLogoutDropdownClose,
         logoutAnchorEl,
         setLogoutAnchorEl,
-    } = ClientAdminDashboardService();
+        GetOnlineUsers,
+        onlineUsers,
+    } = DeveloperDashboardService();
 
     return (
-        <ClientDashboardLayoutContext.Provider value={{ selectedItem, setSelectedItem }}>
+        <DeveloperDashboardLayoutContext.Provider value={{ selectedItem, setSelectedItem }}>
             <Box className="flex justify-between">
                 <CssBaseline />
                 <Header
@@ -79,7 +81,7 @@ const DeveloperDashboard = ({ userInfo }) => {
                     handleDrawerClose={handleDrawerClose}
                     handleListItemClick={handleListItemClick}
                 />
-                <MainContent selectedItem={selectedItem} />
+                <MainContent selectedItem={selectedItem} onlineUsers={onlineUsers} />
                 <SettingsOffcanvas
                     show={show}
                     handleCloseSettings={handleCloseSettings}
@@ -87,7 +89,7 @@ const DeveloperDashboard = ({ userInfo }) => {
                     handleColorChange={handleColorChange}
                 />
             </Box>
-        </ClientDashboardLayoutContext.Provider>
+        </DeveloperDashboardLayoutContext.Provider>
     );
 }
 export default DeveloperDashboard;

@@ -3,9 +3,9 @@ namespace TaskManagementSystem.Server.RealTime
 {
     public class ConnectionManager
     {
-        public readonly Dictionary<string, List<string>> _userConnections = new Dictionary<string, List<string>>();
+        public readonly Dictionary<int, List<string>> _userConnections = new Dictionary<int, List<string>>();
 
-        public void AddConnection(string userId, string connectionId)
+        public void AddConnection(int userId, string connectionId)
         {
             lock (_userConnections)
             {
@@ -18,7 +18,7 @@ namespace TaskManagementSystem.Server.RealTime
             }
         }
 
-        public List<string> GetConnections(string userId)
+        public List<string> GetConnections(int userId)
         {
             lock (_userConnections)
             {
@@ -33,14 +33,37 @@ namespace TaskManagementSystem.Server.RealTime
             }
         }
 
-        public void RemoveConnection(string connectionId)
+        public void RemoveConnection(int userId, string connectionId)
         {
             lock (_userConnections)
             {
-                foreach (var userId in _userConnections.Keys)
+                if (_userConnections.ContainsKey(userId))
                 {
                     _userConnections[userId].Remove(connectionId);
+                    if (_userConnections[userId].Count == 0)
+                    {
+                        _userConnections.Remove(userId);
+                    }
                 }
+            }
+        }
+
+
+        public bool ConnectionExists(int userId, string connectionId)
+        {
+            if (_userConnections.ContainsKey(userId))
+            {
+                return _userConnections[userId].Contains(connectionId);
+            }
+
+            return false;
+        }
+
+        public List<int> GetAllUserIdsWithConnections()
+        {
+            lock (_userConnections)
+            {
+                return _userConnections.Keys.ToList();
             }
         }
     }
