@@ -1,4 +1,4 @@
-﻿namespace TaskManagementSystem.Server.ViewModels
+﻿namespace TaskManagementSystem.Server.ViewModels.CommonViewModels
 {
     public class ResultViewModel
     {

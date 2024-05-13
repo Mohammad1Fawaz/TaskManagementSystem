@@ -7,7 +7,7 @@ using System.Text;
 using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.ViewModels;
+using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Services

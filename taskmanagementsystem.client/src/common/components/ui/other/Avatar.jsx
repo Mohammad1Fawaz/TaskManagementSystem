@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Avatar = ({ text, image, size, sx, status }) => {
+const Avatar = ({ text, image, size, sx, status, className }) => {
 
     return (
-        <div className="">
+        <div className={className}>
             <div style={sx} className={`!w-[${size}] h-[${size}] rounded-[100%] border-2 flex-center p-2 border-[var(--button-primary-color)] font-bold text-lg position-relative`}>
                 {text}
                 {status !== undefined && (

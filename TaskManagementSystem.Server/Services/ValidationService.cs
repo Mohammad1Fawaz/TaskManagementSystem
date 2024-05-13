@@ -88,6 +88,7 @@ namespace TaskManagementSystem.Server.Services
 
         public void StoreVerificationCode(int userId, string verificationCode)
         {
+            int clientId = GetAuthenticatedClientId();
             var existingVerificationCode = _dbContext.UserVerificationCodes.FirstOrDefault(vc => vc.UserId == userId);
 
             if (existingVerificationCode != null)
@@ -96,7 +97,7 @@ namespace TaskManagementSystem.Server.Services
             }
             else
             {
-                _dbContext.UserVerificationCodes.Add(new UserVerificationCode { UserId = userId, VerificationCode = verificationCode });
+                _dbContext.UserVerificationCodes.Add(new UserVerificationCode { UserId = userId, VerificationCode = verificationCode ,clientId = clientId });
             }
 
             _dbContext.SaveChanges();

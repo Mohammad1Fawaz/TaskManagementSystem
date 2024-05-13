@@ -109,7 +109,7 @@ namespace TaskManagementSystem.Server
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<INotificationsService, NotificationsService>();
             services.AddSingleton<ConnectionManager>();
-
+            services.AddScoped<IProjectService, ProjectService>();
         }
     }
 }

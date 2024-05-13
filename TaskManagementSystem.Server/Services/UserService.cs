@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.ViewModels;
+using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 using static TaskManagementSystem.Server.Common.EnumConstants;
 

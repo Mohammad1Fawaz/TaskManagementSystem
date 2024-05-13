@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.ViewModels;
+using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 
 namespace TaskManagementSystem.Server.Services
 {

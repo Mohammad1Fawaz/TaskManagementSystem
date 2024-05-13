@@ -161,7 +161,7 @@ const UserService = {
             {
                 field: 'userName',
                 headerName: 'User Name',
-                width: 200,
+                width: 300,
                 editable: true
             },
             {
@@ -172,7 +172,7 @@ const UserService = {
             {
                 field: 'emailConfirmed',
                 headerName: 'Verified',
-                width: 100,
+                width: 150,
                 renderCell: (params) => {
                     const isVerified = params.value === true;
                     return (
@@ -204,7 +204,7 @@ const UserService = {
                 headerName: 'Roles',
                 description: '',
                 sortable: true,
-                width: 200,
+                width: 250,
             },
             {
                 field: 'Action',

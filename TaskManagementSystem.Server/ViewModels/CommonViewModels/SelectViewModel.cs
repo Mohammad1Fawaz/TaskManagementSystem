@@ -1,6 +1,6 @@
-﻿namespace TaskManagementSystem.Server.ViewModels
+﻿namespace TaskManagementSystem.Server.ViewModels.CommonViewModels
 {
-    public class PermissionViewModel
+    public class SelectViewModel
     {
         public string key { get; set; }
         public string value { get; set; }

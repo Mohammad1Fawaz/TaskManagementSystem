@@ -224,7 +224,7 @@ const DeveloperDashboardService = () => {
             '--main-hover-secondary-color': '#293e51',
             '--main-focus-primary-color': '#66b2ff',
             '--main-focus-secondary-color': '#626262',
-            '--main-background-primary-color': '#2c2f3e',
+            '--main-background-primary-color': '#1d2125',
             '--main-background-secondary-color': '#fff',
             '--text-primary-color': '#ffffffcc',
             '--text-secondary-color': '#626262',
