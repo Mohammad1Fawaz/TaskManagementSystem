@@ -160,3 +160,7 @@ input[type="number"] {
 .scrollbar-bottom::-webkit-scrollbar-track {
     background-color: var(--scrollbar-track-color);
 }
+/* Add this CSS to your stylesheet */
+.react-flow__attribution {
+    display: none !important;
+}

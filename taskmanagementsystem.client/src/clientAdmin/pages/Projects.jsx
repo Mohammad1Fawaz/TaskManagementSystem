@@ -11,35 +11,20 @@ import Box from '@mui/material/Box';
 import HelpersService from '../../common/services/HelpersService';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import CircularProgress from '@mui/material/CircularProgress';
+import WorkflowEditor from '../components/ui/WorkflowEditor';
+
 const Projects = () => {
     const initialStages = [
-        {
-            id: 'todo', title: 'ToDo'
-        },
-        {
-            id: 'pending', title: 'Pending'
-        },
-        {
-            id: 'inProgress', title: 'In Progress'
-        },
-        {
-            id: 'feedback', title: 'Feedback'
-        },
-        {
-            id: 'toDeployQA', title: 'To Deploy QA'
-        },
-        {
-            id: 'qa', title: 'QA'
-        },
-        {
-            id: 'toDeployDev', title: 'To Deploy Dev'
-        },
-        {
-            id: 'dev', title: 'Dev'
-        },
-        {
-            id: 'readyForProduction', title: 'Production'
-        },
+        { id: 'todo', title: 'ToDo' },
+        { id: 'pending', title: 'Pending' },
+        { id: 'inProgress', title: 'In Progress' },
+        { id: 'feedback', title: 'Feedback' },
+        { id: 'toDeployQA', title: 'To Deploy QA' },
+        { id: 'qa', title: 'QA' },
+        { id: 'toDeployDev', title: 'To Deploy Dev' },
+        { id: 'dev', title: 'Dev' },
+        { id: 'readyForProduction', title: 'Production' },
     ];
     const initialFormData = {
         projectName: '',
@@ -49,7 +34,7 @@ const Projects = () => {
         projectLead: 0,
         projectPermissions: '',
         userIds: [],
-        projectWorkFlow: []
+        projectWorkFlow: [],
     };
 
     const [stages, setStages] = useState(initialStages);
@@ -59,107 +44,44 @@ const Projects = () => {
     const [projectDescriptionValidationMessage, setProjectDescriptionValidationMessage] = useState('');
 
     const [formData, setFormData] = useState(initialFormData);
-
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState([]);
     const { data: fetchedUsers, isLoading: loadingUsers, error: usersError } = useGetRequest('/User/get-users', null, null, true);
     const [checkedMembers, setCheckedMembers] = useState([]);
     const { mutate: createProject } = usePostRequest('/Project/create-project', true);
-    
     const [tabIndex, setTabIndex] = useState(0);
 
-    const handleTabChange = (event, newValue) => {
-        setTabIndex(newValue);
-    };
+    const handleTabChange = (event, newValue) => setTabIndex(newValue);
 
     useEffect(() => {
         if (fetchedUsers) {
-            setUsers(
-                fetchedUsers.map(user => ({
-                    value: user.id,
-                    key: user.userName
-                }))
-            );
+            setUsers(fetchedUsers.map(user => ({ value: user.id, key: user.userName })));
         }
     }, [fetchedUsers]);
 
-
     useEffect(() => {
-        setFormData(prevState => ({
-            ...prevState,
-            userIds: checkedMembers,
-            projectWorkFlow: stages
-        }));
+        setFormData(prevState => ({ ...prevState, userIds: checkedMembers, projectWorkFlow: stages }));
     }, [checkedMembers, stages]);
 
     const onDragEnd = (result) => {
         const { source, destination } = result;
-
-        if (!destination) {
-            return;
-        }
-
-        if (
-            destination.droppableId === source.droppableId &&
-            destination.index === source.index
-        ) {
-            return;
-        }
+        if (!destination) return;
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
         const updatedStages = Array.from(stages);
         const [removed] = updatedStages.splice(source.index, 1);
         updatedStages.splice(destination.index, 0, removed);
-
         setStages(updatedStages);
     };
 
-    const handleAddBox = () => {
-        const newBox = { id: new Date().getTime().toString(), title: "your stage's title", tasks: [] };
-        setStages([...stages, newBox]);
-    };
+    const handleAddBox = () => setStages([...stages, { id: new Date().getTime().toString(), title: "your stage's title", tasks: [] }]);
+    const handleRemoveBox = (boxId) => setStages(stages.filter((stage) => stage.id !== boxId));
+    const handleTitleChange = (event, boxId) => setStages(stages.map((stage) => (stage.id === boxId ? { ...stage, title: event.target.value } : stage)));
 
-    const handleRemoveBox = (boxId) => {
-        const updatedStages = stages.filter((stage) => stage.id !== boxId);
-        setStages(updatedStages);
-    };
+    const handleChange = (e) => setFormData(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
+    const handleSelectChange = (selectedOption, input) => setFormData({ ...formData, [input]: selectedOption?.value || selectedOption.map((option) => option.value) });
 
-    const handleTitleChange = (event, boxId) => {
-        const updatedStages = stages.map((stage) => {
-            if (stage.id === boxId) {
-                return { ...stage, title: event.target.value };
-            }
-            return stage;
-        });
-        setStages(updatedStages);
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleSelectChange = (selectedOption, input) => {
-        if (selectedOption) {
-            if (input === "projectLead") {
-                setFormData({ ...formData, projectLead: selectedOption.value });
-            } else {
-                setFormData({ ...formData, projectMembers: selectedOption.map((option) => { return option.value; }) });
-            }
-        }
-    };
-
-
-    const handleCheckBoxChange = (userId) => {
-        const isChecked = checkedMembers.includes(userId);
-        if (isChecked) {
-            setCheckedMembers(checkedMembers.filter(memberId => memberId !== userId));
-        } else {
-            setCheckedMembers([...checkedMembers, userId]);
-        }
-    };
+    const handleCheckBoxChange = (userId) => setCheckedMembers(checkedMembers.includes(userId) ? checkedMembers.filter(memberId => memberId !== userId) : [...checkedMembers, userId]);
 
     const handleSubmit = async () => {
         const projectViewModel = {
@@ -179,31 +101,26 @@ const Projects = () => {
                     setIsLoading(false);
                     if (result.data.errors) {
                         const errors = result.data.errors;
-                        setProjectNameValidationMessage(errors.projectName ?? errors.projectName);
-                        setProjectKeyValidationMessage(errors.projectKey ?? errors.projectKey);
-                        setProjectLeadValidationMessage(errors.projectLead ?? errors.projectLead);
-                        setProjectDescriptionValidationMessage(errors.projectDescription ?? errors.projectDescription);
+                        setProjectNameValidationMessage(errors.projectName ?? '');
+                        setProjectKeyValidationMessage(errors.projectKey ?? '');
+                        setProjectLeadValidationMessage(errors.projectLead ?? '');
+                        setProjectDescriptionValidationMessage(errors.projectDescription ?? '');
                     }
-                    if (result.data.message) {
-                        HelpersService.notify(result.data.message, "error");
-                    }
-                    if (result.data.errorMessage) {
-                        HelpersService.notify(result.data.errorMessage, "error");
-                    }
+                    if (result.data.message) HelpersService.notify(result.data.message, "error");
+                    if (result.data.errorMessage) HelpersService.notify(result.data.errorMessage, "error");
                 },
-                onSuccess: () => {
-                    setIsLoading(false);
-                }
+                onSuccess: () => setIsLoading(false),
             });
-
         } catch (error) {
             HelpersService.notify('Something went wrong', "error");
             setIsLoading(false);
         }
-    }
+    };
 
-
-
+    const handleSaveWorkflow = (elements) => {
+        console.log('Saved Workflow:', elements);
+        // Logic to save workflow to the database can go here
+    };
 
     if (loadingUsers) {
         return <div className="flex h-[100vh] justify-center align-center"><CircularProgress /></div>;
@@ -212,21 +129,21 @@ const Projects = () => {
     } else {
         return (
             <div>
-                <h1 className="">Projects</h1>
+                <h1>Projects</h1>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={tabIndex} onChange={handleTabChange}>
-                        <Tab label="Add New Project" />
-                        <Tab label="Existing Projects" />
+                        <Tab label="Project Info" />
+                        <Tab label="Workflow Management" />
                     </Tabs>
                 </Box>
 
                 {tabIndex === 0 && (
                     <div>
                         <DragDropContext onDragEnd={onDragEnd}>
-                            <div className=" mt-5 shadow pt-4 px-4 rounded-2">
+                            <div className="mt-5 shadow pt-4 px-4 rounded-2">
                                 <div className="flex justify-between">
                                     <h1>Workflow</h1>
-                                    <button className="ml-auto" onClick={handleAddBox} >
+                                    <button className="ml-auto" onClick={handleAddBox}>
                                         <i className="fas fa-plus"></i>
                                     </button>
                                 </div>
@@ -272,19 +189,19 @@ const Projects = () => {
                         </DragDropContext>
                         <div className="mt-5 p-3 shadow p-3 rounded-2">
                             <form className="flex justify-between flex-wrap p-3">
-                                <div className="relative  mt-3 w-[33%]">
+                                <div className="relative mt-3 w-[33%]">
                                     <small className="text-danger text-xs absolute top-[-20px]">{projectNameValidationMessage}</small>
                                     <TextInput type="text" name="projectName" value={formData.projectName} placeholder="Project Name" className="relative" onChange={handleChange} icon="fa-project-diagram" />
                                 </div>
-                                <div className="relative  mt-3 w-[33%]">
+                                <div className="relative mt-3 w-[33%]">
                                     <small className="text-danger text-xs absolute top-[-20px]">{projectKeyValidationMessage}</small>
                                     <TextInput type="text" name="projectKey" value={formData.projectKey} placeholder="Project Key" className="relative" onChange={handleChange} icon="fa-key" />
                                 </div>
-                                <div className="relative  mt-3 w-[33%]">
+                                <div className="relative mt-3 w-[33%]">
                                     <small className="text-danger text-xs absolute top-[-20px]">{projectLeadValidationMessage}</small>
                                     <SelectInput placeholder="Team Leader" selectOptions={users} name="projectLead" value={formData.projectLead} handleSelectChange={(e) => handleSelectChange(e, "projectLead")} className="relative" icon="fa-user" />
                                 </div>
-                                <div className="relative mt-5 w-[48%]  pl-5 py-2 border rounded-2 pl-2">
+                                <div className="relative mt-5 w-[48%] pl-5 py-2 border rounded-2 pl-2">
                                     <FormControlLabel
                                         label="Project Members"
                                         control={
@@ -296,15 +213,9 @@ const Projects = () => {
                                         }
                                         sx={{
                                             color: "var(--text-primary-color)",
-                                            '@media (max-width: 600px)': {
-                                                fontSize: '12px !important',
-                                            },
-                                            '@media (min-width: 601px) and (max-width: 960px)': {
-                                                fontSize: '14px !important',
-                                            },
-                                            '@media (min-width: 961px)': {
-                                                fontSize: '15px !important',
-                                            },
+                                            '@media (max-width: 600px)': { fontSize: '12px !important' },
+                                            '@media (min-width: 601px) and (max-width: 960px)': { fontSize: '14px !important' },
+                                            '@media (min-width: 961px)': { fontSize: '15px !important' },
                                         }}
                                     />
                                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', ml: 3 }}>
@@ -318,23 +229,15 @@ const Projects = () => {
                                                         onChange={() => handleCheckBoxChange(user.value)}
                                                         sx={{
                                                             color: "var(--text-primary-color)",
-                                                            '&.Mui-checked': {
-                                                                color: "var(--button-primary-color)",
-                                                            },
+                                                            '&.Mui-checked': { color: "var(--button-primary-color)" },
                                                         }}
                                                     />
                                                 }
                                                 sx={{
                                                     color: "var(--text-primary-color)",
-                                                    '@media (max-width: 600px)': {
-                                                        fontSize: '12px !important',
-                                                    },
-                                                    '@media (min-width: 601px) and (max-width: 960px)': {
-                                                        fontSize: '14px !important',
-                                                    },
-                                                    '@media (min-width: 961px)': {
-                                                        fontSize: '15px !important',
-                                                    },
+                                                    '@media (max-width: 600px)': { fontSize: '12px !important' },
+                                                    '@media (min-width: 601px) and (max-width: 960px)': { fontSize: '14px !important' },
+                                                    '@media (min-width: 961px)': { fontSize: '15px !important' },
                                                 }}
                                             />
                                         ))}
@@ -342,7 +245,7 @@ const Projects = () => {
                                 </div>
                                 <div className="relative w-[48%] mt-5">
                                     <small className="text-danger text-xs absolute top-[-20px]">{projectDescriptionValidationMessage}</small>
-                                    <Form.Group className="">
+                                    <Form.Group>
                                         <Form.Control as="textarea" id="projectDescription" name="projectDescription" className="h-[250px]" onChange={handleChange} value={formData.projectDescription} placeholder="Project Description" />
                                     </Form.Group>
                                 </div>
@@ -355,14 +258,12 @@ const Projects = () => {
                 )}
                 {tabIndex === 1 && (
                     <div>
-                        hello
+                        <WorkflowEditor onSave={handleSaveWorkflow} />
                     </div>
                 )}
-
             </div>
         );
     }
-
 };
 
 export default Projects;
