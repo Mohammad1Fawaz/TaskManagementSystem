@@ -59,6 +59,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,in
     public DbSet<Country> Countries { get; set; }
     public DbSet<UserVerificationCode> UserVerificationCodes { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Project> Projects { get; set; }
+    public DbSet<Workflow> Workflows { get; set; }
+    public DbSet<ProjectUser> ProjectUsers { get; set; }
+
     #endregion DatabaseTables
 
 

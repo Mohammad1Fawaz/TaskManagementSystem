@@ -1,6 +1,6 @@
 ﻿using TaskManagementSystem.Server.Common;
 using TaskManagementSystem.Server.Models;
-using TaskManagementSystem.Server.ViewModels;
+using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 using static TaskManagementSystem.Server.Common.EnumConstants;
 
 namespace TaskManagementSystem.Server.Services

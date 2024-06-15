@@ -3,8 +3,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Users from '../../pages/Users';
 import Roles from '../../pages/Roles';
-
-//import Projects from '../../pages/Projects';
+import Projects from '../../pages/Projects';
 
 const MainContent = ({ selectedItem, setNotifications, onlineUsers }) => {
 
@@ -22,7 +21,7 @@ const MainContent = ({ selectedItem, setNotifications, onlineUsers }) => {
             )}
             {selectedItem === 2 && (
                 <div className="mt-4">
-                    <p>Hello in projects page</p>
+                    <Projects />
                 </div>
             )}
         </Box>

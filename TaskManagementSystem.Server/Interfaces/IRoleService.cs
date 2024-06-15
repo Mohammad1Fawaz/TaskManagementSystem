@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TaskManagementSystem.Server.Data;
-using TaskManagementSystem.Server.ViewModels;
+using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 
 namespace TaskManagementSystem.Server.Interfaces
 {

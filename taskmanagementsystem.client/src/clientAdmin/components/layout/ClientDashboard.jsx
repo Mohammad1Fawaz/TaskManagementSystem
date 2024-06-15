@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
 import Header from '../layout/Header';
 import Sidebar from '../layout/Sidebar';
 import MainContent from '../layout/MainContent';
@@ -12,6 +12,14 @@ const ClientDashboardLayoutContext = createContext();
 export const useClientDashboardLayoutContext = () => useContext(ClientDashboardLayoutContext);
 
 const ClientDashboard = ({ userInfo }) => {
+    useEffect(() => {
+        const rootElement = document.querySelector('#root');
+        if (rootElement) {
+            rootElement.style.overflowY = 'auto';
+            rootElement.classList.remove('scrollbar-bottom');
+        }
+    }, []);
+
     const {
         open,
         setOpen,

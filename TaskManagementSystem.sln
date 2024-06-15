@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementSystem.Server", "TaskManagementSystem.Server\TaskManagementSystem.Server.csproj", "{BFA88A51-3EDA-47ED-A194-DFD22A9BE2A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagementSystem.Server", "TaskManagementSystem.Server\TaskManagementSystem.Server.csproj", "{BFA88A51-3EDA-47ED-A194-DFD22A9BE2A3}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "taskmanagementsystem.client", "taskmanagementsystem.client\taskmanagementsystem.client.esproj", "{1C4ECAF9-9369-45DF-93A9-3848F117822A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{671A834E-A98E-4C5B-A328-C05EEAB4D056}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

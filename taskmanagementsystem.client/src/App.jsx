@@ -21,7 +21,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
             <Router>
                 <ToastContainer autoClose={false} />
-                <main className="w-full overflow-x-hidden">
+                <main className="w-full !overflow-hidden">
                     <Routes>
                         <Route path="/" element={<LoginPage />} />
                         <Route path="/login" element={<LoginPage />} />
@@ -31,7 +31,7 @@ function App() {
                         <Route path="/AccessDenied" element={<AccessDeniedPage />} />
                         <Route path="/ResetPassword" element={<ResetPasswordPage />} />
                         <Route path="/ClientAdmin" element={<PrivateRoute element={<ClientAdminPage />} requiredRoles={['ClientAdmin']} />} />
-                        <Route path="/Developer" element={<PrivateRoute element={<Developer />} requiredRoles={['User', 'ClientAdmin']} />} />
+                        <Route path="/Developer" element={<PrivateRoute element={<Developer/>} requiredRoles={['User', 'ClientAdmin']} />} />
                     </Routes>
                 </main>
             </Router>

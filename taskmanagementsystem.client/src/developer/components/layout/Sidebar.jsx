@@ -84,7 +84,7 @@ const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick })
                     bgcolor: 'var(--main-background-primary-color)',
                 }}
             >
-                {['Users', 'Roles', 'Projects'].map((text, index) => (
+                {['Board'].map((text, index) => (
                     <ListItem
                         key={text}
                         disablePadding

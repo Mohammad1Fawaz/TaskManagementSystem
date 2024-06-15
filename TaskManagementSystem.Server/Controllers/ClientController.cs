@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Server.Interfaces;
-using TaskManagementSystem.Server.ViewModels;
+using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 using TaskManagementSystem.Server.ViewModels.UserViewModels;
 
 namespace TaskManagementSystem.Server.Controllers

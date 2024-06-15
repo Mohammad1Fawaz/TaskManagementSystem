@@ -4,13 +4,14 @@ import MediumLogo from '../../common/components/ui/images/MainLogo';
 import { usePostRequest } from '../../common/hooks/useGetRequest';
 import AuthService from '../../common/services/AuthService';
 import HelpersService from '../../common/services/HelpersService';
+import DotsLoader from '../../common/components/ui/other/DotsLoader';
 
 const ClientVerificationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const token = new URLSearchParams(location.search).get('token');
     const email = new URLSearchParams(location.search).get('email');
-    const { mutate: verifyClient } = usePostRequest('/Client/verify-email', true);
+    const { mutate: verifyClient } = usePostRequest('/Client/verify-email', false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,7 +29,6 @@ const ClientVerificationPage = () => {
                         }
                     },
                     onSuccess: () => {
-                        AuthService.saveToken(result.token);
                         navigate('/');
                     }
                 });
@@ -40,14 +40,17 @@ const ClientVerificationPage = () => {
     }, [token, navigate]);
 
     return (
-        <div className="d-flex justify-content-center LoginRegisterContainer ">
-            <div className="col-md-3 shadow bg-white  p-5 rounded h-auto">
-                <MediumLogo />
-                <div>
-                    Waiting For your verification !
+        <>
+            <div className="flex flex-col justify-content-center w-full h-[100vh] mt-auto mb-auto lg:bg-[url('/src/assets/TaskManagementSystemBg.png')] bg-white sm:bg-none bg-no-repeat bg-contain bg-right">
+                <div className="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 mx-[5%] shadow bg-white p-4 rounded h-auto flex-col flex-center">
+                    <MediumLogo className="w-[300px] flex-center" />
+                    <div className="mt-5 flex">
+                        <p className ="text-lg text-bold" >Waiting For your verification</p>
+                        <DotsLoader />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 export default ClientVerificationPage;
