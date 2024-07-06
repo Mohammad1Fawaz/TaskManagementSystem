@@ -16,59 +16,67 @@ import Typography from '@mui/material/Typography';
 import MainLogo from '../../../common/components/ui/images/MainLogo';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {Link} from 'react-router-dom'
 
-const drawerWidth = 240;
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-}));
-
-const openedMixin = (theme) => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-});
-
-const closedMixin = (theme) => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
-    },
-});
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        ...(open && {
-            ...openedMixin(theme),
-            '& .MuiDrawer-paper': openedMixin(theme),
-        }),
-        ...(!open && {
-            ...closedMixin(theme),
-            '& .MuiDrawer-paper': closedMixin(theme),
-        }),
-    }),
-);
-
-const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick }) => {
+const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick, darkTheme }) => {
     const theme = useTheme();
+    const drawerWidth = 240;
+
+    const DrawerHeader = styled('div')(({ theme }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: theme.spacing(0, 1),
+        ...theme.mixins.toolbar,
+    }));
+
+    const openedMixin = (theme) => ({
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        overflowX: 'hidden',
+        borderColor: `${darkTheme ? '#292929' : '#eaedf1'}`
+    });
+
+    const closedMixin = (theme) => ({
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        overflowX: 'hidden',
+        width: `calc(${theme.spacing(7)} + 1px)`,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(${theme.spacing(8)} + 1px)`,
+        },
+        borderColor: `${darkTheme ? '#292929' : '#eaedf1'}`
+    });
+    const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+        ({ theme, open }) => ({
+            width: drawerWidth,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+            boxSizing: 'border-box',
+            ...(open && {
+                ...openedMixin(theme),
+                '& .MuiDrawer-paper': openedMixin(theme),
+            }),
+            ...(!open && {
+                ...closedMixin(theme),
+                '& .MuiDrawer-paper': closedMixin(theme),
+            }),
+        }),
+    );
+
+    const menuItems = [
+        { text: 'Board', icon: <PersonIcon />, path: '/board', related: 'Developer' },
+        { text: 'Backlogs', icon: <GroupIcon />, path: '/backlogs', related: 'Developer' },
+    ];
+
 
     return (
-        <Drawer variant="permanent" open={open} sx={{ bgcolor: 'var(--main-background-primary-color)', minHeight: '100vh' }} >
+        <Drawer variant="permanent" open={open} sx={{ bgcolor: 'var(--sidebar-background-primary-color)', minHeight: '100vh' }} >
             <DrawerHeader>
                 <Typography variant="h6" noWrap component="div" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '65px', marginLeft: 'auto', marginRight: 'auto' }}>
                 </Typography>
@@ -81,22 +89,24 @@ const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick })
             <Divider />
             <List
                 sx={{
-                    bgcolor: 'var(--main-background-primary-color)',
+                    bgcolor: 'var(--sidebar-background-primary-color)',
                 }}
             >
-                {['Board'].map((text, index) => (
+                {menuItems.map((menuItem, index) => (
                     <ListItem
-                        key={text}
+                        key={menuItem.text}
                         disablePadding
-                        sx={{ display: 'block' , borderRadius:'50px' }}
-                        onClick={() => handleListItemClick(index)}
-                        selected={selectedItem === index}>
+                        sx={{ display: 'block', borderRadius: '50px', height: 40, bgcolor: selectedItem === index ? 'var(--button-primary-color)' : 'inherit' }}
+                    >
                         <ListItemButton
+                            component={Link}
+                            to={menuItem.path}
+                            onClick={() => handleListItemClick(index)}
                             sx={{
-                                minHeight: 48,
+                                height: 40,
                                 justifyContent: open ? 'initial' : 'center',
                                 px: 2.5,
-                                bgcolor: index === selectedItem ? 'var(--button-primary-color)' : 'inherit',
+                                bgcolor: 'inherit',
                                 '&:hover': {
                                     bgcolor: 'var(--main-hover-secondary-color)',
                                 },
@@ -113,11 +123,15 @@ const Sidebar = ({ open, selectedItem, handleDrawerClose, handleListItemClick })
                                     color: 'var(--text-primary-color)'
                                 }}
                             >
-                                {index === 0 ? <PersonIcon /> : index === 1 ? <GroupIcon /> : <WorkIcon />}
+                                {menuItem.icon}
                             </ListItemIcon>
-                            <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                            <ListItemText
+                                primary={menuItem.text}
+                                sx={{
+                                    opacity: open ? 1 : 0,
+                                }}
+                            />
                         </ListItemButton>
-                        <Divider />
                     </ListItem>
                 ))}
             </List>

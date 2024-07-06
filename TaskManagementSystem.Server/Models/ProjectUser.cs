@@ -7,11 +7,10 @@ namespace TaskManagementSystem.Server.Models
     {
         [ForeignKey("Project")]
         public int projectId { get; set; }
-        public Project Project { get; set; }
+        public Project project { get; set; }
 
         [ForeignKey("User")]
         public int userId { get; set; }
-        public ApplicationUser User { get; set; }
-
+        public ApplicationUser user { get; set; }
     }
 }

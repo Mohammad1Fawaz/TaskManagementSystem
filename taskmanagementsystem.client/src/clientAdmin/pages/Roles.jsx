@@ -37,8 +37,7 @@ const Roles = () => {
     } else {
         return (
             <div>
-                <h1 className="">Roles</h1>
-                <form className="w-100 p-4 mt-3 shadow rounded-2" onSubmit={(e) => RolesService.handleAddRole(e, setIsLoading, formData, setFormData, initialFormData, setRoleNameValidationMessage, setPermissionsValidationMessage,addRole)}>
+                <form className="w-100 appCard p-4 mt-3" onSubmit={(e) => RolesService.handleAddRole(e, setIsLoading, formData, setFormData, initialFormData, setRoleNameValidationMessage, setPermissionsValidationMessage,addRole)}>
                     <div className="flex gap-2">
                         <div className="w-[50%] relative">
                             <small className="text-danger text-xs absolute top-[-20px]">{roleNameValidationMessage}</small>
@@ -55,15 +54,16 @@ const Roles = () => {
                 </form>
                 <div className="mt-5 w-full flex justify-between flex-wrap rounded-2 p-1">
                     {roles && roles.map((role) => (
-                        <div key={role.id} className="mb-3 xs:w-[100%] lg:w-[48%] xl:w-[33%] border p-1 shadow rounded-3">
+                        <div key={role.id} className="mb-3 xs:w-[100%] lg:w-[48%] xl:w-[33%]  p-1 appCard">
                             {claims &&
-                                <NestedCheckboxRoles
-                                    parentName={role.name}
-                                    parentId={role.id}
-                                    children={claims.filter(claim => claim.roleId === role.id)}
-                                    onRoleUpdate={(roleId, checkedClaims) => RolesService.handleUpdateRole(roleId, checkedClaims, setFormData, initialFormData, editRole)}
-                                    handleDeleteRole={(roleId) => RolesService.handleDeleteRole(roleId, setFormData, initialFormData, deleteRole)}
-                                />
+                             <NestedCheckboxRoles
+                                 parentName={role.name}
+                                 parentId={role.id}
+                                 onRoleUpdate={(roleId, checkedClaims) => RolesService.handleUpdateRole(roleId, checkedClaims, setFormData, initialFormData, editRole)}
+                                 handleDeleteRole={(roleId) => RolesService.handleDeleteRole(roleId, setFormData, initialFormData, deleteRole)}
+                             >
+                                 {claims.filter(claim => claim.roleId === role.id)}
+                             </NestedCheckboxRoles>
                             }
                         </div>
                     ))}

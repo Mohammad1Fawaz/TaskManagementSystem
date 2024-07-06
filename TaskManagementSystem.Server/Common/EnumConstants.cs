@@ -86,10 +86,47 @@ namespace TaskManagementSystem.Server.Common
 
         public enum NotificationType
         {
+            [Display(Name = "None")]
             None,
+            [Display(Name = "Info")]
             Info,
+            [Display(Name = "Warning")]
             Warning,
+            [Display(Name = "Mention")]
             Mention
         }
+
+        public enum TaskType
+        {
+            [Display(Name = "Story")]
+            Story,
+            [Display(Name = "Task")]
+            Task,
+            [Display(Name = "Bug")]
+            Bug,
+            [Display(Name = "Plan")]
+            Plan,
+        }
+
+        public enum TaskPriority
+        {
+            [Display(Name = "Highest")]
+            Highest,
+            [Display(Name = "High")]
+            High,
+            [Display(Name = "Medium")]
+            Medium,
+            [Display(Name = "Low")]
+            Low,
+            [Display(Name = "Lowest")]
+            Lowest,
+        }
+
+    }
+
+    public class SelectOption
+    {
+        public string key { get; set; }
+        public int value { get; set; }
     }
 }

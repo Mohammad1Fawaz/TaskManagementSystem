@@ -8,7 +8,6 @@ using TaskManagementSystem.Server.Data;
 using TaskManagementSystem.Server.Interfaces;
 using TaskManagementSystem.Server.RealTime;
 using TaskManagementSystem.Server.Services;
-using TaskManagementSystem.Server.Middlewares;
 
 namespace TaskManagementSystem.Server
 {
@@ -110,6 +109,8 @@ namespace TaskManagementSystem.Server
             services.AddScoped<INotificationsService, NotificationsService>();
             services.AddSingleton<ConnectionManager>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IBoardService, BoardService>();
+            services.AddScoped<ITaskService, TaskService>();
         }
     }
 }

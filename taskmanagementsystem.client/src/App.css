@@ -12,10 +12,12 @@
     --main-focus-primary-color: #66b2ff;
     --main-focus-secondary-color: #626262;
     --main-background-primary-color: #f7f8f9;
-    --main-background-secondary-color: #fff;
+    --main-background-secondary-color: #a9b8c826;
+    --header-background-primary-color: #fffffff;
+    --sidebar-background-secondary-color: #fffffff;
     /* main */
     /* text */
-    --text-primary-color: #626262;
+    --text-primary-color: #495057;
     --text-secondary-color: #66b2ff;
     /* text */
     /* button */
@@ -29,7 +31,10 @@
     --input-hover-secondary-color: #a4d1ff;
     --input-focus-primary-color: #a4d1ff;
     --input-focus-secondary-color: #eff7ff;
-    /* input */
+    --board-color: #f0f0f0;
+    --board-title-color: #e3e3e3;
+    /*card bg color*/
+    --card-background-color: #f7f8f9;
 }
 
 #root {
@@ -37,33 +42,22 @@
     --scrollbar-color: var(--text-primary-color);
 }
 
-* {
-    scrollbar-color: var(--scrollbar-color) var(--main-hover-secondary-color);
-    scrollbar-width: thin !important;
+*{
+    scrollbar-width: auto !important;
     font-family: 'Poppins', sans-serif;
+    box-sizing : border-box !important;
+    margin :0 ;
+    padding : 0 ;
 }
-
-::-webkit-scrollbar {
-    width: 5px;
-    scroll-behavior:smooth;
-    height : auto;
-    background-color: transparent;
-}
-
-html::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-color);
-    border-radius: 5px;
-}
-
-
 
 a {
     text-decoration: none;
 }
 
 
-p,a,h1,h2,h3,h4,h5,h6,input,button,td,tr,div,label{
+p,a,h1,h2,h3,h4,h5,h6,input,button,td,tr,div,label,input{
     color:var(--text-primary-color) !important;
+    font-size : .875rem 
 }
 
 
@@ -81,7 +75,7 @@ input[type="number"] {
 
 
 .MuiDrawer-paperAnchorDockedLeft.css-12i7wg6-MuiPaper-root-MuiDrawer-paper{
-    background-color:var(--main-background-primary-color);
+    background-color:var(--header-background-primary-color);
 }
 
 
@@ -116,7 +110,6 @@ input[type="number"] {
     color : var(--text-primary-color) !important;
 }
 
-/* Custom styles for SweetAlert modal */
 .swal2-popup {
     background-color: var(--main-background-primary-color);
 }
@@ -129,7 +122,7 @@ input[type="number"] {
     color: var(--text-primary-color);
 }
 .css-1l8j5k8 {
-    background-color: var(--main-background-primary-color) !important;
+    background-color: var(--header-background-primary-color) !important;
 }
 
 .container{
@@ -137,30 +130,88 @@ input[type="number"] {
     margin-left:auto;
     margin-right:auto;
 }
-.scrollbar-bottom {
-    position: fixed;
-    bottom: -0.1%;
-    left: 0;
-    width: 100%;
-    overflow-x: auto;
-    z-index: 9999; 
-}
 
-/* For WebKit (Chrome, Safari) */
-.scrollbar-bottom::-webkit-scrollbar {
-    width: 8px; /* Adjust width as needed */
-    height: 8px; /* Adjust height as needed */
-}
-
-.scrollbar-bottom::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb-color); 
-    border-radius: 5px;
-}
-
-.scrollbar-bottom::-webkit-scrollbar-track {
-    background-color: var(--scrollbar-track-color);
-}
-/* Add this CSS to your stylesheet */
 .react-flow__attribution {
     display: none !important;
+}
+
+.tox-edit-area,.tox :not(svg):not(rect) {
+    background-color: var(--main-background-primary-color) !important;
+}
+.tox.tox-tinymce {
+    height: 230px !important;
+}
+.tox.tox-tinymce button {
+    color : var(--text-primary-color) !important
+}
+
+.tox.tox-tinymce button:hover {
+    background-color: var(--button-primary-color) !important;
+}
+
+
+.tox.tox-tinymce span,.tox.tox-tinymce svg{
+    background-color: transparent !important;
+    color : var(--text-primary-color) !important;
+    fill : var(--text-primary-color) !important;
+}
+
+.tox.tox-tinymce div {
+    color: var(--text-primary-color) !important
+}
+
+.tox .tox-toolbar, .tox .tox-toolbar__primary, .tox .tox-toolbar__secondary {
+    background-color: var(--card-background-color) !important;
+    color: var(--text-primary-color) !important;
+}
+
+.tox .tox-tbtn {
+    color: var(--text-primary-color) !important;
+}
+
+.tox .tox-toolbar__group, .tox-editor-container {
+    background-color: var(--card-background-color) !important;
+    width:auto !important;
+}
+
+.tox .tox-button {
+    background-color: var(--card-background-color) !important;
+    color: var(--text-primary-color) !important;
+}
+
+    .tox .tox-button:hover, .tox .tox-button:focus {
+        background-color: var(--text-primary-color) !important;
+        color: var(--text-primary-color) !important;
+    }
+
+.tox .tox-button--enabled, .tox .tox-button--enabled:hover, .tox .tox-button--enabled:focus {
+    color: var(--text-primary-color) !important;
+}
+
+.tox .tox-tbtn:enabled {
+    opacity: 1 !important;
+}
+
+.tox .tox-tbtn:disabled {
+    opacity: 0.5 !important;
+}
+
+.tox .tox-tbtn:enabled:hover, .tox .tox-tbtn:enabled:focus {
+    background-color: var(--card-background-color) !important;
+    color: var(--text-primary-color) !important;
+}
+
+.appCard {
+    border-radius: 5px;
+    border: none !important;
+    outline : none !important;
+    background-color: var(--card-background-color) !important;
+    box-shadow: 0 4px 16px 0 var(--main-background-secondary-color);
+    position: relative;
+    margin-block-end: 1.5rem;
+    width: 100%;
+}
+
+.popover-item:hover{
+    background-color : var(--button-hover-primary-color) !important;
 }

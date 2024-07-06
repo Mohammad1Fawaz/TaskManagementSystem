@@ -7,8 +7,12 @@ import PrimaryButton from '../buttons/PrimaryButton';
 import MainLogo from '../images/MainLogo';
 import PasswordInput from '../inputs/PasswordInput';
 import TextInput from '../inputs/TextInput';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser as loginUserAction } from '../../../redux/actions';
 const UserLoginForm = () => {
     let navigate = useNavigate();
+    const dispatch = useDispatch();
+    const loggedInUser = useSelector((state) => state.loggedInUser);
 
     const initialFormData = {
         email: '',
@@ -63,10 +67,11 @@ const UserLoginForm = () => {
                         return;
                     }
                     if (!loadingUserInfo) {
+                        dispatch(loginUserAction(userData.userInfo));
                         if (userData.userInfo.role?.includes("ClientAdmin")) {
-                            navigate('/ClientAdmin');
+                            navigate('/users');
                         } else {
-                            navigate('/Developer');
+                            navigate('/board');
                         }
                     }
                 }

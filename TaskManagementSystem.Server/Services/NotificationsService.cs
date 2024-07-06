@@ -19,7 +19,7 @@ namespace TaskManagementSystem.Server.Services
         private readonly AppDbContext _dbContext;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ConnectionManager _connectionManager;
-
+        
         public NotificationsService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender mailService, IValidationService validationService, IRoleService roleService, IHubContext<NotificationHub> hubContext, ConnectionManager connectionManager)
         {
             _dbContext = dbContext;
@@ -38,7 +38,7 @@ namespace TaskManagementSystem.Server.Services
             int userId = _validationService.GetAuthenticatedUserId();
 
             List<NotificationViewModel> notifications = await _dbContext.Notifications
-                .Where(x => !x.isRead && x.clientId == clientId && ( x.userReceiverId == userId || x.forAll))
+                .Where(x => x.clientId == clientId && ( x.userReceiverId == userId || x.forAll))
                 .Select(n => new NotificationViewModel
                 {
                     id = n.id,
@@ -122,6 +122,11 @@ namespace TaskManagementSystem.Server.Services
         public async Task SendOnlineUsers(List<int> connectedUsersIds)
         {
             await _hubContext.Clients.All.SendAsync("newOnlineUser", connectedUsersIds);
+        }
+
+        public List<int> GetOnlineUsers() 
+        {
+            return _connectionManager.GetAllUserIdsWithConnections().ToList();
         }
     }
 }

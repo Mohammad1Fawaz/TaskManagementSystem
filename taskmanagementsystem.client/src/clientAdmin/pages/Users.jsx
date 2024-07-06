@@ -1,5 +1,6 @@
 import { CircularProgress } from "@mui/material/index";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import UserService from '../../clientAdmin/services/UserService';
 import PrimaryButton from '../../common/components/ui/buttons/PrimaryButton';
 import PasswordInput from '../../common/components/ui/inputs/PasswordInput';
@@ -10,9 +11,10 @@ import AuthorizeElement from "../../common/components/ui/other/AuthorizeElement"
 import MaterialUiTable from "../../common/components/ui/tables/MaterialUiTable";
 import { useGetRequest, useDeleteRequest, useUpdateRequest, usePostRequest } from "../../common/hooks/useGetRequest";
 import { NotificationService } from "../../common/services/NotificationService";
+import { useSelector } from "react-redux";
 
 
-const Users = ({ setSelectedItem, onlineUsers }) => {
+const Users = ({ setSelectedItem}) => {
 
     const [formData, setFormData] = useState(UserService.initialFormData);
     const [userEmailValidationMessage, setUserEmailValidationMessage] = useState('');
@@ -29,7 +31,7 @@ const Users = ({ setSelectedItem, onlineUsers }) => {
     const { mutate: deleteUser } = useDeleteRequest('/User/delete-user', true, '/User/get-users');
     const { mutate: editUser } = useUpdateRequest('/User/edit-user', true, '/User/get-users');
     const { mutate: addUser } = usePostRequest('/User/register', true, '/User/get-users');
-
+    const navigate = useNavigate();
     useEffect(() => {
         if (fetchedCountries) {
             setCountries(fetchedCountries);
@@ -47,6 +49,8 @@ const Users = ({ setSelectedItem, onlineUsers }) => {
             setUsers(fetchedUsers);
         }
     }, [fetchedUsers]);
+    const userCollaborators = useSelector((state) => state.collaborators);
+    const onlineUsers = useSelector((state) => state.onlineUsers);
 
 
     if (loadingCountries || loadingRoles || loadingUsers) {
@@ -60,7 +64,7 @@ const Users = ({ setSelectedItem, onlineUsers }) => {
         return (
             <div className="">
                 <AuthorizeElement requiredClaims={['Manage Users']}>
-                    <form className="w-full shadow rounded-2 mb-5 p-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={(e) => UserService.handleSubmits(e, formData, setFormData, setIsLoading, setUserNameValidationMessage, setUserEmailValidationMessage, setUserPhoneValidationMessage, setPasswordValidationMessage, addUser)}>
+                    <form className="w-full appCard  mb-5 p-4 flex flex-wrap gap-4 justify-content-between mt-3 xs:flex-col flex-center lg:flex-row" onSubmit={(e) => UserService.handleSubmits(e, formData, setFormData, setIsLoading, setUserNameValidationMessage, setUserEmailValidationMessage, setUserPhoneValidationMessage, setPasswordValidationMessage, addUser)}>
                         <div className="relative xs:w-full lg:w-[45%]">
                             <small className="text-danger text-xs absolute top-[-20px]">{userNameValidationMessage}</small>
                             <TextInput type="text" className="relative" name="name" placeholder="Username" value={formData.name} onChange={(e) => UserService.handleInputChange(e, formData,setFormData)} icon="fa-user" />

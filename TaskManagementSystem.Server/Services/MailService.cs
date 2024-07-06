@@ -8,7 +8,7 @@ namespace TaskManagementSystem.Server.Services
 {
     public class MailService : IEmailSender
     {
-       
+
         public async Task SendEmailAsync(string email, string subject, string htmlMessage, bool hasHeader = true, bool hasFooter = true)
         {
             var message = new MimeMessage();
@@ -34,10 +34,15 @@ namespace TaskManagementSystem.Server.Services
 
             using (var client = new SmtpClient())
             {
-                client.Connect("smtp.gmail.com", 587, false);
-                client.Authenticate("mohammadfawaz261@gmail.com", "xprsrnwgimwxfmoj");
+                // Ignore SSL certificate validation
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                // Connect without SSL/TLS
+                await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+                client.Authenticate("mohammadfawaz261@gmail.com", "gidztuogjvltrvsc");
+
                 await client.SendAsync(message);
-                client.Disconnect(true);
+                await client.DisconnectAsync(true);
             }
         }
 

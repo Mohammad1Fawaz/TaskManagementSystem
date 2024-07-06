@@ -4,6 +4,8 @@ import HelpersService from '../../common/services/HelpersService';
 import Swal from 'sweetalert2';
 import AuthService from '../../common/services/AuthService';
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { setOnlineUsers as setOnlineUsersAction } from '../../common/redux/actions';
 
 const DeveloperDashboardService = () => {
 
@@ -22,6 +24,7 @@ const DeveloperDashboardService = () => {
     const openNotifications = Boolean(notificationsAnchorEl);
     const [openLogoutDropdown, setOpenLogoutDropdown] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const storedDarkTheme = JSON.parse(localStorage.getItem('darkTheme'));
@@ -48,6 +51,7 @@ const DeveloperDashboardService = () => {
 
         realTimeConnection.on("newOnlineUser", (newOnlineUserId) => {
             setOnlineUsers(newOnlineUserId);
+            dispatch(setOnlineUsersAction(newOnlineUserId));
         });
 
         GetNotifications();
@@ -98,7 +102,6 @@ const DeveloperDashboardService = () => {
         try {
             const onlineUsers = await NotificationService.getOnlineUsers();
             setOnlineUsers(onlineUsers);
-            setOnlineUsersCount(onlineUsers.length);
         } catch (error) {
             console.error('Error fetching Notifications:', error);
         }
@@ -138,7 +141,9 @@ const DeveloperDashboardService = () => {
             '--main-focus-primary-color': '#626262',
             '--main-focus-secondary-color': '#626262',
             '--main-background-primary-color': '#f7f8f9',
-            '--main-background-secondary-color': '#fff',
+            '--header-background-primary-color': '#ffffff',
+            '--sidebar-background-primary-color': '#ffffff',
+            '--main-background-secondary-color': '#a9b8c826',
             '--text-primary-color': '#626262',
             '--text-secondary-color': '#626262',
             '--button-primary-color': '#66b2ff',
@@ -149,6 +154,9 @@ const DeveloperDashboardService = () => {
             '--input-hover-secondary-color': '#a4d1ff',
             '--input-focus-primary-color': '#a4d1ff',
             '--input-focus-secondary-color': '#eff7ff',
+            '--board-color': '#f0f0f0',
+            '--board-title-color': '#e3e3e3',
+            '--card-background-color': '#f7f8f9',
         };
     }
 
@@ -225,7 +233,9 @@ const DeveloperDashboardService = () => {
             '--main-focus-primary-color': '#66b2ff',
             '--main-focus-secondary-color': '#626262',
             '--main-background-primary-color': '#1d2125',
-            '--main-background-secondary-color': '#fff',
+            '--header-background-primary-color': '#1d2125',
+            '--sidebar-background-primary-color': '#1d2125',
+            '--main-background-secondary-color': '#00000026',
             '--text-primary-color': '#ffffffcc',
             '--text-secondary-color': '#626262',
             '--button-primary-color': '#66b2ff',
@@ -236,6 +246,9 @@ const DeveloperDashboardService = () => {
             '--input-hover-secondary-color': '#014588',
             '--input-focus-primary-color': '#014588',
             '--input-focus-secondary-color': '#626262',
+            '--board-color': '#161a1d',
+            '--board-title-color': '#14181a',
+            '--card-background-color': '#1d2125',
         });
     };
 

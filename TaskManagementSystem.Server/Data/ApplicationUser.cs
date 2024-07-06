@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using TaskManagementSystem.Server.Models;
 using static TaskManagementSystem.Server.Common.EnumConstants;
 
 namespace TaskManagementSystem.Server.Data
@@ -13,5 +14,8 @@ namespace TaskManagementSystem.Server.Data
         public UserType userType { get; set; }
         public DateTime createdAt { get; set; }= DateTime.UtcNow;
         public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+
+        public List<ProjectUser> ProjectUsers { get; set; }
+        public List<ProjectTask> AssignedTasks { get; set; }
     }
 }

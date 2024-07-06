@@ -1980,6 +1980,7 @@ namespace TaskManagementSystem.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
+                        .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
                     b.HasIndex("UserId");
@@ -2060,6 +2061,7 @@ namespace TaskManagementSystem.Server.Migrations
                         .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
+                        .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("Users", (string)null);
@@ -2126,7 +2128,7 @@ namespace TaskManagementSystem.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("projectLead")
+                    b.Property<int>("projectLeadId")
                         .HasColumnType("int");
 
                     b.Property<string>("projectName")
@@ -2140,12 +2142,12 @@ namespace TaskManagementSystem.Server.Migrations
 
                     b.HasIndex("clientId");
 
-                    b.HasIndex("projectLead");
+                    b.HasIndex("projectLeadId");
 
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectUser", b =>
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectGroup", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -2157,14 +2159,15 @@ namespace TaskManagementSystem.Server.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<int>("projectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
 
                     b.HasKey("id");
 
@@ -2172,9 +2175,194 @@ namespace TaskManagementSystem.Server.Migrations
 
                     b.HasIndex("projectId");
 
+                    b.ToTable("ProjectGroups");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectTask", b =>
+                {
+                    b.Property<string>("taskId")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("assigneeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("dueDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("estimatedTime")
+                        .HasColumnType("double");
+
+                    b.Property<int>("groupId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("loggedTime")
+                        .HasColumnType("double");
+
+                    b.Property<int>("priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("progress")
+                        .HasColumnType("int");
+
+                    b.Property<int>("projectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("reporter")
+                        .HasColumnType("int");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("taskType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("taskId");
+
+                    b.HasIndex("assigneeId");
+
+                    b.HasIndex("clientId");
+
+                    b.HasIndex("groupId");
+
+                    b.HasIndex("projectId");
+
+                    b.HasIndex("taskId")
+                        .IsUnique();
+
+                    b.ToTable("ProjectTasks");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectUser", b =>
+                {
+                    b.Property<int>("projectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("projectId", "userId");
+
                     b.HasIndex("userId");
 
                     b.ToTable("ProjectUsers");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.TaskAttachment", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("fileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("filePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("projectTasktaskId")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("taskId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("uploadedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("clientId");
+
+                    b.HasIndex("projectTasktaskId");
+
+                    b.ToTable("TaskAttachments");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.TaskComment", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("author")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("clientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("postedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("projectTasktaskId")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("taskId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("author")
+                        .IsUnique();
+
+                    b.HasIndex("clientId");
+
+                    b.HasIndex("projectTasktaskId");
+
+                    b.ToTable("TaskComments");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Server.Models.UserVerificationCode", b =>
@@ -2329,18 +2517,18 @@ namespace TaskManagementSystem.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "User")
+                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "ProjectLead")
                         .WithMany()
-                        .HasForeignKey("projectLead")
+                        .HasForeignKey("projectLeadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("ProjectLead");
 
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectUser", b =>
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectGroup", b =>
                 {
                     b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "user")
                         .WithMany()
@@ -2348,21 +2536,101 @@ namespace TaskManagementSystem.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TaskManagementSystem.Server.Models.Project", "Project")
-                        .WithMany()
+                    b.HasOne("TaskManagementSystem.Server.Models.Project", "project")
+                        .WithMany("groups")
                         .HasForeignKey("projectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "User")
+                    b.Navigation("project");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectTask", b =>
+                {
+                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "assigneeUser")
+                        .WithMany("AssignedTasks")
+                        .HasForeignKey("assigneeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "client")
                         .WithMany()
+                        .HasForeignKey("clientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagementSystem.Server.Models.ProjectGroup", "group")
+                        .WithMany("projectTasks")
+                        .HasForeignKey("groupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagementSystem.Server.Models.Project", "project")
+                        .WithMany("tasks")
+                        .HasForeignKey("projectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("assigneeUser");
+
+                    b.Navigation("client");
+
+                    b.Navigation("group");
+
+                    b.Navigation("project");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectUser", b =>
+                {
+                    b.HasOne("TaskManagementSystem.Server.Models.Project", "project")
+                        .WithMany("projectUsers")
+                        .HasForeignKey("projectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "user")
+                        .WithMany("ProjectUsers")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Project");
+                    b.Navigation("project");
 
-                    b.Navigation("User");
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.TaskAttachment", b =>
+                {
+                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "user")
+                        .WithMany()
+                        .HasForeignKey("clientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagementSystem.Server.Models.ProjectTask", "projectTask")
+                        .WithMany("attachments")
+                        .HasForeignKey("projectTasktaskId");
+
+                    b.Navigation("projectTask");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.TaskComment", b =>
+                {
+                    b.HasOne("TaskManagementSystem.Server.Data.ApplicationUser", "user")
+                        .WithMany()
+                        .HasForeignKey("clientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagementSystem.Server.Models.ProjectTask", "projectTask")
+                        .WithMany("comments")
+                        .HasForeignKey("projectTasktaskId");
+
+                    b.Navigation("projectTask");
 
                     b.Navigation("user");
                 });
@@ -2403,6 +2671,34 @@ namespace TaskManagementSystem.Server.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("user");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("AssignedTasks");
+
+                    b.Navigation("ProjectUsers");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.Project", b =>
+                {
+                    b.Navigation("groups");
+
+                    b.Navigation("projectUsers");
+
+                    b.Navigation("tasks");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectGroup", b =>
+                {
+                    b.Navigation("projectTasks");
+                });
+
+            modelBuilder.Entity("TaskManagementSystem.Server.Models.ProjectTask", b =>
+                {
+                    b.Navigation("attachments");
+
+                    b.Navigation("comments");
                 });
 #pragma warning restore 612, 618
         }

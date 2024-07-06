@@ -85,7 +85,7 @@ namespace TaskManagementSystem.Server.Middlewares
             }
         }
 
-        private (string, string, string, bool) ParseJwtToken(string token)
+        private (string?, string?, string?, bool) ParseJwtToken(string token)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -112,15 +112,10 @@ namespace TaskManagementSystem.Server.Middlewares
 
                 return (userId, clientId, role, true);
             }
-            catch (SecurityTokenException ex)
+            catch
             {
-                throw new UnauthorizedAccessException("Invalid authorization token", ex);
-            }
-            catch (Exception ex)
-            {
-                throw new SecurityTokenException("Token validation failed", ex);
+                return (null, null, null, false);
             }
         }
-
     }
 }

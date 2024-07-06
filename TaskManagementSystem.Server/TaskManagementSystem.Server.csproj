@@ -10,6 +10,14 @@
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;8618 </NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;8618 </NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Remove="wwwroot\ToTaskIcon.png" />
     <Content Remove="wwwroot\ToTaskLogo.png" />

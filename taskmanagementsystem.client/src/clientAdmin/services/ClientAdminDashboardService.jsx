@@ -3,15 +3,15 @@ import { NotificationService, realTimeConnection } from '../../common/services/N
 import HelpersService from '../../common/services/HelpersService';
 import Swal from 'sweetalert2';
 import AuthService from '../../common/services/AuthService';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser, resetActivePage, setActivePage, setOnlineUsers } from '../../common/redux/actions';
 
 const ClientAdminDashboardService = () => {
-
     const [open, setOpen] = useState(true);
     const [showLogo, setShowLogo] = useState(false);
     const [selectedItem, setSelectedItem] = useState(0);
     const [notifications, setNotifications] = useState([]);
-    const [onlineUsers, setOnlineUsers] = useState([]);
     const [notificationsCount, setNotificationsCount] = useState(0);
     const [show, setShow] = useState(false);
     const [darkTheme, setDarkTheme] = useState(false);
@@ -22,6 +22,9 @@ const ClientAdminDashboardService = () => {
     const openNotifications = Boolean(notificationsAnchorEl);
     const [openLogoutDropdown, setOpenLogoutDropdown] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const onlineUsers = useSelector(state => state.onlineUsers);
 
     useEffect(() => {
         const storedDarkTheme = JSON.parse(localStorage.getItem('darkTheme'));
@@ -30,12 +33,9 @@ const ClientAdminDashboardService = () => {
         } else {
             localStorage.setItem('darkTheme', darkTheme);
         }
-
-
     }, []);
 
     useEffect(() => {
-
         realTimeConnection.on("receiveNotification", (notification) => {
             const newNotification = {
                 id: notification.id,
@@ -48,20 +48,20 @@ const ClientAdminDashboardService = () => {
         });
 
         realTimeConnection.on("newOnlineUser", (newOnlineUserId) => {
-            setOnlineUsers(newOnlineUserId);
+            dispatch(setOnlineUsers(newOnlineUserId));
         });
 
         GetNotifications();
+        GetOnlineUsers();
+
         return () => {
             realTimeConnection.off("receiveNotification");
             realTimeConnection.off("newOnlineUser");
         };
-    }, [realTimeConnection]);
-
+    }, []);
 
     useEffect(() => {
         applyCustomTheme();
-
         saveColors();
 
         const handleResize = () => {
@@ -73,7 +73,6 @@ const ClientAdminDashboardService = () => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-
     }, [darkTheme]);
 
     useEffect(() => {
@@ -83,7 +82,6 @@ const ClientAdminDashboardService = () => {
             setOpen(true);
         }
     }, [screenWidth]);
-
 
     const GetNotifications = async () => {
         try {
@@ -119,17 +117,19 @@ const ClientAdminDashboardService = () => {
 
     function getSavedColors() {
         const savedColors = localStorage.getItem('customThemeColors');
-        return savedColors ? JSON.parse(savedColors) : getDefaultColors();
+        return savedColors ? JSON.parse(savedColors) : getDarkThemeColors();
     }
 
-    function getDefaultColors() {
+    function getDarkThemeColors() {
         return {
             '--main-hover-primary-color': '#a4d1ff',
             '--main-hover-secondary-color': '#eff7ff',
             '--main-focus-primary-color': '#626262',
             '--main-focus-secondary-color': '#626262',
             '--main-background-primary-color': '#f7f8f9',
-            '--main-background-secondary-color': '#fff',
+            '--header-background-primary-color': '#ffffff',
+            '--sidebar-background-primary-color': '#ffffff',
+            '--main-background-secondary-color': '#a9b8c826',
             '--text-primary-color': '#626262',
             '--text-secondary-color': '#626262',
             '--button-primary-color': '#66b2ff',
@@ -140,6 +140,9 @@ const ClientAdminDashboardService = () => {
             '--input-hover-secondary-color': '#a4d1ff',
             '--input-focus-primary-color': '#a4d1ff',
             '--input-focus-secondary-color': '#eff7ff',
+            '--board-color': '#f0f0f0',
+            '--board-title-color': '#e3e3e3',
+            '--card-background-color': 'white',
         };
     }
 
@@ -166,8 +169,9 @@ const ClientAdminDashboardService = () => {
                     const result = await AuthService.logout();
                     if (result.success) {
                         AuthService.clearToken();
-                        HelpersService.notify(result.message, "success");
                         await NotificationService.stopConnection();
+                        dispatch(resetActivePage());
+                        dispatch(logoutUser());
                         navigate('/login');
                     } else {
                         if (result.message) {
@@ -175,7 +179,7 @@ const ClientAdminDashboardService = () => {
                         }
                     }
                 } catch (error) {
-                    HelpersService.notify('Error during registration', "error");
+                    HelpersService.notify('Error during logout', "error");
                     console.error(error, "error");
                 }
             }
@@ -193,30 +197,32 @@ const ClientAdminDashboardService = () => {
     };
 
     const handleListItemClick = (index) => {
+        dispatch(setActivePage(index));
         setSelectedItem(index);
     };
 
     const applyCustomTheme = () => {
         const root = document.documentElement;
-        const colors = darkTheme ? customThemeColors : getDefaultColors();
+        const colors = darkTheme ? customThemeColors : getDarkThemeColors();
 
         for (const [variable, color] of Object.entries(colors)) {
             root.style.setProperty(variable, color);
         }
     };
 
-
     const handleThemeToggle = () => {
         const newDarkTheme = !darkTheme;
         setDarkTheme(newDarkTheme);
         localStorage.setItem('darkTheme', newDarkTheme);
-        setCustomThemeColors(darkTheme ? getDefaultColors() : {
+        setCustomThemeColors(darkTheme ? getDarkThemeColors() : {
             '--main-hover-primary-color': '#2c5274',
             '--main-hover-secondary-color': '#293e51',
             '--main-focus-primary-color': '#66b2ff',
             '--main-focus-secondary-color': '#626262',
-            '--main-background-primary-color': '#2c2f3e',
-            '--main-background-secondary-color': '#fff',
+            '--main-background-primary-color': '#1d2125',
+            '--header-background-primary-color': '#1d2125',
+            '--sidebar-background-primary-color': '#1d2125',
+            '--main-background-secondary-color': '#00000026',
             '--text-primary-color': '#ffffffcc',
             '--text-secondary-color': '#626262',
             '--button-primary-color': '#66b2ff',
@@ -227,6 +233,9 @@ const ClientAdminDashboardService = () => {
             '--input-hover-secondary-color': '#014588',
             '--input-focus-primary-color': '#014588',
             '--input-focus-secondary-color': '#626262',
+            '--board-color': '#161a1d',
+            '--board-title-color': '#14181a',
+            '--card-background-color': '#1d2125',
         });
     };
 
@@ -245,14 +254,14 @@ const ClientAdminDashboardService = () => {
         } catch (error) {
             console.error('Error fetching Notifications:', error);
         }
-    }
+    };
+
     const GetOnlineUsers = async () => {
         try {
             const onlineUsers = await NotificationService.getOnlineUsers();
-            setOnlineUsers(onlineUsers);
-            setOnlineUsersCount(onlineUsers.length);
+            dispatch(setOnlineUsers(onlineUsers));
         } catch (error) {
-            console.error('Error fetching Notifications:', error);
+            console.error('Error fetching online users:', error);
         }
     };
 
@@ -290,7 +299,6 @@ const ClientAdminDashboardService = () => {
         handleLogoutDropdownClose,
         logoutAnchorEl,
         setLogoutAnchorEl,
-        GetOnlineUsers,
         onlineUsers,
     };
 };

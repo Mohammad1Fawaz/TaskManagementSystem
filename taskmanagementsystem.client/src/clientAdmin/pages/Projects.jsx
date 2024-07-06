@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import PrimaryButton from '../../common/components/ui/buttons/PrimaryButton';
 import TextInput from '../../common/components/ui/inputs/TextInput';
 import Form from 'react-bootstrap/Form';
@@ -129,7 +129,6 @@ const Projects = () => {
     } else {
         return (
             <div>
-                <h1>Projects</h1>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={tabIndex} onChange={handleTabChange}>
                         <Tab label="Project Info" />

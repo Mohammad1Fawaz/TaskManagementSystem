@@ -22,7 +22,10 @@ import ListItem from '@mui/material/ListItem';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import { useDispatch, useSelector } from 'react-redux';
+import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import TextInput from '../../../common/components/ui/inputs/TextInput';
+import PopoverDropdown from '../../../common/components/ui/inputs/PopoverDropdown';
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -39,6 +42,7 @@ const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open' 
             duration: theme.transitions.duration.enteringScreen,
         }),
     }),
+    boxShadow: 'none',
 }));
 
 const Header = ({
@@ -59,13 +63,12 @@ const Header = ({
     handleLogout,
     notificationsAnchorEl,
     logoutAnchorEl,
-    userInfo,
 }) => {
     const navigate = useNavigate();
-
+    const loggedInUser = useSelector((state) => state.loggedInUser);
     return (
-        <AppBar position="fixed" open={open} className="">
-            <Toolbar sx={{ bgcolor: 'var(--main-background-primary-color)' }}>
+        <AppBar position="fixed" open={open} className="bg-[var(--header-background-primary-color)]">
+            <Toolbar sx={{ bgcolor: 'var(--header-background-primary-color)', borderBottom: `1px solid ${darkTheme ? '#ffffff1a' : '#eaedf1'}` }}>
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
@@ -85,93 +88,65 @@ const Header = ({
                 <Typography variant="h6" noWrap component="div">
                     {showLogo && <MainLogo className="w-[115px]  m-auto" />}
                 </Typography>
+                <TextInput
+                    className=""
+                    placeholder="Search for results..."
+                    type="text"
+                    icon="fa-search"
+                />
                 <Typography component="div" sx={{ marginLeft: 'auto' }}>
                     <IconButton onClick={handleThemeToggle}>
                         {darkTheme ? <Brightness3Icon sx={{ color: 'var(--button-primary-color)' }} /> : <WbSunnyIcon sx={{ color: 'var(--button-primary-color)' }} />}
                     </IconButton>
-                    <IconButton
-                        onClick={handleOpenNotifications}
-                        aria-describedby={openNotifications ? 'notifications-popover' : undefined}
-                    >
-                        <Badge badgeContent={notificationsCount ?? 0} color="primary">
-                            <NotificationsIcon sx={{ color: 'var(--button-primary-color)' }} />
-                        </Badge>
-                    </IconButton>
-                    <Popover
-                        id="notifications-popover"
-                        open={openNotifications}
-                        anchorEl={notificationsAnchorEl}
-                        onClose={handleCloseNotifications}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                        PaperProps={{
-                            sx: {
-                                width: '500px',
-                            },
-                        }}
-                        className = "text-[var(--text-secondary-color)] !w-[800px]"
-                    >
-                        <NotificationBox notifications={notifications} />
-                    </Popover>
+                    <PopoverDropdown
+                        btnText={
+                            <Badge badgeContent={notificationsCount ?? 0} color="primary">
+                                <NotificationsIcon sx={{ color: 'var(--button-primary-color)' }} />
+                            </Badge>
+                        }
+                        className="ms-3 inline-block"
+                        contentClassName="!w-[300px]"
+                        dropdownContent={<NotificationBox notifications={notifications} />}
+                        popoverPosition="right"
+                        btnClassName="btn-sm !bg-transparent"
+                        notSelect={true}
+                    />
                     <IconButton onClick={handleSettings}>
                         <SettingsIcon sx={{ color: 'var(--button-primary-color)' }} />
                     </IconButton>
                     <IconButton onClick={handleLogout}>
                         <AccountBoxIcon sx={{ color: 'var(--button-primary-color)' }} />
                     </IconButton>
-                    <IconButton onClick={handleLogoutDropdownOpen}
-                        aria-describedby={openLogoutDropdown ? 'avatar-popover' : undefined}
-                    >
-                        <Avatar
-                            text={userInfo?.userName?.charAt(0).toUpperCase()}
-                            size="40px"
-                            sx={{
-                                width: '30px',
-                                height: '30px',
-                            }}
-                        />
-                        <Typography className= "!text-[15px] ms-2">Admin</Typography>  
-                        <ExpandMoreIcon />
-                    </IconButton>
-                    <Popover
-                        id="avatar-popover"
-                        open={openLogoutDropdown}
-                        anchorEl={logoutAnchorEl}
-                        onClose={handleLogoutDropdownClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
+                    <Avatar
+                        text={loggedInUser?.userName?.charAt(0).toUpperCase()}
+                        size="40px"
+                        sx={{
+                            width: '30px',
+                            height: '30px',
                         }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                        PaperProps={{
-                            sx: {
-                                width: '150px',
-                            },
-                        }}
-                        className="text-[var(--text-secondary-color)] !w-[800px]"
-                    >
-                        <List className="bg-[var(--main-background-primary-color)]">
-                            <ListItem>
-                                <button onClick={() => { handleLogoutDropdownClose(); handleLogout() }}>
-                                    <LogoutIcon />  Logout
-                                </button>
-                            </ListItem>
-                            <ListItem>
-                                <button onClick={() => { handleLogoutDropdownClose(); navigate('/Developer'); }}>
-                                   <DeveloperBoardIcon /> Developer
-                                </button>
-                            </ListItem>
-                        </List>
-                    </Popover>
+                        className ="!inline-block ms-2"
+                    />
+                    <PopoverDropdown
+                        btnText="Admin"
+                        className="!inline-block"
+                        notSelect={true}
+                        dropdownContent={
+                            <List>
+                                <ListItem className="popover-item">
+                                    <button onClick={() => { handleLogoutDropdownClose(); handleLogout() }}>
+                                        <LogoutIcon />  Logout
+                                    </button>
+                                </ListItem>
+                                <ListItem className="popover-item">
+                                    <button onClick={() => { handleLogoutDropdownClose(); navigate('/board'); }}>
+                                        <DeveloperBoardIcon /> Developer
+                                    </button>
+                                </ListItem>
+                            </List>
+                        }
+                        popoverPosition="right"
+                        btnClassName="btn-sm !bg-transparent"
+                    />
                 </Typography>
             </Toolbar>
         </AppBar>

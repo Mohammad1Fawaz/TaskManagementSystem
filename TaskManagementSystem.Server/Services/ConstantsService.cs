@@ -1,5 +1,4 @@
 ﻿using TaskManagementSystem.Server.Common;
-using TaskManagementSystem.Server.Models;
 using TaskManagementSystem.Server.ViewModels.CommonViewModels;
 using static TaskManagementSystem.Server.Common.EnumConstants;
 
@@ -35,6 +34,35 @@ namespace TaskManagementSystem.Server.Services
             }
 
             return permissions;
+        }
+
+        public List<SelectOption> GetTaskPriorities()
+        {
+            var priorities = Enum.GetValues(typeof(EnumConstants.TaskPriority))
+                .Cast<EnumConstants.TaskPriority>()
+                .Select(priority => new SelectOption
+                {
+                    key = priority.GetDisplayName(),
+                    value = (int)priority
+                })
+                .ToList();
+
+            return priorities;
+        }
+
+
+        public List<SelectOption> GetTaskTypes()
+        {
+            var statuses = Enum.GetValues(typeof(EnumConstants.TaskType))
+                .Cast<EnumConstants.TaskType>()
+                .Select(type => new SelectOption
+                {
+                    key = type.GetDisplayName(),
+                    value = (int)type
+                })
+                .ToList();
+
+            return statuses;
         }
     }
 }

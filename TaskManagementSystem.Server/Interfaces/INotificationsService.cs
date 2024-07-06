@@ -16,5 +16,6 @@ namespace TaskManagementSystem.Server.Interfaces
 
         Task SendOnlineUsers(List<int> connectedUsersIds);
 
+        List<int> GetOnlineUsers();
     }
 }

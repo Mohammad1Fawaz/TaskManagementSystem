@@ -8,10 +8,8 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import DeveloperDashboardService from '../../services/DeveloperDashboardService';
 
-const DeveloperDashboardLayoutContext = createContext();
-export const useDeveloperDashboardLayoutContext = () => useContext(DeveloperDashboardLayoutContext);
 
-const DeveloperDashboard = ({ userInfo }) => {
+const DeveloperDashboard = ({ children, breadCrumbs }) => {
     const {
         open,
         setOpen,
@@ -51,46 +49,38 @@ const DeveloperDashboard = ({ userInfo }) => {
     } = DeveloperDashboardService();
 
     return (
-        <DeveloperDashboardLayoutContext.Provider value={{ selectedItem, setSelectedItem }}>
-            <Box className="flex justify-between">
-                <CssBaseline />
-                <Header
-                    open={open}
-                    darkTheme={darkTheme}
-                    handleThemeToggle={handleThemeToggle}
-                    handleOpenNotifications={handleOpenNotifications}
-                    handleCloseNotifications={handleCloseNotifications}
-                    notifications={notifications}
-                    notificationsCount={notificationsCount}
-                    handleSettings={handleSettings}
-                    handleLogout={handleLogout}
-                    showLogo={showLogo}
-                    handleDrawerOpen={handleDrawerOpen}
-                    openNotifications={openNotifications}
-                    notificationsAnchorEl={notificationsAnchorEl}
-                    openLogoutDropdown={openLogoutDropdown}
-                    handleLogoutDropdownOpen={handleLogoutDropdownOpen}
-                    handleLogoutDropdownClose={handleLogoutDropdownClose}
-                    logoutAnchorEl={logoutAnchorEl}
-                    setLogoutAnchorEl={setLogoutAnchorEl}
-                    userInfo={userInfo}
-                />
-                <Sidebar
-                    open={open}
-                    selectedItem={selectedItem}
-                    handleDrawerClose={handleDrawerClose}
-                    handleListItemClick={handleListItemClick}
-                />
-                <MainContent selectedItem={selectedItem} onlineUsers={onlineUsers} />
-                <SettingsOffcanvas
-                    show={show}
-                    handleCloseSettings={handleCloseSettings}
-                    customThemeColors={customThemeColors}
-                    handleColorChange={handleColorChange}
-                />
-            </Box>
-        </DeveloperDashboardLayoutContext.Provider>
-    );
+        <Box sx={{ display: 'flex', p: 0 }}>
+            <CssBaseline />
+            <Header
+                open={open}
+                darkTheme={darkTheme}
+                handleThemeToggle={handleThemeToggle}
+                handleOpenNotifications={handleOpenNotifications}
+                handleCloseNotifications={handleCloseNotifications}
+                notifications={notifications}
+                notificationsCount={notificationsCount}
+                handleSettings={handleSettings}
+                handleLogout={handleLogout}
+                showLogo={showLogo}
+                handleDrawerOpen={handleDrawerOpen}
+                openNotifications={openNotifications}
+                notificationsAnchorEl={notificationsAnchorEl}
+                openLogoutDropdown={openLogoutDropdown}
+                handleLogoutDropdownOpen={handleLogoutDropdownOpen}
+                handleLogoutDropdownClose={handleLogoutDropdownClose}
+                logoutAnchorEl={logoutAnchorEl}
+                setLogoutAnchorEl={setLogoutAnchorEl}
+            />
+            <Sidebar
+                open={open}
+                darkTheme={darkTheme}
+                selectedItem={selectedItem}
+                handleDrawerClose={handleDrawerClose}
+                handleListItemClick={handleListItemClick}
+            />
+            <MainContent element={children} breadCrumbs={breadCrumbs}/>
+        </Box>
+    )
 }
 export default DeveloperDashboard;
 

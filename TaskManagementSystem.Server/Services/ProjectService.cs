@@ -23,7 +23,7 @@ namespace TaskManagementSystem.Server.Services
                 projectName = projectViewModel.projectName,
                 projectKey = projectViewModel.projectKey,
                 projectDescription = projectViewModel.projectDescription,
-                projectLead = projectViewModel.projectLead,
+                projectLeadId = projectViewModel.projectLead,
                 clientId = clientId
             };
             _dbContext.Projects.Add(project);
